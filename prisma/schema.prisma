@@ -66,10 +66,10 @@ model Project {
   code              String
   description       String
   area              String
-  areaAdminId       Int
-  areaAdmin         Employee          @relation("admin", fields: [areaAdminId], references: [id])
-  localAdminId      Int
-  localAdmin        Employee          @relation("local", fields: [localAdminId], references: [id])
+  areaAdminId       Int?
+  areaAdmin         Employee?         @relation("admin", fields: [areaAdminId], references: [id])
+  localAdminId      Int?
+  localAdmin        Employee?         @relation("local", fields: [localAdminId], references: [id])
   start             DateTime
   end               DateTime
   available         Boolean           @default(true)
@@ -122,5 +122,5 @@ model ActivityReport {
   @@index([dailyProjectActivityId])
   @@index([monthlyProjectActivityId])
   @@index([siteProjectActivityId])
-  @@map("ActivityHistories")
+  @@map("ActivityReports")
 }

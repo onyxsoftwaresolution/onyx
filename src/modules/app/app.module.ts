@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '@modules/auth/passport/jwt-auth.guard';
 import { RolesGuard } from '@modules/auth/rbac/role.guard';
 import { EmployeeModule } from '@modules/employee/employee.module';
 import { PrismaModule } from '@modules/prisma/prisma.module';
+import { ProjectModule } from '@modules/project/project.module';
 import { UsersModule } from '@modules/user/user.module';
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
@@ -19,6 +20,7 @@ import { AppService } from './app.service';
     PrismaModule,
     ActivityTemplateModule,
     EmployeeModule,
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [

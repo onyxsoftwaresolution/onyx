@@ -6,6 +6,8 @@ import { bootstrap } from '../src/main';
 import { UserService } from '@modules/user/service/user.service';
 import { ActivityTemplateService } from '@modules/activity-template/service/activity-template.service';
 import { EmployeeService } from '@modules/employee/service/employee.service';
+import { ProjectService } from '@modules/project/service/project.service';
+import * as dayjs from 'dayjs';
 
 (async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -17,6 +19,8 @@ import { EmployeeService } from '@modules/employee/service/employee.service';
   // await seedActivityTemplates(app);
 
   // await seedEmployees(app);
+
+  // await seedProjects(app);
 
   process.exitCode = 0;
   await app.close();
@@ -99,4 +103,34 @@ const seedEmployees = async (app: NestExpressApplication) => {
   ];
 
   console.log('seeded employees', result);
+};
+
+const seedProjects = async (app: NestExpressApplication) => {
+  const projectService = app.get<ProjectService>(ProjectService);
+
+  const result = [
+    await projectService.createProject({
+      description: 'proj 1',
+      area: 'area 1',
+      code: 'code 1',
+      start: dayjs().toISOString(),
+      end: dayjs().add(1, 'month').toISOString(),
+    }),
+    await projectService.createProject({
+      description: 'proj 2',
+      area: 'area 2',
+      code: 'code 2',
+      start: dayjs().toISOString(),
+      end: dayjs().add(2, 'month').toISOString(),
+    }),
+    await projectService.createProject({
+      description: 'proj 3',
+      area: 'area 3',
+      code: 'code 3',
+      start: dayjs().toISOString(),
+      end: dayjs().add(3, 'month').toISOString(),
+    }),
+  ];
+
+  console.log('seeded projects', result);
 };
