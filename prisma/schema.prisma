@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+enum Role {
+  ADMIN
+  USER
+
+  @@map("Roles")
+}
+
+model User {
+  id       Int      @id @unique @default(autoincrement())
+  created  DateTime @default(now())
+  modified DateTime @default(now())
+  deleted  Boolean  @default(false)
+
+  username String @unique
+  password String
+  role     Role
+
+  @@map("Users")
+}
+
+model ActivityTemplate {
+  id       Int      @id @unique @default(autoincrement())
+  created  DateTime @default(now())
+  modified DateTime @default(now())
+  deleted  Boolean  @default(false)
+
+  description String
+  material    String
+  cost        Float
+  available   Boolean @default(true)
+
+  @@map("ActivityTemplates")
+}
+
+model Employee {
+  id       Int      @id @unique @default(autoincrement())
+  created  DateTime @default(now())
+  modified DateTime @default(now())
+  deleted  Boolean  @default(false)
+
+  name         String
+  position     String
+  available    Boolean   @default(true)
+  adminProject Project[] @relation("admin")
+  localProject Project[] @relation("local")
+
+  @@map("Employees")
+}
+
+model Project {
+  id       Int      @id @unique @default(autoincrement())
+  created  DateTime @default(now())
+  modified DateTime @default(now())
+  deleted  Boolean  @default(false)
+
+  code              String
+  description       String
+  area              String
+  areaAdminId       Int
+  areaAdmin         Employee          @relation("admin", fields: [areaAdminId], references: [id])
+  localAdminId      Int
+  localAdmin        Employee          @relation("local", fields: [localAdminId], references: [id])
+  start             DateTime
+  end               DateTime
+  available         Boolean           @default(true)
+  projectActivities ProjectActivity[]
+
+  @@index([areaAdminId])
+  @@index([localAdminId])
+  @@map("Projects")
+}
+
+model ProjectActivity {
+  id       Int      @id @unique @default(autoincrement())
+  created  DateTime @default(now())
+  modified DateTime @default(now())
+  deleted  Boolean  @default(false)
+
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id])
+
+  total         Float
+  dailyReports  ActivityReport[] @relation("daily")
+  monthlyReport ActivityReport[] @relation("monthly")
+  siteReport    ActivityReport[] @relation("site")
+
+  @@index([projectId])
+  @@map("ProjectActivities")
+}
+
+enum ActivityReportType {
+  DAILY
+  MONTHLY
+  SITE
+}
+
+model ActivityReport {
+  id       Int      @id @unique @default(autoincrement())
+  created  DateTime @default(now())
+  modified DateTime @default(now())
+  deleted  Boolean  @default(false)
+
+  type                     ActivityReportType
+  total                    Float
+  dailyProjectActivityId   Int?
+  dailyProjectActivity     ProjectActivity?   @relation("daily", fields: [dailyProjectActivityId], references: [id])
+  monthlyProjectActivityId Int?
+  monthlyProjectActivity   ProjectActivity?   @relation("monthly", fields: [monthlyProjectActivityId], references: [id])
+  siteProjectActivityId    Int?
+  siteProjectActivity      ProjectActivity?   @relation("site", fields: [siteProjectActivityId], references: [id])
+
+  @@index([dailyProjectActivityId])
+  @@index([monthlyProjectActivityId])
+  @@index([siteProjectActivityId])
+  @@map("ActivityHistories")
+}
