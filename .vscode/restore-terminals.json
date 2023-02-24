@@ -1,0 +1,19 @@
+{
+  "artificialDelayMilliseconds": 700,
+  "keepExistingTerminalsOpen": false,
+  "runOnStartup": true,
+  "terminals": [
+    {
+      "splitTerminals": [
+        {
+          "name": "api",
+          "commands": ["npm run start:api:dev"]
+        },
+        {
+          "name": "app",
+          "commands": ["npm run start:app:web:dev"]
+        }
+      ]
+    }
+  ]
+}

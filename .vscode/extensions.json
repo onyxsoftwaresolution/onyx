@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "ethansk.restore-terminals",
+    "naumovs.color-highlight",
+    "mikestead.dotenv",
+    "dbaeumer.vscode-eslint",
+    "eamodio.gitlens",
+    "esbenp.prettier-vscode",
+    "prisma.prisma",
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-mysql",
+    "wayou.vscode-todo-highlight",
+    "gruntfuggly.todo-tree",
+    "vscode-icons-team.vscode-icons"
+  ]
+}
