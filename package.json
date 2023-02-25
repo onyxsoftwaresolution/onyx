@@ -3,8 +3,7 @@
   "private": true,
   "scripts": {
     "start:api:dev": "cd ./packages/api && npm run start:dev",
-    "start:app:web:dev": "cd ./packages/app && npm run web",
-    "start:app:ios:dev": "cd ./packages/app && npm run ios"
+    "start:app:dev": "cd ./packages/app && npm start"
   },
   "workspaces": {
     "packages": [

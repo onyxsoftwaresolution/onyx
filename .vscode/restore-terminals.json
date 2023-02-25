@@ -11,7 +11,7 @@
         },
         {
           "name": "app",
-          "commands": ["npm run start:app:web:dev"]
+          "commands": ["npm run start:app:dev"]
         }
       ]
     }

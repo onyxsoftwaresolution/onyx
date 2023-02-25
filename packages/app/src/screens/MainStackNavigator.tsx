@@ -1,12 +1,12 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { memo } from 'react';
-import AppTabNavigator from './app/AppTabNavigator';
+import AppMenuNavigator from './app/AppMenuNavigator';
 import LoginStackNavigator from './login/LoginStackNavigator';
 import { Screens } from './Screens';
 
 const Stack = createNativeStackNavigator();
 
-export default memo(function MainStackNavigator(props) {
+export default memo(function MainStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
@@ -15,8 +15,8 @@ export default memo(function MainStackNavigator(props) {
         options={{ title: '' }}
       />
       <Stack.Screen
-        name={Screens.APP_NAVIGATOR}
-        component={AppTabNavigator}
+        name={Screens.APP_MENU_NAVIGATOR}
+        component={AppMenuNavigator}
         options={{ title: '' }}
       />
     </Stack.Navigator>
