@@ -9,6 +9,9 @@ export class Store {
   static async set(key: string, value: string): Promise<void> {
     cookie.set(key, value);
   }
+  static async delete(key: string): Promise<void> {
+    cookie.remove(key);
+  }
 }
 
 export default Store;

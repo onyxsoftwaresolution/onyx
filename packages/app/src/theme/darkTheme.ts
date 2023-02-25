@@ -5,7 +5,7 @@ export const darkTheme = {
   roundness: 0,
   colors: {
     ...MD3DarkTheme.colors,
-    primary: '#1079b2',
+    primary: '#007AFF',
   },
   breakpoint: 390 + 200,
 };

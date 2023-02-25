@@ -9,6 +9,9 @@ export class Store {
   static async set(key: string, value: string): Promise<void> {
     return await SecureStore.setItemAsync(key, value);
   }
+  static async delete(key: string): Promise<void> {
+    return await SecureStore.deleteItemAsync(key);
+  }
 }
 
 export default Store;

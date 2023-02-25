@@ -1,11 +1,11 @@
 import React, { memo } from 'react';
 import { Screens } from '../Screens';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import DailyReportStackNavigator from './DailyReportStackNavigator';
-import MonthlyReportStackNavigator from './MonthlyReportStackNavigator';
-import ProjectStackNavigator from './ProjectStackNavigator';
-import SiteReportStackNavigator from './SiteReportStackNavigator';
-import OtherStackNavigator from './OtherStackNavigator';
+import DailyReportStackNavigator from './daily/DailyReportStackNavigator';
+import MonthlyReportStackNavigator from './monthly/MonthlyReportStackNavigator';
+import ProjectStackNavigator from './projects/ProjectStackNavigator';
+import SiteReportStackNavigator from './site/SiteReportStackNavigator';
+import OtherStackNavigator from './other/OtherStackNavigator';
 import { useTheme } from 'react-native-paper';
 import { useWindowDimensions } from 'react-native';
 import { AppTheme } from '../../theme/type';

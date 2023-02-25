@@ -70,6 +70,7 @@ export default memo(function LoginScreen() {
                 value={value}
                 onChangeText={onChange}
                 style={{ marginBottom: 7 }}
+                placeholder={'Username'}
               />
             </>
           )}
@@ -101,6 +102,7 @@ export default memo(function LoginScreen() {
                 value={value}
                 onChangeText={onChange}
                 style={{ marginBottom: 7 }}
+                placeholder={'Password'}
               />
             </>
           )}
