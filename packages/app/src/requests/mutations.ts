@@ -1,22 +1,20 @@
 import { UseMutationOptions } from '@tanstack/react-query';
 import { Store } from '../storage/Store';
-import { request } from './request';
+import { mutationFn, request } from './request';
 
 export class Mutations {
   static postLogin() {
     return {
       mutationKey: ['login'],
       mutationFn: async (body: any) => {
-        const result = await request(`http://localhost:4000/v1/auth/login`, {
-          method: 'POST',
-          body: JSON.stringify(body),
-          headers: {
-            'content-type': 'application/json',
+        return await mutationFn(
+          `http://localhost:4000/v1/auth/login`,
+          { body, method: 'POST' },
+          (response) => {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-non-null-asserted-optional-chain
+            Store.set('access_token', response.data?.access_token!);
           },
-        });
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-non-null-asserted-optional-chain
-        Store.set('access_token', result.data?.access_token!);
-        return result;
+        );
       },
     } as UseMutationOptions;
   }

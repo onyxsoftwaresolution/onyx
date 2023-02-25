@@ -14,4 +14,3 @@ declare var _testDefault: typeof StoreAndroid;
 declare var _testDefault: typeof StoreWeb;
 
 export * from './Store.ios';
-export default StoreIos;

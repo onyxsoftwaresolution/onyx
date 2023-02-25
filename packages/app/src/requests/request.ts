@@ -1,3 +1,5 @@
+import { Store } from '../storage/Store';
+
 const getContentType = (responseHeaders: Headers) => {
   const headers = Array.from(responseHeaders.entries());
   const header = headers
@@ -55,4 +57,54 @@ export const request = async <T>(
 ): Promise<T> => {
   const response = await fetch(input, init);
   return await getPayload<T>(response);
+};
+
+export const mutationFn = async (
+  input: RequestInfo,
+  init?: RequestInit,
+  onSuccess?: (result: unknown) => void,
+) => {
+  const token = await Store.get('access_token');
+  const auth =
+    token != null
+      ? {
+          Authorization: `Bearer ${token}`,
+        }
+      : {};
+  const response = await request(input, {
+    ...init,
+    body: JSON.stringify(init?.body),
+    headers: {
+      ...auth,
+      'content-type': 'application/json',
+      ...init?.headers,
+    } as any,
+  });
+  onSuccess?.(response);
+  return response;
+};
+
+export const queryFn = async (
+  input: RequestInfo,
+  init?: RequestInit,
+  onSuccess?: (result: unknown) => void,
+) => {
+  const token = await Store.get('access_token');
+  const auth =
+    token != null
+      ? {
+          Authorization: `Bearer ${token}`,
+        }
+      : {};
+  const response = await request(input, {
+    ...init,
+    body: JSON.stringify(init?.body),
+    headers: {
+      ...auth,
+      'content-type': 'application/json',
+      ...init?.headers,
+    } as any,
+  });
+  onSuccess?.(response);
+  return response;
 };
