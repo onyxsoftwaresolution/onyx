@@ -6,6 +6,7 @@ export const darkTheme = {
   colors: {
     ...MD3DarkTheme.colors,
     primary: '#007AFF',
+    danger: '#ff0800',
   },
   breakpoint: 390 + 200,
 };

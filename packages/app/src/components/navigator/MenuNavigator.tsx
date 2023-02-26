@@ -18,6 +18,7 @@ import {
   DefaultRouterOptions,
   useNavigationBuilder,
 } from '@react-navigation/native';
+import { useTheme } from 'react-native-paper';
 
 // Props accepted by the view
 type MenuNavigationConfig = {
@@ -73,15 +74,30 @@ function MenuNavigator({
       initialRouteName,
     });
 
+  const { colors } = useTheme();
+
   return (
     <NavigationContent>
       <View
         style={[
-          { flexDirection: 'row', height: '100%', flex: 1 },
+          {
+            flexDirection: 'row',
+            height: '100%',
+            flex: 1,
+          },
           containerStyle,
         ]}
       >
-        <View style={[{ width: 200 }, menuBarStyle]}>
+        <View
+          style={[
+            {
+              width: 200,
+              borderRightWidth: 1,
+              borderRightColor: colors.inverseSurface,
+            },
+            menuBarStyle,
+          ]}
+        >
           <Text>menu</Text>
         </View>
         <View style={[{ flex: 1 }, contentStyle]}>

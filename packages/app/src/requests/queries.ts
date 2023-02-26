@@ -16,3 +16,14 @@ export const getSelf = ({ onError, onLoading, onSuccess }: Options = {}) =>
     onError,
     onSuccess,
   } as UseQueryOptions);
+
+export const getEmployees = ({ onError, onLoading, onSuccess }: Options = {}) =>
+  ({
+    queryKey: ['employees'],
+    queryFn: async () => {
+      onLoading?.();
+      return await queryFn(`http://localhost:4000/v1/employees`);
+    },
+    onError,
+    onSuccess,
+  } as UseQueryOptions);

@@ -18,4 +18,16 @@ export class Mutations {
       },
     } as UseMutationOptions;
   }
+
+  static upsertEmployee() {
+    return {
+      mutationKey: ['employee'],
+      mutationFn: async (body: any) => {
+        return await mutationFn(`http://localhost:4000/v1/employee`, {
+          body,
+          method: 'PUT',
+        });
+      },
+    } as UseMutationOptions;
+  }
 }

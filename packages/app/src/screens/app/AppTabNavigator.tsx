@@ -5,10 +5,11 @@ import DailyReportStackNavigator from './daily/DailyReportStackNavigator';
 import MonthlyReportStackNavigator from './monthly/MonthlyReportStackNavigator';
 import ProjectStackNavigator from './projects/ProjectStackNavigator';
 import SiteReportStackNavigator from './site/SiteReportStackNavigator';
-import OtherStackNavigator from './other/OtherStackNavigator';
+import SettingsStackNavigator from './settings/SettingsStackNavigator';
 import { useTheme } from 'react-native-paper';
 import { useWindowDimensions } from 'react-native';
 import { AppTheme } from '../../theme/type';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,7 +19,7 @@ export default memo(function AppTabNavigator() {
 
   return (
     <Tab.Navigator
-      initialRouteName={Screens.APP_PROJECT_NAVIGATOR}
+      initialRouteName={Screens.APP_SETTINGS_NAVIGATOR}
       screenOptions={{
         headerShown: false,
         // tabBarActiveBackgroundColor: theme.colors.surface,
@@ -34,27 +35,82 @@ export default memo(function AppTabNavigator() {
       <Tab.Screen
         name={Screens.APP_DAILY_REPORT_NAVIGATOR}
         component={DailyReportStackNavigator}
-        options={{ title: 'daily' }}
+        options={{
+          title: 'Daily',
+          tabBarIcon: (props) => (
+            <>
+              <Icon
+                name="calendar-day"
+                size={props.size}
+                style={[{ color: props.color }]}
+              />
+            </>
+          ),
+        }}
       />
       <Tab.Screen
         name={Screens.APP_MONTHLY_REPORT_NAVIGATOR}
         component={MonthlyReportStackNavigator}
-        options={{ title: 'monthly' }}
+        options={{
+          title: 'Monthly',
+          tabBarIcon: (props) => (
+            <>
+              <Icon
+                name="calendar-alt"
+                size={props.size}
+                style={[{ color: props.color }]}
+              />
+            </>
+          ),
+        }}
       />
       <Tab.Screen
         name={Screens.APP_PROJECT_NAVIGATOR}
         component={ProjectStackNavigator}
-        options={{ title: 'projects' }}
+        options={{
+          title: 'Projects',
+          tabBarIcon: (props) => (
+            <>
+              <Icon
+                name="tasks"
+                size={props.size}
+                style={[{ color: props.color }]}
+              />
+            </>
+          ),
+        }}
       />
       <Tab.Screen
         name={Screens.APP_SITE_REPORT_NAVIGATOR}
         component={SiteReportStackNavigator}
-        options={{ title: 'site' }}
+        options={{
+          title: 'Site',
+          tabBarIcon: (props) => (
+            <>
+              <Icon
+                name="map-marker"
+                size={props.size}
+                style={[{ color: props.color }]}
+              />
+            </>
+          ),
+        }}
       />
       <Tab.Screen
-        name={Screens.APP_OTHER_NAVIGATOR}
-        component={OtherStackNavigator}
-        options={{ title: 'other' }}
+        name={Screens.APP_SETTINGS_NAVIGATOR}
+        component={SettingsStackNavigator}
+        options={{
+          title: 'Settings',
+          tabBarIcon: (props) => (
+            <>
+              <Icon
+                name="cog"
+                size={props.size}
+                style={[{ color: props.color }]}
+              />
+            </>
+          ),
+        }}
       />
     </Tab.Navigator>
   );
