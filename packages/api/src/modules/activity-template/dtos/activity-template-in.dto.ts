@@ -1,6 +1,12 @@
 import { EntityInDTO } from '@common/dtos/entity.in.dto';
 import { ActivityTemplate } from '@prisma/client';
-import { IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { PickType, PartialType, IntersectionType } from '@nestjs/swagger';
 
 export class ActivityTemplateInDTO
@@ -27,13 +33,8 @@ export class CreateActivityTemplateDTO extends PickType(ActivityTemplateInDTO, [
   'material',
 ] as const) {}
 
-export class IdActivityTemplateDTO implements Partial<ActivityTemplate> {
+export class UpsertActivityTemplateDTO extends CreateActivityTemplateDTO {
   @IsInt()
-  @IsNotEmpty()
+  @IsOptional()
   id?: number;
 }
-
-export class UpsertActivityTemplateDTO extends IntersectionType(
-  IdActivityTemplateDTO,
-  CreateActivityTemplateDTO,
-) {}

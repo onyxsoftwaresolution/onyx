@@ -30,4 +30,16 @@ export class Mutations {
       },
     } as UseMutationOptions;
   }
+
+  static upsertActivityTemplate() {
+    return {
+      mutationKey: ['activity-template'],
+      mutationFn: async (body: any) => {
+        return await mutationFn(`http://localhost:4000/v1/activity-template`, {
+          body,
+          method: 'PUT',
+        });
+      },
+    } as UseMutationOptions;
+  }
 }

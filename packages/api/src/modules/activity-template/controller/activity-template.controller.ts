@@ -7,22 +7,22 @@ import { ActivityTemplateService } from '../service/activity-template.service';
 
 @Controller({
   version: '1',
-  path: 'activity-template',
+  path: '',
 })
 export class ActivityTemplateController {
   constructor(private activityService: ActivityTemplateService) {}
 
-  @Get()
-  @Roles(Role.ADMIN)
+  @Get('activity-templates')
+  @Roles(Role.ADMIN, Role.USER)
   async listActivities(): Promise<ActivityTemplateOutDTO[]> {
     return await this.activityService.listActivityTemplates();
   }
 
-  @Put()
-  @Roles(Role.ADMIN)
-  async createActivity(
+  @Put('activity-template')
+  @Roles(Role.ADMIN, Role.USER)
+  async upsertActivity(
     @Body() activity: UpsertActivityTemplateDTO,
   ): Promise<ActivityTemplateOutDTO> {
-    return await this.activityService.createActivityTemplate(activity);
+    return await this.activityService.upsertActivityTemplate(activity);
   }
 }

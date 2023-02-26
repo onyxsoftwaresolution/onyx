@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateActivityTemplateDTO } from '../dtos/activity-template-in.dto';
+import {
+  CreateActivityTemplateDTO,
+  UpsertActivityTemplateDTO,
+} from '../dtos/activity-template-in.dto';
 import { ActivityTemplateOutDTO } from '../dtos/activity-template-out.dto';
 import { ActivityTemplateProvider } from '../provider/activity-template.provider';
 
@@ -10,6 +13,12 @@ export class ActivityTemplateService {
   async createActivityTemplate(activity: CreateActivityTemplateDTO) {
     return new ActivityTemplateOutDTO(
       await this.activityTemplateProvider.createActivityTemplates(activity),
+    );
+  }
+
+  async upsertActivityTemplate(activity: UpsertActivityTemplateDTO) {
+    return new ActivityTemplateOutDTO(
+      await this.activityTemplateProvider.upsertActivityTemplates(activity),
     );
   }
 

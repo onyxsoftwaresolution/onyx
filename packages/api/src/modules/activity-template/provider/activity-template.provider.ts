@@ -1,6 +1,9 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { CreateActivityTemplateDTO } from '../dtos/activity-template-in.dto';
+import {
+  CreateActivityTemplateDTO,
+  UpsertActivityTemplateDTO,
+} from '../dtos/activity-template-in.dto';
 
 @Injectable()
 export class ActivityTemplateProvider {
@@ -19,6 +22,14 @@ export class ActivityTemplateProvider {
         modified: true,
         deleted: true,
       },
+    });
+  }
+
+  async upsertActivityTemplates({ id, ...data }: UpsertActivityTemplateDTO) {
+    return await this.prisma.client.activityTemplate.upsert({
+      where: id != null ? { id } : { id: -1 },
+      create: data,
+      update: id != null ? { id, ...data } : {},
     });
   }
 

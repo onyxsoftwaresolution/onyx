@@ -12,38 +12,44 @@ import { useFocusEffect } from '@react-navigation/native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 export default memo<NativeStackScreenProps<any, string>>(
-  function EmployeeListScreen(props) {
-    const employees = useQuery(Queries.getEmployees());
+  function ActivityTemplateListScreen(props) {
+    const activities = useQuery(Queries.getActivityTemplates());
     const { colors } = useTheme();
 
     useFocusEffect(() => {
-      employees.refetch();
+      activities.refetch();
     });
 
     const onPress = useCallback(
-      (employee) => {
-        props.navigation.navigate(Screens.APP_EMPLOYEE_UPSERT, employee);
+      (activity) => {
+        props.navigation.navigate(
+          Screens.APP_ACTIVITY_TEMPLATE_UPSERT,
+          activity,
+        );
       },
       [props.navigation],
     );
 
-    const renderEmployee = useCallback(
-      (employee, i) => (
+    const renderActivity = useCallback(
+      (activity, i) => (
         <TouchableRipple
+          key={activity.id}
           style={[styles.touchStyle]}
-          key={employee.id}
           onPress={() => {}}
         >
           <View style={[styles.item]}>
             <View style={[styles.itemRow]}>
               <View style={[{ flex: 1 }]}>
-                <Text style={[styles.itemText]}>{employee.name}</Text>
+                <Text style={[styles.itemText]}>{activity.description}</Text>
                 <Text style={[styles.itemSubText, { color: colors.error }]}>
-                  {employee.position}
+                  {activity.material}
+                </Text>
+                <Text style={[styles.itemSubText, { color: colors.error }]}>
+                  {activity.cost}
                 </Text>
               </View>
               <TouchableWithoutFeedback
-                onPress={() => onPress(employee)}
+                onPress={() => onPress(activity)}
                 containerStyle={[styles.iconContainer]}
               >
                 <Icon
@@ -62,7 +68,7 @@ export default memo<NativeStackScreenProps<any, string>>(
     return (
       <ScreenContainer scrollContainerStyle={[styles.scrollContainer]}>
         <View style={[styles.list]}>
-          {employees.data?.data?.map(renderEmployee)}
+          {activities.data?.data?.map(renderActivity)}
         </View>
       </ScreenContainer>
     );
@@ -87,6 +93,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   itemRow: {
+    maxWidth: '100%',
     flex: 1,
     flexDirection: 'row',
   },
@@ -107,14 +114,14 @@ const styles = StyleSheet.create({
   },
 });
 
-export function EmployeeAddButton(
+export function ActivityTemplateAddButton(
   props: HeaderButtonProps & NativeStackScreenProps<any, string>,
 ) {
   const { colors } = useTheme();
   return (
     <TouchableOpacity
       onPress={() => {
-        props.navigation.navigate(Screens.APP_EMPLOYEE_UPSERT);
+        props.navigation.navigate(Screens.APP_ACTIVITY_TEMPLATE_UPSERT);
       }}
     >
       <Icon

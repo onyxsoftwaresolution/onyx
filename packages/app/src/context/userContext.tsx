@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { createContext, memo, useContext, useEffect, useState } from 'react';
-import { getSelf } from '../requests/queries';
+import { Queries } from '../requests/queries';
 
 type UserState = {
   id: number;
@@ -21,7 +21,7 @@ export const Provider = memo<Props>(function Provider(props) {
   const value = useState<unknown>();
 
   useQuery(
-    getSelf({
+    Queries.getSelf({
       onError(error) {
         value[1]({ error, isError: true });
       },

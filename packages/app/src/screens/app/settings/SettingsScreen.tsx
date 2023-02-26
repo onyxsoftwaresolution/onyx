@@ -43,7 +43,9 @@ export default memo<NativeStackScreenProps<any, string>>(
           case Links.ACTIVITIES:
             return {
               color: colors.inverseSurface,
-              onPress: () => {},
+              onPress: () => {
+                navigation.navigate(Screens.APP_ACTIVITY_TEMPLATE_LIST);
+              },
               icon: 'tools',
               chevron: 'chevron-right',
             };
