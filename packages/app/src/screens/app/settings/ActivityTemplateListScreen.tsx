@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   item: {
     maxWidth: '100%',
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: 'column',
   },
   itemRow: {
     maxWidth: '100%',

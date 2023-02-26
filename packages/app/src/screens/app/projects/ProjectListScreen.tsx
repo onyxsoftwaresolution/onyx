@@ -6,14 +6,18 @@ import { StyleSheet, View } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import { useDialog } from '../../../components/dialog/useDialog';
 import ScreenContainer from '../../../components/ScreenContainer';
 import { Queries } from '../../../requests/queries';
+import { AppTheme } from '../../../theme/type';
 import { Screens } from '../../Screens';
 
 export default memo<NativeStackScreenProps<any, string>>(
   function ProjectListScreen(props) {
     const projects = useQuery(Queries.getProjects());
-    const { colors } = useTheme();
+    const { colors } = useTheme<AppTheme>();
+
+    const dialog = useDialog();
 
     useFocusEffect(() => {
       projects.refetch();
@@ -45,6 +49,15 @@ export default memo<NativeStackScreenProps<any, string>>(
                 </Text>
               </View>
               <TouchableWithoutFeedback
+                onPress={() => dialog.show(project)}
+                containerStyle={[styles.iconContainer]}
+              >
+                <Icon
+                  name={'trash-alt'}
+                  style={[{ color: colors.danger, fontSize: 18 }]}
+                />
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback
                 onPress={() => onPress(project)}
                 containerStyle={[styles.iconContainer]}
               >
@@ -58,7 +71,7 @@ export default memo<NativeStackScreenProps<any, string>>(
           </View>
         </TouchableRipple>
       ),
-      [colors.error, colors.inverseSurface, onPress],
+      [colors.danger, colors.error, colors.inverseSurface, dialog, onPress],
     );
 
     return (
@@ -66,6 +79,15 @@ export default memo<NativeStackScreenProps<any, string>>(
         <View style={[styles.list]}>
           {projects.data?.data?.map(renderProjects)}
         </View>
+        {dialog.renderDialog(
+          (project) => `Delete project '${project?.description}'`,
+          'Are you sure?',
+          [
+            { label: 'Delete', textColor: colors.danger },
+            () => <View style={{ flex: 1 }} />,
+            { label: 'Cancel' },
+          ],
+        )}
       </ScreenContainer>
     );
   },
@@ -86,7 +108,7 @@ const styles = StyleSheet.create({
   item: {
     maxWidth: '100%',
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: 'column',
   },
   itemRow: {
     flex: 1,
