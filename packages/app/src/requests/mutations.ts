@@ -1,6 +1,6 @@
 import { UseMutationOptions } from '@tanstack/react-query';
 import { Store } from '../storage/Store';
-import { mutationFn, request } from './request';
+import { mutationFn } from './request';
 
 export class Mutations {
   static postLogin() {
@@ -8,7 +8,7 @@ export class Mutations {
       mutationKey: ['login'],
       mutationFn: async (body: any) => {
         return await mutationFn(
-          `http://localhost:4000/v1/auth/login`,
+          `http://192.168.0.102:4000/v1/auth/login`,
           { body, method: 'POST' },
           (response) => {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-non-null-asserted-optional-chain
@@ -23,7 +23,7 @@ export class Mutations {
     return {
       mutationKey: ['employee'],
       mutationFn: async (body: any) => {
-        return await mutationFn(`http://localhost:4000/v1/employee`, {
+        return await mutationFn(`http://192.168.0.102:4000/v1/employee`, {
           body,
           method: 'PUT',
         });
@@ -35,10 +35,13 @@ export class Mutations {
     return {
       mutationKey: ['activity-template'],
       mutationFn: async (body: any) => {
-        return await mutationFn(`http://localhost:4000/v1/activity-template`, {
-          body,
-          method: 'PUT',
-        });
+        return await mutationFn(
+          `http://192.168.0.102:4000/v1/activity-template`,
+          {
+            body,
+            method: 'PUT',
+          },
+        );
       },
     } as UseMutationOptions;
   }

@@ -19,7 +19,7 @@ export default memo(function AppTabNavigator() {
 
   return (
     <Tab.Navigator
-      initialRouteName={Screens.APP_SETTINGS_NAVIGATOR}
+      initialRouteName={Screens.APP_PROJECT_NAVIGATOR}
       screenOptions={{
         headerShown: false,
         // tabBarActiveBackgroundColor: theme.colors.surface,

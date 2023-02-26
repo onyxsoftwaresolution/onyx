@@ -1,49 +1,51 @@
+import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { memo, useCallback } from 'react';
-import { View, StyleSheet, Platform, TouchableOpacity } from 'react-native';
-import ScreenContainer from '../../../components/ScreenContainer';
-import { Queries } from '../../../requests/queries';
+import { StyleSheet, View } from 'react-native';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import ScreenContainer from '../../../components/ScreenContainer';
+import { Queries } from '../../../requests/queries';
 import { Screens } from '../../Screens';
-import { HeaderButtonProps } from '@react-navigation/native-stack/lib/typescript/src/types';
-import { useFocusEffect } from '@react-navigation/native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 export default memo<NativeStackScreenProps<any, string>>(
-  function EmployeeListScreen(props) {
-    const employees = useQuery(Queries.getEmployees());
+  function ProjectListScreen(props) {
+    const projects = useQuery(Queries.getProjects());
     const { colors } = useTheme();
 
     useFocusEffect(() => {
-      employees.refetch();
+      projects.refetch();
     });
 
     const onPress = useCallback(
-      (employee) => {
-        props.navigation.navigate(Screens.APP_EMPLOYEE_UPSERT, employee);
+      (project) => {
+        props.navigation.navigate(Screens.APP_PROJECT_UPSERT, project);
       },
       [props.navigation],
     );
 
-    const renderEmployee = useCallback(
-      (employee, i) => (
+    const renderProjects = useCallback(
+      (project, i) => (
         <TouchableRipple
           style={[styles.touchStyle]}
-          key={employee.id}
+          key={project.id}
           onPress={() => {}}
         >
           <View style={[styles.item]}>
             <View style={[styles.itemRow]}>
               <View style={[{ flex: 1 }]}>
-                <Text style={[styles.itemText]}>{employee.name}</Text>
+                <Text style={[styles.itemText]}>{project.description}</Text>
                 <Text style={[styles.itemSubText, { color: colors.error }]}>
-                  {employee.position}
+                  {project.area}
+                </Text>
+                <Text style={[styles.itemSubText, { color: colors.error }]}>
+                  {project.code}
                 </Text>
               </View>
               <TouchableWithoutFeedback
-                onPress={() => onPress(employee)}
+                onPress={() => onPress(project)}
                 containerStyle={[styles.iconContainer]}
               >
                 <Icon
@@ -62,7 +64,7 @@ export default memo<NativeStackScreenProps<any, string>>(
     return (
       <ScreenContainer scrollContainerStyle={[styles.scrollContainer]}>
         <View style={[styles.list]}>
-          {employees.data?.data?.map(renderEmployee)}
+          {projects.data?.data?.map(renderProjects)}
         </View>
       </ScreenContainer>
     );

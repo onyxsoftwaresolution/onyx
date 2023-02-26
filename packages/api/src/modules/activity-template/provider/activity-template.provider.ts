@@ -35,13 +35,7 @@ export class ActivityTemplateProvider {
 
   async listActivityTemplates() {
     return await this.prisma.client.activityTemplate.findMany({
-      select: {
-        id: true,
-        available: true,
-        cost: true,
-        description: true,
-        material: true,
-      },
+      where: { deleted: false, available: true },
     });
   }
 }

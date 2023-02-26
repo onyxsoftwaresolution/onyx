@@ -12,7 +12,7 @@ export class Queries {
       queryKey: ['self'],
       queryFn: async () => {
         onLoading?.();
-        return await queryFn(`http://localhost:4000/v1/user/self`);
+        return await queryFn(`http://192.168.0.102:4000/v1/user/self`);
       },
       onError,
       onSuccess,
@@ -23,7 +23,7 @@ export class Queries {
       queryKey: ['employees'],
       queryFn: async () => {
         onLoading?.();
-        return await queryFn(`http://localhost:4000/v1/employees`);
+        return await queryFn(`http://192.168.0.102:4000/v1/employees`);
       },
       onError,
       onSuccess,
@@ -38,7 +38,18 @@ export class Queries {
       queryKey: ['activity-templates'],
       queryFn: async () => {
         onLoading?.();
-        return await queryFn(`http://localhost:4000/v1/activity-templates`);
+        return await queryFn(`http://192.168.0.102:4000/v1/activity-templates`);
+      },
+      onError,
+      onSuccess,
+    } as UseQueryOptions);
+
+  static getProjects = ({ onError, onLoading, onSuccess }: Options = {}) =>
+    ({
+      queryKey: ['projects'],
+      queryFn: async () => {
+        onLoading?.();
+        return await queryFn(`http://192.168.0.102:4000/v1/projects`);
       },
       onError,
       onSuccess,

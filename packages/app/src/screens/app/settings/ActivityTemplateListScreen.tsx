@@ -113,26 +113,3 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
 });
-
-export function ActivityTemplateAddButton(
-  props: HeaderButtonProps & NativeStackScreenProps<any, string>,
-) {
-  const { colors } = useTheme();
-  return (
-    <TouchableOpacity
-      onPress={() => {
-        props.navigation.navigate(Screens.APP_ACTIVITY_TEMPLATE_UPSERT);
-      }}
-    >
-      <Icon
-        name="plus"
-        style={{
-          padding: Platform.OS === 'ios' ? 10 : 20,
-          paddingRight: Platform.OS === 'ios' ? 0 : 20,
-          color: Platform.OS === 'ios' ? colors.primary : colors.inverseSurface,
-          fontSize: 18,
-        }}
-      />
-    </TouchableOpacity>
-  );
-}

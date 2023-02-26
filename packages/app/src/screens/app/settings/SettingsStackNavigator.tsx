@@ -7,13 +7,11 @@ import { useTheme } from 'react-native-paper';
 import { Screens } from '../../Screens';
 import SettingsScreen from './SettingsScreen';
 import { Platform } from 'react-native';
-import EmployeeListScreen, { EmployeeAddButton } from './EmployeeListScreen';
+import EmployeeListScreen from './EmployeeListScreen';
 import EmployeeAddScreen from './EmployeeUpsertScreen';
-import ActivityTemplateListScreen, {
-  ActivityTemplateAddButton,
-} from './ActivityTemplateListScreen';
-import NotInplementedScreen from '../../NotInplementedScreen';
+import ActivityTemplateListScreen from './ActivityTemplateListScreen';
 import ActivityTemplateUpsertScreen from './ActivityTemplateUpsertScreen';
+import { HeaderAddButton } from '../../../components/HeaderAddButton';
 
 const Stack = createNativeStackNavigator();
 
@@ -46,8 +44,12 @@ export default memo(function SettingsStackNavigator() {
         component={EmployeeListScreen}
         options={(screenProps) => ({
           ...options('Employees'),
-          headerRight: (props) => (
-            <EmployeeAddButton {...screenProps} {...props} />
+          headerRight: (headerProps) => (
+            <HeaderAddButton
+              {...screenProps}
+              {...headerProps}
+              screenName={Screens.APP_EMPLOYEE_UPSERT}
+            />
           ),
         })}
       />
@@ -67,8 +69,12 @@ export default memo(function SettingsStackNavigator() {
         component={ActivityTemplateListScreen}
         options={(screenProps) => ({
           ...options('Activity Templates'),
-          headerRight: (props) => (
-            <ActivityTemplateAddButton {...screenProps} {...props} />
+          headerRight: (headerProps) => (
+            <HeaderAddButton
+              {...screenProps}
+              {...headerProps}
+              screenName={Screens.APP_ACTIVITY_TEMPLATE_UPSERT}
+            />
           ),
         })}
       />

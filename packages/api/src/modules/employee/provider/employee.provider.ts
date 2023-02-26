@@ -26,7 +26,9 @@ export class EmployeeProvider {
   }
 
   async listEmployees() {
-    return await this.prismaService.client.employee.findMany();
+    return await this.prismaService.client.employee.findMany({
+      where: { deleted: false, available: true },
+    });
   }
 
   async updateEmployee({ id, ...data }: UpdateEmployeeDTO) {
