@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { memo, useCallback } from 'react';
 import { View, StyleSheet, Platform, TouchableOpacity } from 'react-native';
 import ScreenContainer from '../../../components/ScreenContainer';
-import { Queries } from '../../../requests/queries';
+import { Queries } from '../../../requests/Queries';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Screens } from '../../Screens';

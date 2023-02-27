@@ -8,8 +8,8 @@ import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useDialog } from '../../../components/dialog/useDialog';
 import ScreenContainer from '../../../components/ScreenContainer';
-import { Mutations } from '../../../requests/mutations';
-import { Queries } from '../../../requests/queries';
+import { Mutations } from '../../../requests/Mutations';
+import { Queries } from '../../../requests/Queries';
 import { AppTheme } from '../../../theme/type';
 import { Screens } from '../../Screens';
 

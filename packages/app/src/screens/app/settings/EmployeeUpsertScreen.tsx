@@ -8,7 +8,7 @@ import { HelperText } from 'react-native-paper';
 import MGButton from '../../../components/MGButton';
 import MGTextInput from '../../../components/MGTextInput';
 import ScreenContainer from '../../../components/ScreenContainer';
-import { Mutations } from '../../../requests/mutations';
+import { Mutations } from '../../../requests/Mutations';
 import { Screens } from '../../Screens';
 
 export default memo<NativeStackScreenProps<any, string>>(

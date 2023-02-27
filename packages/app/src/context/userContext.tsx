@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { createContext, memo, useContext, useEffect, useState } from 'react';
-import { Queries } from '../requests/queries';
+import { Queries } from '../requests/Queries';
 
 type UserState = {
   id: number;

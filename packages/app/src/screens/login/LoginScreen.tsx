@@ -8,7 +8,7 @@ import MGButton from '../../components/MGButton';
 import MGTextInput from '../../components/MGTextInput';
 import ScreenContainer from '../../components/ScreenContainer';
 import { useUser } from '../../context/userContext';
-import { Mutations } from '../../requests/mutations';
+import { Mutations } from '../../requests/Mutations';
 
 export default memo(function LoginScreen() {
   const [, setUser] = useUser();
