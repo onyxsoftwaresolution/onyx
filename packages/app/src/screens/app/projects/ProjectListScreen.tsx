@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { memo, useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -8,6 +8,7 @@ import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useDialog } from '../../../components/dialog/useDialog';
 import ScreenContainer from '../../../components/ScreenContainer';
+import { Mutations } from '../../../requests/mutations';
 import { Queries } from '../../../requests/queries';
 import { AppTheme } from '../../../theme/type';
 import { Screens } from '../../Screens';
@@ -15,6 +16,14 @@ import { Screens } from '../../Screens';
 export default memo<NativeStackScreenProps<any, string>>(
   function ProjectListScreen(props) {
     const projects = useQuery(Queries.getProjects());
+    const deleteProject = useMutation(
+      Mutations.deleteProject({
+        onSuccess() {
+          projects.refetch();
+        },
+      }),
+    );
+
     const { colors } = useTheme<AppTheme>();
 
     const dialog = useDialog();
@@ -74,20 +83,29 @@ export default memo<NativeStackScreenProps<any, string>>(
       [colors.danger, colors.error, colors.inverseSurface, dialog, onPress],
     );
 
+    const dialogRenderOptions = useCallback(
+      (project) => ({
+        title: `Delete project '${project?.description}'`,
+        message: 'Are you sure?',
+        buttons: [
+          {
+            label: 'Delete',
+            textColor: colors.danger,
+            onPress: () => deleteProject.mutate(project.id),
+          },
+          () => <View style={{ flex: 1 }} />,
+          { label: 'Cancel' },
+        ],
+      }),
+      [colors.danger, deleteProject],
+    );
+
     return (
       <ScreenContainer scrollContainerStyle={[styles.scrollContainer]}>
         <View style={[styles.list]}>
           {projects.data?.data?.map(renderProjects)}
         </View>
-        {dialog.renderDialog(
-          (project) => `Delete project '${project?.description}'`,
-          'Are you sure?',
-          [
-            { label: 'Delete', textColor: colors.danger },
-            () => <View style={{ flex: 1 }} />,
-            { label: 'Cancel' },
-          ],
-        )}
+        {dialog.renderDialog(dialogRenderOptions)}
       </ScreenContainer>
     );
   },

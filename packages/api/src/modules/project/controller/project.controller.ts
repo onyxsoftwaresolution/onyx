@@ -1,5 +1,5 @@
 import { Roles } from '@modules/auth/rbac/role.decorator';
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Delete, Get, Param } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { ProjectService } from '../service/project.service';
 
@@ -20,5 +20,11 @@ export class ProjectController {
   @Roles(Role.ADMIN, Role.USER)
   async getProject(@Param('id') id: number) {
     return await this.projectService.getProject(id);
+  }
+
+  @Delete('project/:id')
+  @Roles(Role.ADMIN, Role.USER)
+  async deleteProject(@Param('id') id: number) {
+    return await this.projectService.deleteProject(id);
   }
 }

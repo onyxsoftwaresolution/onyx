@@ -21,4 +21,8 @@ export class ProjectService {
       await this.projectProvider.createProject(createProject),
     );
   }
+
+  async deleteProject(id: number) {
+    return new ProjectOutDTO(await this.projectProvider.deleteProject(id));
+  }
 }

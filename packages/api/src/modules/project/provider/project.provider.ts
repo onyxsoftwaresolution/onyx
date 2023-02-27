@@ -47,4 +47,11 @@ export class ProjectProvider {
       },
     });
   }
+
+  async deleteProject(id: number) {
+    return await this.prismaService.client.project.update({
+      where: { id },
+      data: { deleted: true },
+    });
+  }
 }

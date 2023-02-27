@@ -1,6 +1,6 @@
 import { UseQueryOptions } from '@tanstack/react-query';
 import { Store } from '../storage/Store';
-import { queryFn, request } from './request';
+import { request } from './request';
 
 type Options = Partial<Pick<UseQueryOptions, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -12,7 +12,7 @@ export class Queries {
       queryKey: ['self'],
       queryFn: async () => {
         onLoading?.();
-        return await queryFn(`http://192.168.0.102:4000/v1/user/self`);
+        return await Queries.queryFn(`http://192.168.0.102:4000/v1/user/self`);
       },
       onError,
       onSuccess,
@@ -23,7 +23,7 @@ export class Queries {
       queryKey: ['employees'],
       queryFn: async () => {
         onLoading?.();
-        return await queryFn(`http://192.168.0.102:4000/v1/employees`);
+        return await Queries.queryFn(`http://192.168.0.102:4000/v1/employees`);
       },
       onError,
       onSuccess,
@@ -38,7 +38,9 @@ export class Queries {
       queryKey: ['activity-templates'],
       queryFn: async () => {
         onLoading?.();
-        return await queryFn(`http://192.168.0.102:4000/v1/activity-templates`);
+        return await Queries.queryFn(
+          `http://192.168.0.102:4000/v1/activity-templates`,
+        );
       },
       onError,
       onSuccess,
@@ -49,9 +51,34 @@ export class Queries {
       queryKey: ['projects'],
       queryFn: async () => {
         onLoading?.();
-        return await queryFn(`http://192.168.0.102:4000/v1/projects`);
+        return await Queries.queryFn(`http://192.168.0.102:4000/v1/projects`);
       },
       onError,
       onSuccess,
     } as UseQueryOptions);
+
+  static queryFn = async (
+    input: RequestInfo,
+    init?: RequestInit,
+    onSuccess?: (result: unknown) => void,
+  ) => {
+    const token = await Store.get('access_token');
+    const auth =
+      token != null
+        ? {
+            Authorization: `Bearer ${token}`,
+          }
+        : {};
+    const response = await request(input, {
+      ...init,
+      body: JSON.stringify(init?.body),
+      headers: {
+        ...auth,
+        'content-type': 'application/json',
+        ...init?.headers,
+      } as any,
+    });
+    onSuccess?.(response);
+    return response;
+  };
 }
