@@ -1,7 +1,11 @@
 import { Prisma } from '@prisma/client';
-import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import { IsDateString, IsInt, IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateProject implements Prisma.ProjectCreateInput {
+export class UpsertProjectDTO implements Partial<Prisma.ProjectCreateInput> {
+  @IsInt()
+  @IsNotEmpty()
+  id?: number;
+
   @IsString()
   @IsNotEmpty()
   code: string;
@@ -16,9 +20,9 @@ export class CreateProject implements Prisma.ProjectCreateInput {
 
   @IsDateString()
   @IsNotEmpty()
-  start: string;
+  start: Date | string;
 
   @IsDateString()
   @IsNotEmpty()
-  end: string;
+  end: Date | string;
 }

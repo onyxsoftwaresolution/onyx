@@ -1,9 +1,10 @@
 import { UseMutationOptions } from '@tanstack/react-query';
 import { ProjectOutDTO } from '@workspace/api/src/modules/project/dtos/project.out.dto';
+import { UpsertProjectDTO } from '@workspace/api/src/modules/project/dtos/project.in.dto';
 import { LoginTokenDTO } from '@workspace/api/src/modules/auth/dtos/login.token.dto';
 import { LoginDTO } from '@workspace/api/src/modules/auth/dtos/login.dto';
 import { Store } from '../storage/Store';
-import { FetchResponse, request } from './request';
+import { FetchError, FetchResponse, request } from './request';
 
 type Options = Partial<Pick<UseMutationOptions, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -72,25 +73,27 @@ export class Mutations {
     } as UseMutationOptions<FetchResponse<ProjectOutDTO>, unknown, number>;
   }
 
-  static upsertProject({
-    onError,
-    onLoading,
-    onSuccess,
-  }: Options = {}): UseMutationOptions {
+  static upsertProject({ onError, onLoading, onSuccess }: Options = {}) {
     return {
       mutationKey: ['project'],
-      mutationFn: async (id) => {
+      mutationFn: async (body) => {
         onLoading?.();
         return await Mutations.mutationFn(
-          `http://192.168.0.102:4000/v1/project/${id}`,
+          `http://192.168.0.102:4000/v1/project/`,
           {
+            body: body as any,
             method: 'PUT',
           },
         );
       },
       onSuccess,
       onError,
-    } as UseMutationOptions;
+    } as UseMutationOptions<
+      FetchResponse<ProjectOutDTO>,
+      FetchError,
+      UpsertProjectDTO,
+      unknown
+    >;
   }
 
   static mutationFn = async <T>(

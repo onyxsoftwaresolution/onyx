@@ -1,24 +1,16 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { CreateProject } from '../dtos/project.in.dto';
+import { UpsertProjectDTO } from '../dtos/project.in.dto';
 
 @Injectable()
 export class ProjectProvider {
   constructor(private prismaService: PrismaService) {}
 
-  async createProject(createProject: CreateProject) {
-    return await this.prismaService.client.project.create({
-      data: createProject,
-      select: {
-        id: true,
-        created: true,
-        modified: true,
-        code: true,
-        description: true,
-        area: true,
-        start: true,
-        end: true,
-      },
+  async upsertProject(data: UpsertProjectDTO) {
+    return await this.prismaService.client.project.upsert({
+      where: { id: data.id },
+      create: data,
+      update: data,
     });
   }
 

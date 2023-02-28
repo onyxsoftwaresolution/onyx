@@ -1,6 +1,6 @@
 import { UseQueryOptions } from '@tanstack/react-query';
 import { Store } from '../storage/Store';
-import { FetchResponse, request } from './request';
+import { FetchError, FetchResponse, request } from './request';
 import { ProjectOutDTO } from '@workspace/api/src/modules/project/dtos/project.out.dto';
 
 type Options = Partial<Pick<UseQueryOptions, 'onError' | 'onSuccess'>> & {
@@ -30,18 +30,12 @@ export class Queries {
       onSuccess,
     } as UseQueryOptions);
 
-  static getActivityTemplates = ({
-    onError,
-    onLoading,
-    onSuccess,
-  }: Options = {}) =>
+  static getActivityTemplates = ({ onError, onLoading, onSuccess }: Options = {}) =>
     ({
       queryKey: ['activity-templates'],
       queryFn: async () => {
         onLoading?.();
-        return await Queries.queryFn(
-          `http://192.168.0.102:4000/v1/activity-templates`,
-        );
+        return await Queries.queryFn(`http://192.168.0.102:4000/v1/activity-templates`);
       },
       onError,
       onSuccess,
@@ -58,11 +52,18 @@ export class Queries {
       onSuccess,
     } as UseQueryOptions<FetchResponse<ProjectOutDTO[]>>);
 
-  static queryFn = async (
-    input: RequestInfo,
-    init?: RequestInit,
-    onSuccess?: (result: unknown) => void,
-  ) => {
+  static getProject = (id: number, { onError, onLoading, onSuccess }: Options = {}) =>
+  ({
+      queryKey: [`project-${id}`],
+      queryFn: async () => {
+        onLoading?.();
+        return await Queries.queryFn(`http://192.168.0.102:4000/v1/project/${id}`);
+      },
+      onError,
+      onSuccess,
+    } as UseQueryOptions<FetchResponse<ProjectOutDTO>, FetchError>);
+
+  static queryFn = async (input: RequestInfo, init?: RequestInit, onSuccess?: (result: unknown) => void) => {
     const token = await Store.get('access_token');
     const auth =
       token != null

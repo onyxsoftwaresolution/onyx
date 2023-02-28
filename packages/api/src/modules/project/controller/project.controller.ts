@@ -1,6 +1,7 @@
 import { Roles } from '@modules/auth/rbac/role.decorator';
-import { Controller, Delete, Get, Param } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
 import { Role } from '@prisma/client';
+import { UpsertProjectDTO } from '../dtos/project.in.dto';
 import { ProjectService } from '../service/project.service';
 
 @Controller({
@@ -22,8 +23,14 @@ export class ProjectController {
     return await this.projectService.getProject(id);
   }
 
+  @Put('project')
+  @Roles(Role.ADMIN)
+  async upsertProject(@Body() data: UpsertProjectDTO) {
+    return await this.projectService.upsertProject(data);
+  }
+
   @Delete('project/:id')
-  @Roles(Role.ADMIN, Role.USER)
+  @Roles(Role.ADMIN)
   async deleteProject(@Param('id') id: number) {
     return await this.projectService.deleteProject(id);
   }

@@ -17,6 +17,10 @@ export type FetchResponse<T> = {
   url: string;
 };
 
+export type FetchError = FetchResponse<{
+  code: string;
+}>;
+
 const getPayload = async <T>(response: Response): Promise<FetchResponse<T>> => {
   const contentType = getContentType(response.headers);
   switch (contentType) {
@@ -41,10 +45,7 @@ const getPayload = async <T>(response: Response): Promise<FetchResponse<T>> => {
   }
 };
 
-export const request = async <T>(
-  input: RequestInfo,
-  init?: RequestInit,
-): Promise<FetchResponse<T>> => {
+export const request = async <T>(input: RequestInfo, init?: RequestInit): Promise<FetchResponse<T>> => {
   const response = await fetch(input, init);
   return await getPayload<T>(response);
 };

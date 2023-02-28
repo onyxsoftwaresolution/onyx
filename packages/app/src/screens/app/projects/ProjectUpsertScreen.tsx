@@ -1,172 +1,161 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { UpsertProjectDTO } from '@workspace/api/src/modules/project/dtos/project.in.dto';
 import { isNotEmpty, isString } from 'class-validator';
-import { memo, useCallback, useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { StyleSheet, View } from 'react-native';
+import { Fragment, memo, useCallback, useMemo } from 'react';
+import { Controller, useForm, useFieldArray } from 'react-hook-form';
+import { StyleSheet, View, Text } from 'react-native';
 import { HelperText } from 'react-native-paper';
 import MGButton from '../../../components/MGButton';
+import MGDatePicker from '../../../components/MGDatePicker';
 import MGTextInput from '../../../components/MGTextInput';
 import ScreenContainer from '../../../components/ScreenContainer';
 import { Mutations } from '../../../requests/Mutations';
-import { Screens } from '../../Screens';
+import { Queries } from '../../../requests/Queries';
 
 type Params = {
-  //
+  id: number;
 };
 
-export default memo<NativeStackScreenProps<Params, keyof Params>>(
-  function ProjectUpsertScreen(props) {
-    const params = props.route.params;
+export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertScreen(props) {
+  const params = props.route.params as unknown as Params;
 
-    const activity = useMutation(Mutations.upsertProject());
+  const project = useQuery(Queries.getProject(params?.id, { onSuccess: () => !isDirty && reset() }));
+  const upsert = useMutation(Mutations.upsertProject());
 
-    const {
-      control,
-      handleSubmit,
-      formState: { errors, isValid },
-      getValues,
-    } = useForm<unknown>({
-      mode: 'onChange',
-      values: {
-        id: params.id ?? '',
-        description: params.description ?? '',
-        material: params.material ?? '',
-        cost: params.cost ?? '',
-      },
+  const values: UpsertProjectDTO = useMemo(() => {
+    const data = project.data?.data;
+    return ({
+      id: data?.id ?? undefined,
+      area: data?.area ?? '',
+      code: data?.code ?? '',
+      description: data?.description ?? '',
+      end: data?.end ?? '',
+      start: data?.start ?? '',
     });
+  }, [project.data?.data]);
 
-    useEffect(() => {
-      if (activity.isSuccess) {
-        if (props.navigation.canGoBack()) {
-          props.navigation.goBack();
-        } else {
-          props.navigation.navigate(Screens.APP_ACTIVITY_TEMPLATE_LIST);
-        }
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid, isDirty },
+    getValues,
+    reset,
+  } = useForm<UpsertProjectDTO>({
+    mode: 'onChange',
+    values,
+  });
+
+  const submit = useCallback(
+    ({ id, ...rest }: UpsertProjectDTO) => {
+      if (params?.id != null) {
+        upsert.mutate({ id, ...rest });
+      } else {
+        upsert.mutate({ ...rest });
       }
-    }, [activity.isSuccess, props.navigation]);
+    },
+    [params?.id, upsert],
+  );
 
-    const submit = useCallback(
-      ({ id, description, material, cost }: unknown) => {
-        if (params.id != null) {
-          activity.mutate({ id, description, material, cost });
-        } else {
-          activity.mutate({ description, material, cost });
-        }
-      },
-      [activity, params.id],
-    );
-
+  const renderDescription = useCallback(() => {
     return (
-      <ScreenContainer scrollContainerStyle={[styles.scrollContainer]}>
-        <View style={[styles.view]}>
-          <Controller
-            control={control}
-            rules={{
-              required: {
-                value: true,
-                message: 'required message',
-              },
-              validate: (value) => {
-                return isString(value) && isNotEmpty(value);
-              },
-            }}
-            render={({ field: { onChange, value } }) => (
-              <>
-                {errors.description != null ? (
-                  <HelperText type="error">
-                    {errors.description.message}
-                  </HelperText>
-                ) : null}
-                {activity?.isError ? (
-                  <HelperText type="error">
-                    Error: {activity?.error?.data.code}
-                  </HelperText>
-                ) : null}
-                <MGTextInput
-                  value={value}
-                  onChangeText={onChange}
-                  style={{ marginBottom: 7 }}
-                  placeholder={'Description'}
-                />
-              </>
-            )}
-            name="description"
-          />
-          <Controller
-            control={control}
-            rules={{
-              required: {
-                value: true,
-                message: 'required message',
-              },
-              validate: (value) => {
-                return isString(value) && isNotEmpty(value);
-              },
-            }}
-            render={({ field: { onChange, value } }) => (
-              <>
-                {errors.material != null ? (
-                  <HelperText type="error">
-                    {errors.material.message}
-                  </HelperText>
-                ) : null}
-                {activity?.isError ? (
-                  <HelperText type="error">
-                    Error: {activity?.error?.data.code}
-                  </HelperText>
-                ) : null}
-                <MGTextInput
-                  value={value}
-                  onChangeText={onChange}
-                  style={{ marginBottom: 7 }}
-                  placeholder={'Material'}
-                />
-              </>
-            )}
-            name="material"
-          />
-          <Controller
-            control={control}
-            rules={{
-              required: {
-                value: true,
-                message: 'required message',
-              },
-              validate: (value) => {
-                return isString(value) && isNotEmpty(value);
-              },
-            }}
-            render={({ field: { onChange, value } }) => (
-              <>
-                {errors.cost != null ? (
-                  <HelperText type="error">{errors.cost.message}</HelperText>
-                ) : null}
-                {activity?.isError ? (
-                  <HelperText type="error">
-                    Error: {activity?.error?.data.code}
-                  </HelperText>
-                ) : null}
-                <MGTextInput
-                  value={value}
-                  onChangeText={onChange}
-                  style={{ marginBottom: 7 }}
-                  placeholder={'Cost'}
-                />
-              </>
-            )}
-            name="cost"
-          />
-          <MGButton
-            icon="send"
-            label={'Submit'}
-            onPress={handleSubmit(submit)}
-          />
-        </View>
-      </ScreenContainer>
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Description field is required!' },
+          validate: (value) => isString(value) && isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <>
+            {errors.description != null
+              ? <HelperText type="error">{errors.description.message}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGTextInput
+              value={value}
+              onChangeText={onChange}
+              style={{ marginBottom: 7 }}
+              placeholder={'Description'}
+            />
+          </>
+        )}
+        name="description"
+      />
     );
-  },
-);
+  }, [control, errors.description, upsert?.error?.data.code, upsert?.isError]);
+
+  const renderArea = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Area field is required!' },
+          validate: (value) => isString(value) && isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <>
+            {errors.area != null
+              ? <HelperText type="error">{errors.area.message}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGTextInput
+              value={value}
+              onChangeText={onChange}
+              style={{ marginBottom: 7 }}
+              placeholder={'Area'}
+            />
+          </>
+        )}
+        name="area"
+      />
+    );
+  }, [control, errors.area, upsert?.error?.data.code, upsert?.isError]);
+
+  const renderCode = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Code field is required!' },
+          validate: (value) => isString(value) && isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <>
+            {errors.code != null
+              ? <HelperText type="error">{errors.code.message}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGTextInput
+              value={value}
+              onChangeText={onChange}
+              style={{ marginBottom: 7 }}
+              placeholder={'Code'}
+            />
+          </>
+        )}
+        name="code"
+      />
+    );
+  }, [control, errors.code, upsert?.error?.data.code, upsert?.isError]);
+
+  return (
+    <ScreenContainer scrollContainerStyle={[styles.scrollContainer]}>
+      <View style={[styles.view]}>
+        {renderDescription()}
+        {renderArea()}
+        {renderCode()}
+        <MGDatePicker mode="single" />
+        {/* <MGButton icon="send" label={'Submit'} onPress={handleSubmit(submit)} /> */}
+      </View>
+    </ScreenContainer>
+  );
+});
 
 const styles = StyleSheet.create({
   scrollContainer: {

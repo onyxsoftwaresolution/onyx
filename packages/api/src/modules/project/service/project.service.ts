@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateProject } from '../dtos/project.in.dto';
+import { UpsertProjectDTO } from '../dtos/project.in.dto';
 import { ProjectOutDTO } from '../dtos/project.out.dto';
 import { ProjectProvider } from '../provider/project.provider';
 
@@ -16,10 +16,8 @@ export class ProjectService {
     return new ProjectOutDTO(await this.projectProvider.getProject(id));
   }
 
-  async createProject(createProject: CreateProject): Promise<ProjectOutDTO> {
-    return new ProjectOutDTO(
-      await this.projectProvider.createProject(createProject),
-    );
+  async upsertProject(data: UpsertProjectDTO): Promise<ProjectOutDTO> {
+    return new ProjectOutDTO(await this.projectProvider.upsertProject(data));
   }
 
   async deleteProject(id: number) {

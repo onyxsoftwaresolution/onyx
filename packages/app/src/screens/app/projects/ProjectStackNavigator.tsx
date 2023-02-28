@@ -6,9 +6,9 @@ import React, { memo, useCallback } from 'react';
 import { Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { HeaderAddButton } from '../../../components/HeaderAddButton';
-import NotInplementedScreen from '../../NotInplementedScreen';
 import { Screens } from '../../Screens';
 import ProjectListScreen from './ProjectListScreen';
+import ProjectUpsertScreen from './ProjectUpsertScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,7 +44,7 @@ export default memo(function ProjectStackNavigator() {
       />
       <Stack.Screen
         name={Screens.APP_PROJECT_UPSERT}
-        component={NotInplementedScreen}
+        component={ProjectUpsertScreen}
         options={(screenProps) => ({
           ...options('Add/Edit Project'),
         })}
