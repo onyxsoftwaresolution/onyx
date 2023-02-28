@@ -1,6 +1,7 @@
 import { UseQueryOptions } from '@tanstack/react-query';
 import { Store } from '../storage/Store';
-import { request } from './request';
+import { FetchResponse, request } from './request';
+import { ProjectOutDTO } from '@workspace/api/src/modules/project/dtos/project.out.dto';
 
 type Options = Partial<Pick<UseQueryOptions, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -55,7 +56,7 @@ export class Queries {
       },
       onError,
       onSuccess,
-    } as UseQueryOptions);
+    } as UseQueryOptions<FetchResponse<ProjectOutDTO[]>>);
 
   static queryFn = async (
     input: RequestInfo,

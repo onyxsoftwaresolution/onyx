@@ -19,13 +19,13 @@ export type RenderOptions = {
   )[];
 };
 
-type RenderOptionsFunction<T> = (data: T | undefined) => RenderOptions;
+export type RenderOptionsFunction<T> = (data: T) => RenderOptions;
 
 export function useDialog<T>() {
   const [isVisible, setVisible] = useState(false);
   const [data, setData] = useState<T>();
 
-  const show = useCallback((data: T | undefined) => {
+  const show = useCallback((data: T) => {
     setVisible(true);
     setData(data);
   }, []);
@@ -33,7 +33,7 @@ export function useDialog<T>() {
 
   const renderDialog = useCallback(
     (arg: RenderOptions | RenderOptionsFunction<T>) => {
-      const options = typeof arg === 'function' ? arg(data) : arg;
+      const options = typeof arg === 'function' ? arg(data as T) : arg;
       return (
         <Portal>
           <Dialog visible={isVisible} onDismiss={hide}>

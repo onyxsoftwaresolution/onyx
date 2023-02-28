@@ -1,6 +1,9 @@
 import { UseMutationOptions } from '@tanstack/react-query';
+import { ProjectOutDTO } from '@workspace/api/src/modules/project/dtos/project.out.dto';
+import { LoginTokenDTO } from '@workspace/api/src/modules/auth/dtos/login.token.dto';
+import { LoginDTO } from '@workspace/api/src/modules/auth/dtos/login.dto';
 import { Store } from '../storage/Store';
-import { request } from './request';
+import { FetchResponse, request } from './request';
 
 type Options = Partial<Pick<UseMutationOptions, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -10,17 +13,16 @@ export class Mutations {
   static postLogin() {
     return {
       mutationKey: ['login'],
-      mutationFn: async (body: any) => {
+      mutationFn: async (body) => {
         return await Mutations.mutationFn(
           `http://192.168.0.102:4000/v1/auth/login`,
-          { body, method: 'POST' },
+          { body: body as any, method: 'POST' },
           (response) => {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-non-null-asserted-optional-chain
-            Store.set('access_token', response.data?.access_token!);
+            Store.set('access_token', response.data?.access_token ?? null);
           },
         );
       },
-    } as UseMutationOptions;
+    } as UseMutationOptions<FetchResponse<LoginTokenDTO>, unknown, LoginDTO>;
   }
 
   static upsertEmployee() {
@@ -67,13 +69,34 @@ export class Mutations {
       },
       onSuccess,
       onError,
-    } as UseMutationOptions<unknown, unknown, number, unknown>;
+    } as UseMutationOptions<FetchResponse<ProjectOutDTO>, unknown, number>;
   }
 
-  static mutationFn = async (
+  static upsertProject({
+    onError,
+    onLoading,
+    onSuccess,
+  }: Options = {}): UseMutationOptions {
+    return {
+      mutationKey: ['project'],
+      mutationFn: async (id) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `http://192.168.0.102:4000/v1/project/${id}`,
+          {
+            method: 'PUT',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions;
+  }
+
+  static mutationFn = async <T>(
     input: RequestInfo,
     init?: RequestInit,
-    onSuccess?: (result: unknown) => void,
+    onSuccess?: (result: FetchResponse<T>) => void,
   ) => {
     const token = await Store.get('access_token');
     const auth =
@@ -82,7 +105,7 @@ export class Mutations {
             Authorization: `Bearer ${token}`,
           }
         : {};
-    const response = await request(input, {
+    const response = await request<T>(input, {
       ...init,
       body: JSON.stringify(init?.body),
       headers: {

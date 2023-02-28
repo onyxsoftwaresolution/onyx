@@ -9,50 +9,42 @@ const getContentType = (responseHeaders: Headers) => {
   return 'application/octet-stream';
 };
 
-const getPayload = async <T>(response: Response): Promise<T> => {
+export type FetchResponse<T> = {
+  data: T;
+  ok: boolean;
+  status: number;
+  statusText: string;
+  url: string;
+};
+
+const getPayload = async <T>(response: Response): Promise<FetchResponse<T>> => {
   const contentType = getContentType(response.headers);
   switch (contentType) {
     case 'application/json':
-      if (response.ok)
-        return {
-          data: await response.json(),
-          ok: response.ok,
-          status: response.status,
-          statusText: response.statusText,
-          url: response.url,
-        } as T;
-      throw {
+      return {
         data: await response.json(),
         ok: response.ok,
         status: response.status,
         statusText: response.statusText,
         url: response.url,
-      };
+      } as FetchResponse<T>;
     case 'text/plain':
-      if (response.ok)
-        return {
-          data: await response.json(),
-          ok: response.ok,
-          status: response.status,
-          statusText: response.statusText,
-          url: response.url,
-        } as T;
-      throw {
-        data: await response.text(),
+      return {
+        data: await response.json(),
         ok: response.ok,
         status: response.status,
         statusText: response.statusText,
         url: response.url,
-      };
+      } as FetchResponse<T>;
     default:
-      return '' as T;
+      return {} as FetchResponse<T>;
   }
 };
 
 export const request = async <T>(
   input: RequestInfo,
   init?: RequestInit,
-): Promise<T> => {
+): Promise<FetchResponse<T>> => {
   const response = await fetch(input, init);
   return await getPayload<T>(response);
 };

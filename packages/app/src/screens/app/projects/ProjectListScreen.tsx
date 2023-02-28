@@ -1,12 +1,16 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { ProjectOutDTO } from '@workspace/api/src/modules/project/dtos/project.out.dto';
 import { memo, useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { useDialog } from '../../../components/dialog/useDialog';
+import {
+  RenderOptionsFunction,
+  useDialog,
+} from '../../../components/dialog/useDialog';
 import ScreenContainer from '../../../components/ScreenContainer';
 import { Mutations } from '../../../requests/Mutations';
 import { Queries } from '../../../requests/Queries';
@@ -26,21 +30,21 @@ export default memo<NativeStackScreenProps<any, string>>(
 
     const { colors } = useTheme<AppTheme>();
 
-    const dialog = useDialog();
+    const dialog = useDialog<ProjectOutDTO>();
 
     useFocusEffect(() => {
       projects.refetch();
     });
 
     const onPress = useCallback(
-      (project) => {
+      (project: ProjectOutDTO) => {
         props.navigation.navigate(Screens.APP_PROJECT_UPSERT, project);
       },
       [props.navigation],
     );
 
     const renderProjects = useCallback(
-      (project, i) => (
+      (project: ProjectOutDTO, i: number) => (
         <TouchableRipple
           style={[styles.touchStyle]}
           key={project.id}
@@ -83,22 +87,23 @@ export default memo<NativeStackScreenProps<any, string>>(
       [colors.danger, colors.error, colors.inverseSurface, dialog, onPress],
     );
 
-    const dialogRenderOptions = useCallback(
-      (project) => ({
-        title: `Delete project '${project?.description}'`,
-        message: 'Are you sure?',
-        buttons: [
-          {
-            label: 'Delete',
-            textColor: colors.danger,
-            onPress: () => deleteProject.mutate(project.id),
-          },
-          () => <View style={{ flex: 1 }} />,
-          { label: 'Cancel' },
-        ],
-      }),
-      [colors.danger, deleteProject],
-    );
+    const dialogRenderOptions: RenderOptionsFunction<ProjectOutDTO> =
+      useCallback(
+        (project) => ({
+          title: `Delete project '${project?.description}'`,
+          message: 'Are you sure?',
+          buttons: [
+            {
+              label: 'Delete',
+              textColor: colors.danger,
+              onPress: () => deleteProject.mutate(project.id),
+            },
+            () => <View style={{ flex: 1 }} />,
+            { label: 'Cancel' },
+          ],
+        }),
+        [colors.danger, deleteProject],
+      );
 
     return (
       <ScreenContainer scrollContainerStyle={[styles.scrollContainer]}>

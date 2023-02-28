@@ -36,7 +36,8 @@
     "react-native-tab-view": "^3.5.0",
     "react-native-vector-icons": "^9.2.0",
     "react-native-web": "~0.18.9",
-    "rimraf": "^4.1.2"
+    "rimraf": "^4.1.2",
+    "@workspace/api": "*"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
