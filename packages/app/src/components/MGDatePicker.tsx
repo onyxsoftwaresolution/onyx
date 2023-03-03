@@ -1,10 +1,12 @@
 import { memo, useCallback, useState } from "react";
-import { StyleProp, TextStyle, TouchableWithoutFeedback, View } from "react-native";
-import { Portal, TextInput, TextInputProps } from "react-native-paper";
-import { DatePickerModal, DatePickerModalSingleProps } from "react-native-paper-dates";
+import { StyleProp, TextStyle, View } from "react-native";
+import { Portal, TextInputProps, TouchableRipple, Text } from "react-native-paper";
+import { enGB, registerTranslation, DatePickerModal, DatePickerModalSingleProps } from "react-native-paper-dates";
 import { MultiConfirm, ValidRangeType } from "react-native-paper-dates/lib/typescript/Date/Calendar";
 import dayjs from "dayjs";
 import { dayOrNull } from "../dayOrNull";
+
+registerTranslation('en-GB', enGB);
 
 interface MGDatePickerProps extends Pick<DatePickerModalSingleProps, "uppercase" | "startYear" | "endYear"> {
   value?: Date | null;
@@ -22,9 +24,9 @@ interface MGDatePickerProps extends Pick<DatePickerModalSingleProps, "uppercase"
 export default memo<MGDatePickerProps>(function MGDatePicker(props) {
   const [isDatePickerVisible, setDatePickerVisibility] = useState<boolean>(false);
 
-  const showDatePicker = () => {
+  const showDatePicker = useCallback(() => {
     setDatePickerVisibility(true);
-  };
+  }, []);
 
   const onConfirm: MultiConfirm = useCallback(
     (params) => {
@@ -40,20 +42,14 @@ export default memo<MGDatePickerProps>(function MGDatePicker(props) {
 
   return (
     <View>
-      <TouchableWithoutFeedback onPress={showDatePicker}>
-        <TextInput
-          value={dayOrNull(dayjs(props.value))?.format('DD/MM/YYYY') ?? ""}
-          label={props.label}
-          mode={props.inputMode ?? "outlined"}
-          placeholder={props.placeholder}
-          editable={false}
-          style={[props.inputStyle]}
-          error={!!props.error}
-        />
-      </TouchableWithoutFeedback>
+      <TouchableRipple onPress={showDatePicker}>
+        <View style={[{ backgroundColor: '#fff' }]}>
+          <Text style={[{ fontSize: 15, color: '#000', padding: 10, paddingHorizontal: 16 }]}>{dayOrNull(dayjs(props.value))?.format('DD/MM/YYYY') ?? ""}</Text>
+        </View>
+      </TouchableRipple>
       <Portal>
         <DatePickerModal
-          locale={'en'}
+          locale={'en-GB'}
           visible={isDatePickerVisible}
           date={props.value ?? props.defaultValue}
           mode={props.mode as "multiple"}
