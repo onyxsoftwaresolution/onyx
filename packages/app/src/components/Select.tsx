@@ -67,8 +67,24 @@ export default memo(function Select<T extends { id: number }>(props: SelectProps
   return (
     <>
       <View style={[props.containerStyle]}>
-        {type === "button" ? <MGButton icon={"plus"} label={props.label} onPress={() => dialog.show(undefined)} /> : null}
-        {type === "input" ? <MGTextInput value={props.text(data)} onChangeText={() => { }} label={props.label} onFocus={() => dialog.show(undefined)} /> : null}
+        {type === "button"
+          ? <MGButton
+            icon={"plus"}
+            label={props.label}
+            onPress={() => dialog.show(undefined)}
+          />
+          : null}
+        {type === "input"
+          ? <TouchableRipple onPress={() => dialog.show(undefined)}>
+            <View pointerEvents="none">
+              <MGTextInput
+                value={props.text(data)}
+                onChangeText={() => { }}
+                label={props.label}
+              />
+            </View>
+          </TouchableRipple>
+          : null}
       </View>
       {dialog.renderDialog(dialogRenderOptions)}
     </>

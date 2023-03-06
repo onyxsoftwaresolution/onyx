@@ -44,11 +44,14 @@ export default memo<MGDatePickerProps>(function MGDatePicker(props) {
 
   return (
     <View style={[props.containerStyle]}>
-      <MGTextInput
-        onFocus={showDatePicker}
-        value={dayOrNull(dayjs(props.value))?.format('DD/MM/YYYY') ?? ""}
-        label={props.label}
-      />
+      <TouchableRipple onPress={showDatePicker}>
+        <View pointerEvents="none">
+          <MGTextInput
+            value={dayOrNull(dayjs(props.value))?.format('DD/MM/YYYY') ?? ""}
+            label={props.label}
+          />
+        </View>
+      </TouchableRipple>
       <Portal>
         <DatePickerModal
           locale={'en-GB'}
