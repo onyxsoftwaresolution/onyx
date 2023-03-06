@@ -105,8 +105,8 @@ export class Mutations {
     const auth =
       token != null
         ? {
-            Authorization: `Bearer ${token}`,
-          }
+          Authorization: `Bearer ${token}`,
+        }
         : {};
     const response = await request<T>(input, {
       ...init,

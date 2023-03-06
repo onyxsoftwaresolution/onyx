@@ -1,10 +1,11 @@
 import { memo, useCallback, useState } from "react";
-import { StyleProp, TextStyle, View } from "react-native";
+import { StyleProp, TextStyle, View, ViewStyle } from "react-native";
 import { Portal, TextInputProps, TouchableRipple, Text } from "react-native-paper";
 import { enGB, registerTranslation, DatePickerModal, DatePickerModalSingleProps } from "react-native-paper-dates";
 import { MultiConfirm, ValidRangeType } from "react-native-paper-dates/lib/typescript/Date/Calendar";
 import dayjs from "dayjs";
 import { dayOrNull } from "../dayOrNull";
+import MGTextInput from "./MGTextInput";
 
 registerTranslation('en-GB', enGB);
 
@@ -19,6 +20,7 @@ interface MGDatePickerProps extends Pick<DatePickerModalSingleProps, "uppercase"
   error?: boolean;
   validRange?: ValidRangeType | undefined;
   inputStyle?: StyleProp<TextStyle>;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 export default memo<MGDatePickerProps>(function MGDatePicker(props) {
@@ -41,12 +43,12 @@ export default memo<MGDatePickerProps>(function MGDatePicker(props) {
   }, [setDatePickerVisibility]);
 
   return (
-    <View>
-      <TouchableRipple onPress={showDatePicker}>
-        <View style={[{ backgroundColor: '#fff' }]}>
-          <Text style={[{ fontSize: 15, color: '#000', padding: 10, paddingHorizontal: 16 }]}>{dayOrNull(dayjs(props.value))?.format('DD/MM/YYYY') ?? ""}</Text>
-        </View>
-      </TouchableRipple>
+    <View style={[props.containerStyle]}>
+      <MGTextInput
+        onFocus={showDatePicker}
+        value={dayOrNull(dayjs(props.value))?.format('DD/MM/YYYY') ?? ""}
+        label={props.label}
+      />
       <Portal>
         <DatePickerModal
           locale={'en-GB'}

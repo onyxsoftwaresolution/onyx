@@ -11,9 +11,9 @@ const Stack = createNativeStackNavigator();
 export default memo(function MainStackNavigator() {
   const [user] = useUser();
 
-  const isLoading = useMemo(() => user?.isLoading, [user?.isLoading]);
+  const isLoading = useMemo(() => { return user == null || user?.isLoading }, [user?.isLoading]);
 
-  const isLoggedIn = useMemo(() => user?.data != null, [user?.data]);
+  const isLoggedIn = useMemo(() => { return user?.ok }, [user]);
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

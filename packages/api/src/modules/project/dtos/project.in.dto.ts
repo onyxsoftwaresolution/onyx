@@ -1,7 +1,8 @@
-import { Prisma } from '@prisma/client';
-import { IsDateString, IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { UpsertEmployeeDTO } from '@modules/employee/dtos/employee.in.dto';
+import { Prisma, ProjectActivity } from '@prisma/client';
+import { IsArray, IsDateString, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class UpsertProjectDTO implements Partial<Prisma.ProjectCreateInput> {
+export class UpsertProjectDTO {
   @IsInt()
   @IsNotEmpty()
   id?: number;
@@ -25,4 +26,33 @@ export class UpsertProjectDTO implements Partial<Prisma.ProjectCreateInput> {
   @IsDateString()
   @IsNotEmpty()
   end: Date | string;
+
+  @IsArray()
+  projectActivities: ProjectActivityInDTO[];
+
+  areaAdmin: UpsertEmployeeDTO;
+
+  localAdmin: UpsertEmployeeDTO;
+}
+
+export class ProjectActivityInDTO {
+  @IsInt()
+  @IsOptional()
+  id?: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  total: number;
+
+  @IsString()
+  @IsNotEmpty()
+  description: string;
+
+  @IsString()
+  @IsNotEmpty()
+  material: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  cost: number;
 }

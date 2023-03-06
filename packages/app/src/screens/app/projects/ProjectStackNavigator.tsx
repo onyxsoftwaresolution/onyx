@@ -27,7 +27,7 @@ export default memo(function ProjectStackNavigator() {
   );
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: true }}>
+    <Stack.Navigator initialRouteName={Screens.APP_PROJECT_LIST} screenOptions={{ headerShown: true }}>
       <Stack.Screen
         name={Screens.APP_PROJECT_LIST}
         component={ProjectListScreen}

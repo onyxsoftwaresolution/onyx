@@ -63,14 +63,14 @@ export default memo(function LoginScreen() {
               ) : null}
               {login?.isError ? (
                 <HelperText type="error">
-                  Error: {login?.error?.data.code}
+                  Error: {login?.error?.data?.code}
                 </HelperText>
               ) : null}
               <MGTextInput
                 value={value}
                 onChangeText={onChange}
                 style={{ marginBottom: 7 }}
-                placeholder={'Username'}
+                label={'Username'}
               />
             </>
           )}
@@ -94,7 +94,7 @@ export default memo(function LoginScreen() {
               ) : null}
               {login?.isError ? (
                 <HelperText type="error">
-                  Error: {login?.error?.data.code}
+                  Error: {login?.error?.data?.code}
                 </HelperText>
               ) : null}
               <MGTextInput
@@ -102,7 +102,7 @@ export default memo(function LoginScreen() {
                 value={value}
                 onChangeText={onChange}
                 style={{ marginBottom: 7 }}
-                placeholder={'Password'}
+                label={'Password'}
               />
             </>
           )}
