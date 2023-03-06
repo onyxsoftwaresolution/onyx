@@ -51,17 +51,17 @@ export default memo(function Select<T extends { id: number }>(props: SelectProps
           {
             label: 'Select',
             textColor: colors.danger,
-            onPress: () => { props.onSelect(data); },
+            onPress: () => { props.onSelect(data); type === "button" && setData(undefined); },
           },
           () => <View style={{ flex: 1 }} />,
           {
             label: 'Cancel',
-            onPress: () => { },
+            onPress: () => { type === "button" && setData(undefined); },
           },
         ],
-        onDismiss: () => { },
+        onDismiss: () => { type === "button" && setData(undefined); },
       }),
-      [datas?.data?.data, colors.danger, data, props],
+      [datas?.data?.data, colors.danger, data, props, type],
     );
 
   return (

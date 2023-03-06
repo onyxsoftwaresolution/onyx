@@ -35,9 +35,9 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
       description: data?.description ?? '',
       end: data?.end ?? '',
       start: data?.start ?? '',
-      projectActivities: [],
-      localAdmin: null,
-      areaAdmin: null,
+      projectActivities: data?.projectActivities ?? [],
+      localAdmin: data?.localAdmin ?? null,
+      areaAdmin: data?.areaAdmin ?? null,
     });
   }, [project.data?.data]);
 
@@ -355,7 +355,8 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
         {renderDescription()}
         {renderArea()}
         {renderCode()}
-        <MGDatePicker label={"Date"} containerStyle={[{ marginBottom: 7 }]} mode="single" />
+        <MGDatePicker label={"Start date"} containerStyle={[{ marginBottom: 7 }]} mode="single" />
+        <MGDatePicker label={"End date"} containerStyle={[{ marginBottom: 7 }]} mode="single" />
         <View>
           {fields.map((field, index) => renderProjectActivity(index))}
         </View>
@@ -370,7 +371,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
         />
         {renderLocalAdmin()}
         {renderAreaAdmin()}
-        <MGButton disabled={!isValid} icon="send" label={'Submit'} onPress={handleSubmit(submit)} />
+        <MGButton icon="send" label={'Submit'} onPress={handleSubmit(submit)} />
       </View>
     </ScreenContainer>
   );

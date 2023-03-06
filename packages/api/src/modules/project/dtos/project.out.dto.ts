@@ -1,6 +1,29 @@
 import { EntityOutDTO } from '@common/dtos/entity.out.dto';
-import { Project } from '@prisma/client';
+import { EmployeeOutDTO } from '@modules/employee/dtos/employee.out.dto';
+import { Project, ProjectActivity } from '@prisma/client';
 import { Expose } from 'class-transformer';
+
+export class ProjectActivityOutDTO extends EntityOutDTO implements ProjectActivity {
+  @Expose()
+  id: number;
+
+  @Expose()
+  total: number;
+
+  @Expose()
+  description: string;
+
+  @Expose()
+  material: string;
+
+  @Expose()
+  cost: number;
+
+  created: Date;
+  modified: Date;
+  deleted: boolean;
+  projectId: number;
+}
 
 export class ProjectOutDTO extends EntityOutDTO implements Project {
   @Expose()
@@ -27,7 +50,13 @@ export class ProjectOutDTO extends EntityOutDTO implements Project {
   areaAdminId: number;
 
   @Expose()
+  areaAdmin: EmployeeOutDTO;
+
+  @Expose()
   localAdminId: number;
+
+  @Expose()
+  localAdmin: EmployeeOutDTO;
 
   @Expose()
   start: Date;
@@ -37,4 +66,7 @@ export class ProjectOutDTO extends EntityOutDTO implements Project {
 
   @Expose()
   available: boolean;
+
+  @Expose()
+  projectActivities: ProjectActivityOutDTO[];
 }
