@@ -3,9 +3,9 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
 import { UpsertProjectDTO } from '@workspace/api/src/modules/project/dtos/project.in.dto';
 import { isInt, isNotEmpty, isNumber, isString } from 'class-validator';
-import { Fragment, memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { Controller, useForm, useFieldArray } from 'react-hook-form';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { HelperText } from 'react-native-paper';
 import MGButton from '../../../components/MGButton';
 import MGDatePicker from '../../../components/MGDatePicker';
@@ -189,18 +189,18 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
     );
   }, [control, errors.projectActivities, upsert?.error?.data.code, upsert?.isError]);
 
-  const renderProjectActivityTotal = useCallback((index: number) => {
+  const renderProjectActivityQuantity = useCallback((index: number) => {
     return (
       <Controller
         control={control}
         rules={{
-          required: { value: true, message: 'Total field is required!' },
+          required: { value: true, message: 'Quantity field is required!' },
           validate: (value) => isNumber(parseFloat(value.toString())),
         }}
         render={({ field: { onChange, value } }) => (
           <>
-            {errors.projectActivities?.[index]?.total != null
-              ? <HelperText type="error">{errors.projectActivities?.[index]?.total?.message}</HelperText>
+            {errors.projectActivities?.[index]?.quantity != null
+              ? <HelperText type="error">{errors.projectActivities?.[index]?.quantity?.message}</HelperText>
               : null}
             {upsert?.isError
               ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
@@ -209,11 +209,11 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               value={value.toString()}
               onChangeText={onChange}
               style={{ marginBottom: 7 }}
-              label={'Total'}
+              label={'Quantity'}
             />
           </>
         )}
-        name={`projectActivities.${index}.total`}
+        name={`projectActivities.${index}.quantity`}
       />
     );
   }, [control, errors.projectActivities, upsert?.error?.data.code, upsert?.isError]);
@@ -238,7 +238,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               value={value}
               onChangeText={onChange}
               style={{ marginBottom: 7 }}
-              label={'Total'}
+              label={'Material'}
             />
           </>
         )}
@@ -282,10 +282,10 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
         {renderProjectActivityDescription(index)}
         {renderProjectActivityMaterial(index)}
         {renderProjectActivityCost(index)}
-        {renderProjectActivityTotal(index)}
+        {renderProjectActivityQuantity(index)}
       </View>
     );
-  }, [renderProjectActivityCost, renderProjectActivityDescription, renderProjectActivityMaterial, renderProjectActivityTotal]);
+  }, [renderProjectActivityCost, renderProjectActivityDescription, renderProjectActivityMaterial, renderProjectActivityQuantity]);
 
   const renderLocalAdmin = useCallback(() => {
     return (
@@ -364,7 +364,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           getter={Queries.getActivityTemplates as any}
           text={(data: ActivityTemplateOutDTO) => data.description}
           onSelect={(data: ActivityTemplateOutDTO) => {
-            append({ cost: data.cost, description: data.description, material: data.material, total: 0 })
+            append({ cost: data.cost, description: data.description, material: data.material, quantity: 0 })
           }}
           label="Add activity"
           containerStyle={[{ marginBottom: 7 }]}

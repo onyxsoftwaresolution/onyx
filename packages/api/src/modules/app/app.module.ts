@@ -6,6 +6,7 @@ import { RolesGuard } from '@modules/auth/rbac/role.guard';
 import { EmployeeModule } from '@modules/employee/employee.module';
 import { PrismaModule } from '@modules/prisma/prisma.module';
 import { ProjectModule } from '@modules/project/project.module';
+import { ReportModule } from '@modules/report/report.module';
 import { UsersModule } from '@modules/user/user.module';
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
@@ -21,6 +22,7 @@ import { AppService } from './app.service';
     ActivityTemplateModule,
     EmployeeModule,
     ProjectModule,
+    ReportModule,
   ],
   controllers: [AppController],
   providers: [
@@ -37,4 +39,4 @@ import { AppService } from './app.service';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

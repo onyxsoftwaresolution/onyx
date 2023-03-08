@@ -42,7 +42,7 @@ export class ProjectActivityInDTO {
 
   @IsNumber()
   @IsNotEmpty()
-  total: number;
+  quantity: number;
 
   @IsString()
   @IsNotEmpty()

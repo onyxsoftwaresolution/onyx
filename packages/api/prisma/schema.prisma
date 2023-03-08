@@ -63,21 +63,42 @@ model Project {
   modified DateTime @default(now())
   deleted  Boolean  @default(false)
 
-  code              String
-  description       String
-  area              String
-  areaAdminId       Int?
-  areaAdmin         Employee?         @relation("admin", fields: [areaAdminId], references: [id])
-  localAdminId      Int?
-  localAdmin        Employee?         @relation("local", fields: [localAdminId], references: [id])
-  start             DateTime
-  end               DateTime
-  available         Boolean           @default(true)
+  code        String
+  description String
+  area        String
+  start       DateTime
+  end         DateTime
+  available   Boolean  @default(true)
+
+  areaAdminId  Int?
+  areaAdmin    Employee? @relation("admin", fields: [areaAdminId], references: [id])
+  localAdminId Int?
+  localAdmin   Employee? @relation("local", fields: [localAdminId], references: [id])
+
   projectActivities ProjectActivity[]
+  reports           ProjectReport[]
 
   @@index([areaAdminId])
   @@index([localAdminId])
   @@map("Projects")
+}
+
+model ProjectReport {
+  id       Int      @id @unique @default(autoincrement())
+  created  DateTime @default(now())
+  modified DateTime @default(now())
+  deleted  Boolean  @default(false)
+
+  projectId Int?
+  project   Project? @relation(fields: [projectId], references: [id])
+  date      DateTime
+
+  daily   ActivityReport[] @relation("daily_report")
+  monthly ActivityReport[] @relation("monthly_report")
+  site    ActivityReport[] @relation("site_report")
+
+  @@index([projectId])
+  @@map("ProjectRepots")
 }
 
 model ProjectActivity {
@@ -89,22 +110,18 @@ model ProjectActivity {
   projectId Int
   project   Project @relation(fields: [projectId], references: [id])
 
-  total         Float
-  description   String
-  material      String
-  cost          Float
-  dailyReports  ActivityReport[] @relation("daily")
-  monthlyReport ActivityReport[] @relation("monthly")
-  siteReport    ActivityReport[] @relation("site")
+  quantity    Float  @default(0)
+  // from activity template
+  description String
+  material    String
+  cost        Float
+
+  daily   ActivityReport[] @relation("daily")
+  monthly ActivityReport[] @relation("monthly")
+  site    ActivityReport[] @relation("site")
 
   @@index([projectId])
   @@map("ProjectActivities")
-}
-
-enum ActivityReportType {
-  DAILY
-  MONTHLY
-  SITE
 }
 
 model ActivityReport {
@@ -113,17 +130,25 @@ model ActivityReport {
   modified DateTime @default(now())
   deleted  Boolean  @default(false)
 
-  type                     ActivityReportType
-  total                    Float
-  dailyProjectActivityId   Int?
-  dailyProjectActivity     ProjectActivity?   @relation("daily", fields: [dailyProjectActivityId], references: [id])
-  monthlyProjectActivityId Int?
-  monthlyProjectActivity   ProjectActivity?   @relation("monthly", fields: [monthlyProjectActivityId], references: [id])
-  siteProjectActivityId    Int?
-  siteProjectActivity      ProjectActivity?   @relation("site", fields: [siteProjectActivityId], references: [id])
+  dailyId   Int?
+  daily     ProjectActivity? @relation("daily", fields: [dailyId], references: [id])
+  monthlyId Int
+  monthly   ProjectActivity? @relation("monthly", fields: [monthlyId], references: [id])
+  siteId    Int?
+  site      ProjectActivity? @relation("site", fields: [siteId], references: [id])
 
-  @@index([dailyProjectActivityId])
-  @@index([monthlyProjectActivityId])
-  @@index([siteProjectActivityId])
-  @@map("ActivityReports")
+  dailyReportId   Int?
+  dailyReport     ProjectReport? @relation("daily_report", fields: [dailyReportId], references: [id])
+  monthlyReportId Int?
+  monthlyReport   ProjectReport? @relation("monthly_report", fields: [monthlyReportId], references: [id])
+  siteReportId    Int?
+  siteReport      ProjectReport? @relation("site_report", fields: [siteReportId], references: [id])
+
+  @@index([monthlyId])
+  @@index([dailyId])
+  @@index([siteId])
+  @@index([dailyReportId])
+  @@index([monthlyReportId])
+  @@index([siteReportId])
+  @@map("SiteActivityReports")
 }

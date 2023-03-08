@@ -19,7 +19,7 @@ export default memo(function AppTabNavigator() {
 
   return (
     <Tab.Navigator
-      initialRouteName={Screens.APP_PROJECT_NAVIGATOR}
+      initialRouteName={Screens.APP_DAILY_REPORT_NAVIGATOR}
       screenOptions={{
         headerShown: false,
         // tabBarActiveBackgroundColor: theme.colors.surface,
@@ -30,7 +30,7 @@ export default memo(function AppTabNavigator() {
         },
         tabBarHideOnKeyboard: true,
       }}
-      // tabBar={(): null => null}
+    // tabBar={(): null => null}
     >
       <Tab.Screen
         name={Screens.APP_DAILY_REPORT_NAVIGATOR}

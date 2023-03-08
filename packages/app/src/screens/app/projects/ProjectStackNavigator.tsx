@@ -7,30 +7,22 @@ import { Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { HeaderAddButton } from '../../../components/HeaderAddButton';
 import { Screens } from '../../Screens';
+import { useScreenOptions } from '../../useScreenOptions';
 import ProjectListScreen from './ProjectListScreen';
 import ProjectUpsertScreen from './ProjectUpsertScreen';
 
 const Stack = createNativeStackNavigator();
 
-export default memo(function ProjectStackNavigator() {
-  const { colors } = useTheme();
+const component = memo((props: any) => <ProjectListScreen {...props} type="project" />)
 
-  const options = useCallback(
-    (title: string): NativeStackNavigationOptions => ({
-      title,
-      headerStyle: { backgroundColor: colors.surface },
-      headerTitleStyle: { color: colors.inverseSurface },
-      headerTintColor:
-        Platform.OS === 'ios' ? colors.primary : colors.inverseSurface,
-    }),
-    [colors.inverseSurface, colors.primary, colors.surface],
-  );
+export default memo(function ProjectStackNavigator() {
+  const options = useScreenOptions();
 
   return (
     <Stack.Navigator initialRouteName={Screens.APP_PROJECT_LIST} screenOptions={{ headerShown: true }}>
       <Stack.Screen
         name={Screens.APP_PROJECT_LIST}
-        component={ProjectListScreen}
+        component={component}
         options={(screenProps) => ({
           ...options('Projects'),
           headerRight: (headerProps) => (
@@ -45,9 +37,7 @@ export default memo(function ProjectStackNavigator() {
       <Stack.Screen
         name={Screens.APP_PROJECT_UPSERT}
         component={ProjectUpsertScreen}
-        options={(screenProps) => ({
-          ...options('Add/Edit Project'),
-        })}
+        options={options('Add/Edit Project')}
       />
     </Stack.Navigator>
   );

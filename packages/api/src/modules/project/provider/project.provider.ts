@@ -1,6 +1,5 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
-import { Injectable, NotImplementedException } from '@nestjs/common';
-import { Project } from '@prisma/client';
+import { Injectable } from '@nestjs/common';
 import { UpsertProjectDTO } from '../dtos/project.in.dto';
 
 @Injectable()
@@ -28,11 +27,16 @@ export class ProjectProvider {
           createMany: {
             data: projectActivities
               .filter(pa => pa.id == null)
-              .map(({ description, cost, material, total }) => ({ description, cost, material, total })),
+              .map(({ description, cost, material, quantity }) => ({ description, cost, material, quantity })),
           },
-          deleteMany: {
-            OR: deleteProjectActivityIds.map(id => ({ id })),
-          }
+          updateMany: {
+            where: {
+              OR: deleteProjectActivityIds.map(id => ({ id })),
+            },
+            data: {
+              deleted: true,
+            },
+          },
         }
       }
     });
@@ -77,7 +81,7 @@ export class ProjectProvider {
             cost: true,
             description: true,
             material: true,
-            total: true,
+            quantity: true,
           }
         },
       },

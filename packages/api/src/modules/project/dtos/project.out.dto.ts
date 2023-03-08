@@ -8,7 +8,7 @@ export class ProjectActivityOutDTO extends EntityOutDTO implements ProjectActivi
   id: number;
 
   @Expose()
-  total: number;
+  quantity: number;
 
   @Expose()
   description: string;
