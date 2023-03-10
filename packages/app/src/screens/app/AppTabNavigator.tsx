@@ -4,7 +4,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DailyReportStackNavigator from './daily/DailyReportStackNavigator';
 import MonthlyReportStackNavigator from './monthly/MonthlyReportStackNavigator';
 import ProjectStackNavigator from './projects/ProjectStackNavigator';
-import SiteReportStackNavigator from './site/SiteReportStackNavigator';
 import SettingsStackNavigator from './settings/SettingsStackNavigator';
 import { useTheme } from 'react-native-paper';
 import { useWindowDimensions } from 'react-native';
@@ -73,22 +72,6 @@ export default memo(function AppTabNavigator() {
             <>
               <Icon
                 name="tasks"
-                size={props.size}
-                style={[{ color: props.color }]}
-              />
-            </>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name={Screens.APP_SITE_REPORT_NAVIGATOR}
-        component={SiteReportStackNavigator}
-        options={{
-          title: 'Site',
-          tabBarIcon: (props) => (
-            <>
-              <Icon
-                name="map-marker"
                 size={props.size}
                 style={[{ color: props.color }]}
               />

@@ -53,7 +53,7 @@ export default memo<NativeStackScreenProps<any, string>>(
           default:
             return {
               color: colors.inverseSurface,
-              onPress: () => {},
+              onPress: () => { },
               icon: '',
               chevron: '',
             };
@@ -128,8 +128,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   list: {
-    maxWidth: 300,
-    width: '80%',
+    maxWidth: 500,
+    width: '95%',
     marginTop: 21,
   },
   item: {

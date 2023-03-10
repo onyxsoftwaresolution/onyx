@@ -1,14 +1,19 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useMutation } from "@tanstack/react-query";
-import { memo, useEffect } from "react";
-import { Mutations } from "../../../requests/Mutations";
+import { memo, PropsWithChildren, useEffect } from "react";
 import { StyleSheet } from "react-native";
 import ScreenContainer from "../../../components/ScreenContainer";
+import { Mutations } from "../../../requests/Mutations";
+import { Report } from "./Report";
 
-export default memo<NativeStackScreenProps<any, string>>(function DailyReportUpsertScreen(props) {
+type Props = PropsWithChildren<NativeStackScreenProps<any, string>> & {
+  type: Report;
+}
+
+export default memo<Props>(function ReportUpsertScreen(props) {
   const { projectId } = props.route.params as { projectId: number };
 
-  const upsert = useMutation(Mutations.createReport(projectId));
+  const upsert = useMutation(Mutations.createReport(props.type, projectId));
 
   useEffect(() => {
     upsert.mutate({});
@@ -26,8 +31,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   list: {
-    maxWidth: 300,
-    width: '80%',
+    maxWidth: 500,
+    width: '95%',
     marginTop: 21,
   },
   touchStyle: {

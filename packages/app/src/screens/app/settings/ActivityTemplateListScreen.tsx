@@ -10,6 +10,7 @@ import { Screens } from '../../Screens';
 import { HeaderButtonProps } from '@react-navigation/native-stack/lib/typescript/src/types';
 import { useFocusEffect } from '@react-navigation/native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
 
 export default memo<NativeStackScreenProps<any, string>>(
   function ActivityTemplateListScreen(props) {
@@ -21,7 +22,7 @@ export default memo<NativeStackScreenProps<any, string>>(
     });
 
     const onPress = useCallback(
-      (activity) => {
+      (activity: ActivityTemplateOutDTO) => {
         props.navigation.navigate(
           Screens.APP_ACTIVITY_TEMPLATE_UPSERT,
           activity,
@@ -31,11 +32,11 @@ export default memo<NativeStackScreenProps<any, string>>(
     );
 
     const renderActivity = useCallback(
-      (activity, i) => (
+      (activity: ActivityTemplateOutDTO, index: number) => (
         <TouchableRipple
           key={activity.id}
           style={[styles.touchStyle]}
-          onPress={() => {}}
+          onPress={() => { }}
         >
           <View style={[styles.item]}>
             <View style={[styles.itemRow]}>
@@ -80,8 +81,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   list: {
-    maxWidth: 300,
-    width: '80%',
+    maxWidth: 500,
+    width: '95%',
     marginTop: 21,
   },
   touchStyle: {

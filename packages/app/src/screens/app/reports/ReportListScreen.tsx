@@ -17,9 +17,10 @@ import { Mutations } from '../../../requests/Mutations';
 import { Queries } from '../../../requests/Queries';
 import { AppTheme } from '../../../theme/type';
 import { Screens } from '../../Screens';
+import { Report } from './Report';
 
 type Props = NativeStackScreenProps<any, string> & {
-  type: 'daily' | 'monthly' | 'site';
+  type: Report;
 }
 
 export default memo<Props>(function ReportListScreen(props) {
@@ -58,7 +59,7 @@ export default memo<Props>(function ReportListScreen(props) {
           <View style={[{ flex: 1 }]}>
             <Text style={[styles.itemText]}>{dayjs(report.date).format('YYYY-MM-DD HH:mm')}</Text>
           </View>
-          <TouchableWithoutFeedback
+          {/* <TouchableWithoutFeedback
             onPress={() => dialog.show(report)}
             containerStyle={[styles.iconContainer]}
           >
@@ -75,22 +76,19 @@ export default memo<Props>(function ReportListScreen(props) {
               name={'pen'}
               style={[{ color: colors.inverseSurface, fontSize: 18 }]}
             />
-          </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback> */}
         </View>
         <Divider />
       </View>
     </TouchableRipple>
-  ), [colors.danger, colors.inverseSurface, dialog, onPress]);
+  ), []);
 
   const renderListItem = useCallback((project: ReportListItemOutDTO, index: number) => {
     switch (props.type) {
-      case 'daily':
+      case Report.DAILY:
         return renderReport(project, index);
 
-      case 'monthly':
-        return renderReport(project, index);
-
-      case 'site':
+      case Report.MONTHLY:
         return renderReport(project, index);
 
       default:
@@ -130,8 +128,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   list: {
-    maxWidth: 300,
-    width: '80%',
+    maxWidth: 500,
+    width: '95%',
     marginTop: 21,
   },
   touchStyle: {

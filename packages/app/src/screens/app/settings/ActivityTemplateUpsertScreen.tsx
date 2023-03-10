@@ -174,8 +174,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   view: {
-    maxWidth: 300,
-    width: '80%',
+    maxWidth: 500,
+    width: '95%',
     marginTop: 21,
   },
 });

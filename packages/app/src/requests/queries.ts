@@ -5,6 +5,7 @@ import { ProjectOutDTO } from '@workspace/api/src/modules/project/dtos/project.o
 import { ActivityTemplateOutDTO } from "@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto"
 import { EmployeeOutDTO } from "@workspace/api/src/modules/employee/dtos/employee.out.dto"
 import { ReportListItemOutDTO } from '@workspace/api/src/modules/report/dtos/report-out.dto';
+import { Report } from '../screens/app/reports/Report';
 
 type Options = Partial<Pick<UseQueryOptions, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -88,9 +89,9 @@ export class Queries {
     onSuccess,
   } as UseQueryOptions<FetchResponse<ProjectOutDTO>, FetchError>);
 
-  static getReports = (type: 'daily' | 'monthly' | 'site', projectId: number, { onError, onLoading, onSuccess }: Options = {}) =>
+  static getReports = (type: Report, projectId: number, { onError, onLoading, onSuccess }: Options = {}) =>
   ({
-    queryKey: [`${type}-reports-project-${projectId}`],
+    queryKey: [`/v1/${type}-reports/${projectId}`],
     queryFn: async () => {
       onLoading?.();
       return await Queries.queryFn(`http://192.168.0.102:4000/v1/${type}-reports/${projectId}`);

@@ -1,5 +1,5 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 
 @Injectable()
@@ -35,7 +35,6 @@ export class ReportProvider {
   }
 
   async createDailyReport(projectId: number) {
-    debugger
     const project = await this.prismaService.client.project.findFirst({
       where: { id: projectId },
       select: {
@@ -46,6 +45,8 @@ export class ReportProvider {
         }
       }
     });
+    if (project.projectActivities.length === 0)
+      throw new InternalServerErrorException();
     return await this.prismaService.client.projectReport.create({
       data: {
         date: dayjs().toDate(),
@@ -73,6 +74,8 @@ export class ReportProvider {
         }
       }
     });
+    if (project.projectActivities.length === 0)
+      throw new InternalServerErrorException();
     return await this.prismaService.client.projectReport.create({
       data: {
         date: dayjs().toDate(),
@@ -89,7 +92,7 @@ export class ReportProvider {
   }
 
   async getDailyReport(projectId: number) {
-    await this.prismaService.client.projectReport.findFirst({
+    return await this.prismaService.client.projectReport.findFirst({
       where: { projectId, deleted: false },
       select: {
         dailyActivityReports: true,
@@ -98,7 +101,7 @@ export class ReportProvider {
   }
 
   async getMonthlyReport(projectId: number) {
-    await this.prismaService.client.projectReport.findFirst({
+    return await this.prismaService.client.projectReport.findFirst({
       where: { projectId, deleted: false },
       select: {
         monthlyActivityReports: true,

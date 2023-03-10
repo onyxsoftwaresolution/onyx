@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   },
   view: {
     alignSelf: 'center',
-    maxWidth: 300,
-    width: '80%',
+    maxWidth: 500,
+    width: '95%',
   },
 });

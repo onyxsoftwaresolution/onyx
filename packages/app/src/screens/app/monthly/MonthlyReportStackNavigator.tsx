@@ -6,12 +6,14 @@ import { Screens } from '../../Screens';
 import { useScreenOptions } from '../../useScreenOptions';
 import ProjectListScreen from '../projects/ProjectListScreen';
 import ReportListScreen from '../reports/ReportListScreen';
-import MonthlyReportUpsertScreen from './MonthlyReportUpsertScreen';
+import { Report } from '../reports/Report';
+import ReportUpsertScreen from '../reports/ReportUpsertScreen';
 
 const Stack = createNativeStackNavigator();
 
-const MonthlyReportProjectListScreen = memo((props: any) => <ProjectListScreen {...props} type="monthly" />);
-const MonthlyReportsScreen = memo((props: any) => <ReportListScreen {...props} type='monthly' />);
+const MonthlyReportProjectListScreen = memo((props: any) => <ProjectListScreen {...props} type={Report.MONTHLY} />);
+const MonthlyReportsScreen = memo((props: any) => <ReportListScreen {...props} type={Report.MONTHLY} />);
+const MonthlyReportUpsertScreen = memo((props: any) => <ReportUpsertScreen {...props} type={Report.MONTHLY} />);
 
 export default memo(function MonthlyReportStackNavigator() {
   const { colors } = useTheme();

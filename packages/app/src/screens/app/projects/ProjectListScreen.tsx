@@ -16,9 +16,10 @@ import { Mutations } from '../../../requests/Mutations';
 import { Queries } from '../../../requests/Queries';
 import { AppTheme } from '../../../theme/type';
 import { Screens } from '../../Screens';
+import { Report } from '../reports/Report';
 
 type Props = NativeStackScreenProps<any, string> & {
-  type: 'project' | 'daily' | 'monthly' | 'site';
+  type: 'project' | Report;
 }
 
 export default memo<Props>(function ProjectListScreen({ type, ...props }) {
@@ -171,64 +172,21 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
     </TouchableRipple>
   ), [props.navigation]);
 
-  const renderProjectForSite = useCallback((project: ProjectOutDTO, index: number) => (
-    <TouchableRipple
-      style={[styles.touchStyle]}
-      key={project.id}
-      onPress={() => { props.navigation.navigate(Screens.APP_SITE_REPORT__REPORT_LIST_SCREEN, { projectId: project.id }) }}
-    >
-      <View style={[styles.item]}>
-        <View style={[styles.itemRow]}>
-          <View style={[{ flex: 1 }]}>
-            <Text style={[styles.itemText]}>{project.description}</Text>
-            {/* <Text style={[styles.itemSubText, { color: colors.error }]}>
-              {project.area}
-            </Text>
-            <Text style={[styles.itemSubText, { color: colors.error }]}>
-              {project.code}
-            </Text> */}
-          </View>
-          {/* <TouchableWithoutFeedback
-                onPress={() => dialog.show(project)}
-                containerStyle={[styles.iconContainer]}
-              >
-                <Icon
-                  name={'trash-alt'}
-                  style={[{ color: colors.danger, fontSize: 18 }]}
-                />
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback
-                onPress={() => onPress(project)}
-                containerStyle={[styles.iconContainer]}
-              >
-                <Icon
-                  name={'pen'}
-                  style={[{ color: colors.inverseSurface, fontSize: 18 }]}
-                />
-              </TouchableWithoutFeedback> */}
-        </View>
-        <Divider />
-      </View>
-    </TouchableRipple>
-  ), [props.navigation]);
-
   const renderListItem = useCallback((project: ProjectOutDTO, index: number) => {
     switch (type) {
-      case 'daily':
+      case Report.DAILY:
         return renderProjectForDaily(project, index);
 
-      case 'monthly':
+      case Report.MONTHLY:
         return renderProjectForMonthly(project, index);
 
       case 'project':
         return renderProject(project, index);
 
-      case 'site':
-        return renderProjectForSite(project, index);
       default:
         return null;
     }
-  }, [type, renderProjectForDaily, renderProjectForMonthly, renderProject, renderProjectForSite]);
+  }, [type, renderProjectForDaily, renderProjectForMonthly, renderProject]);
 
   const dialogRenderOptions: RenderOptionsFunction<ProjectOutDTO> = useCallback((project) => ({
     title: `Delete project '${project?.description}'`,
@@ -262,8 +220,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   list: {
-    maxWidth: 300,
-    width: '80%',
+    maxWidth: 500,
+    width: '95%',
     marginTop: 21,
   },
   touchStyle: {

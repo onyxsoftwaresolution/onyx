@@ -6,12 +6,14 @@ import { Screens } from '../../Screens';
 import { useScreenOptions } from '../../useScreenOptions';
 import ProjectListScreen from '../projects/ProjectListScreen';
 import ReportListScreen from '../reports/ReportListScreen';
-import DailyReportUpsertScreen from './DailyReportUpsertScreen';
+import { Report } from '../reports/Report';
+import ReportUpsertScreen from '../reports/ReportUpsertScreen';
 
 const Stack = createNativeStackNavigator();
 
-const DailyReportProjectListScreen = memo((props: any) => <ProjectListScreen {...props} type="daily" />);
-const DailyReportsScreen = memo((props: any) => <ReportListScreen {...props} type='daily' />);
+const DailyReportProjectListScreen = memo((props: any) => <ProjectListScreen {...props} type={Report.DAILY} />);
+const DailyReportsScreen = memo((props: any) => <ReportListScreen {...props} type={Report.DAILY} />);
+const DailyReportUpsertScreen = memo((props: any) => <ReportUpsertScreen {...props} type={Report.DAILY} />);
 
 export default memo(function DailyReportStackNavigator() {
   const options = useScreenOptions();

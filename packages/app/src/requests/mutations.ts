@@ -5,6 +5,7 @@ import { LoginTokenDTO } from '@workspace/api/src/modules/auth/dtos/login.token.
 import { LoginDTO } from '@workspace/api/src/modules/auth/dtos/login.dto';
 import { Store } from '../storage/Store';
 import { FetchError, FetchResponse, request } from './request';
+import { Report } from '../screens/app/reports/Report';
 
 type Options = Partial<Pick<UseMutationOptions, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -96,13 +97,13 @@ export class Mutations {
     >;
   }
 
-  static createReport(projectId: number, { onError, onLoading, onSuccess }: Options = {}) {
+  static createReport(type: Report, projectId: number, { onError, onLoading, onSuccess }: Options = {}) {
     return {
       mutationKey: [`report-project-${projectId}`],
       mutationFn: async (body) => {
         onLoading?.();
         return await Mutations.mutationFn(
-          `http://192.168.0.102:4000/v1/report/${projectId}`,
+          `http://192.168.0.102:4000/v1/${type}-report/${projectId}`,
           {
             body: body as any,
             method: 'POST',

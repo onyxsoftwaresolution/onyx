@@ -32,7 +32,7 @@ export default memo<NativeStackScreenProps<any, string>>(
         <TouchableRipple
           style={[styles.touchStyle]}
           key={employee.id}
-          onPress={() => {}}
+          onPress={() => { }}
         >
           <View style={[styles.item]}>
             <View style={[styles.itemRow]}>
@@ -74,8 +74,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   list: {
-    maxWidth: 300,
-    width: '80%',
+    maxWidth: 500,
+    width: '95%',
     marginTop: 21,
   },
   touchStyle: {
