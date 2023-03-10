@@ -24,22 +24,32 @@ export type FetchError = FetchResponse<{
 const getPayload = async <T>(response: Response): Promise<FetchResponse<T>> => {
   const contentType = getContentType(response.headers);
   switch (contentType) {
-    case 'application/json':
-      return {
+    case 'application/json': {
+      const rv = {
         data: await response.json(),
         ok: response.ok,
         status: response.status,
         statusText: response.statusText,
         url: response.url,
-      } as FetchResponse<T>;
-    case 'text/plain':
-      return {
-        data: await response.json(),
+      } as FetchResponse<T>
+      if (response.ok) {
+        return rv;
+      }
+      throw rv;
+    }
+    case 'text/plain': {
+      const rv = {
+        data: await response.text(),
         ok: response.ok,
         status: response.status,
         statusText: response.statusText,
         url: response.url,
       } as FetchResponse<T>;
+      if (response.ok) {
+        return rv;
+      }
+      throw rv;
+    }
     default:
       return {} as FetchResponse<T>;
   }

@@ -7,8 +7,6 @@ export class ProjectProvider {
   constructor(private prismaService: PrismaService) { }
 
   async upsertProject({ id, area, areaAdmin, code, description, end, localAdmin, projectActivities, start }: UpsertProjectDTO): ReturnType<ProjectProvider["getProject"]> {
-    debugger
-
     const currentProjectActivities = await this.prismaService.client.projectActivity.findMany({
       where: { projectId: id }
     });

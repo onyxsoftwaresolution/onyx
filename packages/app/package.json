@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
+    "@babel/plugin-proposal-logical-assignment-operators": "^7.20.7",
+    "@babel/plugin-syntax-nullish-coalescing-operator": "^7.8.3",
+    "@babel/preset-env": "^7.20.2",
     "@expo/webpack-config": "^0.17.2",
     "@react-native-community/datetimepicker": "6.5.2",
     "@react-navigation/bottom-tabs": "^6.5.6",

@@ -9,13 +9,13 @@ import { Screens } from '../screens/Screens';
 
 export function HeaderAddButton(
   props: HeaderButtonProps &
-    NativeStackScreenProps<any, string> & { screenName: Screens },
+    NativeStackScreenProps<any, string> & { screenName: Screens, params?: Record<string, any> },
 ) {
   const { colors } = useTheme();
   return (
     <TouchableOpacity
       onPress={() => {
-        props.navigation.navigate(props.screenName);
+        props.navigation.navigate(props.screenName, props.params);
       }}
     >
       <Icon

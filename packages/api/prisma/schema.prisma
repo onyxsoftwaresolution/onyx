@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["filteredRelationCount"]
 }
 
 datasource db {
@@ -48,11 +49,11 @@ model Employee {
   modified DateTime @default(now())
   deleted  Boolean  @default(false)
 
-  name         String
-  position     String
-  available    Boolean   @default(true)
-  adminProject Project[] @relation("admin")
-  localProject Project[] @relation("local")
+  name          String
+  position      String
+  available     Boolean   @default(true)
+  adminProjects Project[] @relation("admin")
+  localProjects Project[] @relation("local")
 
   @@map("Employees")
 }
@@ -93,9 +94,8 @@ model ProjectReport {
   project   Project? @relation(fields: [projectId], references: [id])
   date      DateTime
 
-  daily   ActivityReport[] @relation("daily_report")
-  monthly ActivityReport[] @relation("monthly_report")
-  site    ActivityReport[] @relation("site_report")
+  dailyActivityReports   ActivityReport[] @relation("daily_report")
+  monthlyActivityReports ActivityReport[] @relation("monthly_report")
 
   @@index([projectId])
   @@map("ProjectRepots")
@@ -116,9 +116,8 @@ model ProjectActivity {
   material    String
   cost        Float
 
-  daily   ActivityReport[] @relation("daily")
-  monthly ActivityReport[] @relation("monthly")
-  site    ActivityReport[] @relation("site")
+  dailyActivityReports   ActivityReport[] @relation("daily_activity_report")
+  monthlyActivityReports ActivityReport[] @relation("monthly_activity_report")
 
   @@index([projectId])
   @@map("ProjectActivities")
@@ -130,25 +129,19 @@ model ActivityReport {
   modified DateTime @default(now())
   deleted  Boolean  @default(false)
 
-  dailyId   Int?
-  daily     ProjectActivity? @relation("daily", fields: [dailyId], references: [id])
-  monthlyId Int
-  monthly   ProjectActivity? @relation("monthly", fields: [monthlyId], references: [id])
-  siteId    Int?
-  site      ProjectActivity? @relation("site", fields: [siteId], references: [id])
+  dailyProjectActivityId   Int?             @map("dailyId")
+  dailyProjectActivity     ProjectActivity? @relation("daily_activity_report", fields: [dailyProjectActivityId], references: [id])
+  monthlyProjectActivityId Int?             @map("monthlyId")
+  monthlyProjectActivity   ProjectActivity? @relation("monthly_activity_report", fields: [monthlyProjectActivityId], references: [id])
 
-  dailyReportId   Int?
-  dailyReport     ProjectReport? @relation("daily_report", fields: [dailyReportId], references: [id])
-  monthlyReportId Int?
-  monthlyReport   ProjectReport? @relation("monthly_report", fields: [monthlyReportId], references: [id])
-  siteReportId    Int?
-  siteReport      ProjectReport? @relation("site_report", fields: [siteReportId], references: [id])
+  dailyProjectReportId   Int?           @map("dailyReportId")
+  dailyProjectReport     ProjectReport? @relation("daily_report", fields: [dailyProjectReportId], references: [id])
+  monthlyProjectReportId Int?           @map("monthlyReportId")
+  monthlyProjectReport   ProjectReport? @relation("monthly_report", fields: [monthlyProjectReportId], references: [id])
 
-  @@index([monthlyId])
-  @@index([dailyId])
-  @@index([siteId])
-  @@index([dailyReportId])
-  @@index([monthlyReportId])
-  @@index([siteReportId])
-  @@map("SiteActivityReports")
+  @@index([monthlyProjectActivityId])
+  @@index([dailyProjectActivityId])
+  @@index([dailyProjectReportId])
+  @@index([monthlyProjectReportId])
+  @@map("ActivityReports")
 }

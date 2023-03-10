@@ -18,94 +18,95 @@ import { AppTheme } from '../../../theme/type';
 import { Screens } from '../../Screens';
 
 type Props = NativeStackScreenProps<any, string> & {
-  type: 'project' | 'daily' | 'monthly';
+  type: 'project' | 'daily' | 'monthly' | 'site';
 }
 
-export default memo<Props>(
-  function ProjectListScreen(props) {
-    const projects = useQuery(Queries.getProjects());
-    const deleteProject = useMutation(
-      Mutations.deleteProject({
-        onSuccess() {
-          projects.refetch();
-        },
-      }),
-    );
+export default memo<Props>(function ProjectListScreen({ type, ...props }) {
+  type ??= 'project';
 
-    const { colors } = useTheme<AppTheme>();
-
-    const dialog = useDialog<ProjectOutDTO>();
-
-    useFocusEffect(() => {
-      projects.refetch();
-    });
-
-    const onPress = useCallback(
-      (project: ProjectOutDTO) => {
-        props.navigation.navigate(Screens.APP_PROJECT_UPSERT, project);
+  const projects = useQuery(Queries.getProjects());
+  const deleteProject = useMutation(
+    Mutations.deleteProject({
+      onSuccess() {
+        projects.refetch();
       },
-      [props.navigation],
-    );
+    }),
+  );
 
-    const renderProject = useCallback((project: ProjectOutDTO, index: number) => (
-      <TouchableRipple
-        style={[styles.touchStyle]}
-        key={project.id}
-        onPress={() => { }}
-      >
-        <View style={[styles.item]}>
-          <View style={[styles.itemRow]}>
-            <View style={[{ flex: 1 }]}>
-              <Text style={[styles.itemText]}>{project.description}</Text>
-              <Text style={[styles.itemSubText, { color: colors.error }]}>
-                {project.area}
-              </Text>
-              <Text style={[styles.itemSubText, { color: colors.error }]}>
-                {project.code}
-              </Text>
-            </View>
-            <TouchableWithoutFeedback
-              onPress={() => dialog.show(project)}
-              containerStyle={[styles.iconContainer]}
-            >
-              <Icon
-                name={'trash-alt'}
-                style={[{ color: colors.danger, fontSize: 18 }]}
-              />
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback
-              onPress={() => onPress(project)}
-              containerStyle={[styles.iconContainer]}
-            >
-              <Icon
-                name={'pen'}
-                style={[{ color: colors.inverseSurface, fontSize: 18 }]}
-              />
-            </TouchableWithoutFeedback>
+  const { colors } = useTheme<AppTheme>();
+
+  const dialog = useDialog<ProjectOutDTO>();
+
+  useFocusEffect(() => {
+    projects.refetch();
+  });
+
+  const onPress = useCallback(
+    (project: ProjectOutDTO) => {
+      props.navigation.navigate(Screens.APP_PROJECT_UPSERT, project);
+    },
+    [props.navigation],
+  );
+
+  const renderProject = useCallback((project: ProjectOutDTO, index: number) => (
+    <TouchableRipple
+      style={[styles.touchStyle]}
+      key={project.id}
+      onPress={() => { }}
+    >
+      <View style={[styles.item]}>
+        <View style={[styles.itemRow]}>
+          <View style={[{ flex: 1 }]}>
+            <Text style={[styles.itemText]}>{project.description}</Text>
+            <Text style={[styles.itemSubText, { color: colors.error }]}>
+              {project.area}
+            </Text>
+            <Text style={[styles.itemSubText, { color: colors.error }]}>
+              {project.code}
+            </Text>
           </View>
-          <Divider />
+          <TouchableWithoutFeedback
+            onPress={() => dialog.show(project)}
+            containerStyle={[styles.iconContainer]}
+          >
+            <Icon
+              name={'trash-alt'}
+              style={[{ color: colors.danger, fontSize: 18 }]}
+            />
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback
+            onPress={() => onPress(project)}
+            containerStyle={[styles.iconContainer]}
+          >
+            <Icon
+              name={'pen'}
+              style={[{ color: colors.inverseSurface, fontSize: 18 }]}
+            />
+          </TouchableWithoutFeedback>
         </View>
-      </TouchableRipple>
-    ), [colors.danger, colors.error, colors.inverseSurface, dialog, onPress]);
+        <Divider />
+      </View>
+    </TouchableRipple>
+  ), [colors.danger, colors.error, colors.inverseSurface, dialog, onPress]);
 
-    const renderProjectForDaily = useCallback((project: ProjectOutDTO, index: number) => (
-      <TouchableRipple
-        style={[styles.touchStyle]}
-        key={project.id}
-        onPress={() => { props.navigation.navigate(Screens.APP_DAILY_REPORTS_SCREEN, { id: project.id }) }}
-      >
-        <View style={[styles.item]}>
-          <View style={[styles.itemRow]}>
-            <View style={[{ flex: 1 }]}>
-              <Text style={[styles.itemText]}>{project.description}</Text>
-              <Text style={[styles.itemSubText, { color: colors.error }]}>
-                {project.area}
-              </Text>
-              <Text style={[styles.itemSubText, { color: colors.error }]}>
-                {project.code}
-              </Text>
-            </View>
-            {/* <TouchableWithoutFeedback
+  const renderProjectForDaily = useCallback((project: ProjectOutDTO, index: number) => (
+    <TouchableRipple
+      style={[styles.touchStyle]}
+      key={project.id}
+      onPress={() => { props.navigation.navigate(Screens.APP_DAILY_REPORT__REPORT_LIST_SCREEN, { projectId: project.id }) }}
+    >
+      <View style={[styles.item]}>
+        <View style={[styles.itemRow]}>
+          <View style={[{ flex: 1 }]}>
+            <Text style={[styles.itemText]}>{project.description}</Text>
+            {/* <Text style={[styles.itemSubText, { color: colors.error }]}>
+              {project.area}
+            </Text>
+            <Text style={[styles.itemSubText, { color: colors.error }]}>
+              {project.code}
+            </Text> */}
+          </View>
+          {/* <TouchableWithoutFeedback
                 onPress={() => dialog.show(project)}
                 containerStyle={[styles.iconContainer]}
               >
@@ -123,30 +124,30 @@ export default memo<Props>(
                   style={[{ color: colors.inverseSurface, fontSize: 18 }]}
                 />
               </TouchableWithoutFeedback> */}
-          </View>
-          <Divider />
         </View>
-      </TouchableRipple>
-    ), [colors.error, props.navigation]);
+        <Divider />
+      </View>
+    </TouchableRipple>
+  ), [props.navigation]);
 
-    const renderProjectForMonthly = useCallback((project: ProjectOutDTO, index: number) => (
-      <TouchableRipple
-        style={[styles.touchStyle]}
-        key={project.id}
-        onPress={() => { props.navigation.navigate(Screens.APP_MONTHLY_REPORTS_SCREEN, { id: project.id }) }}
-      >
-        <View style={[styles.item]}>
-          <View style={[styles.itemRow]}>
-            <View style={[{ flex: 1 }]}>
-              <Text style={[styles.itemText]}>{project.description}</Text>
-              <Text style={[styles.itemSubText, { color: colors.error }]}>
-                {project.area}
-              </Text>
-              <Text style={[styles.itemSubText, { color: colors.error }]}>
-                {project.code}
-              </Text>
-            </View>
-            {/* <TouchableWithoutFeedback
+  const renderProjectForMonthly = useCallback((project: ProjectOutDTO, index: number) => (
+    <TouchableRipple
+      style={[styles.touchStyle]}
+      key={project.id}
+      onPress={() => { props.navigation.navigate(Screens.APP_MONTHLY_REPORT__REPORT_LIST_SCREEN, { projectId: project.id }) }}
+    >
+      <View style={[styles.item]}>
+        <View style={[styles.itemRow]}>
+          <View style={[{ flex: 1 }]}>
+            <Text style={[styles.itemText]}>{project.description}</Text>
+            {/* <Text style={[styles.itemSubText, { color: colors.error }]}>
+              {project.area}
+            </Text>
+            <Text style={[styles.itemSubText, { color: colors.error }]}>
+              {project.code}
+            </Text> */}
+          </View>
+          {/* <TouchableWithoutFeedback
                 onPress={() => dialog.show(project)}
                 containerStyle={[styles.iconContainer]}
               >
@@ -164,50 +165,97 @@ export default memo<Props>(
                   style={[{ color: colors.inverseSurface, fontSize: 18 }]}
                 />
               </TouchableWithoutFeedback> */}
+        </View>
+        <Divider />
+      </View>
+    </TouchableRipple>
+  ), [props.navigation]);
+
+  const renderProjectForSite = useCallback((project: ProjectOutDTO, index: number) => (
+    <TouchableRipple
+      style={[styles.touchStyle]}
+      key={project.id}
+      onPress={() => { props.navigation.navigate(Screens.APP_SITE_REPORT__REPORT_LIST_SCREEN, { projectId: project.id }) }}
+    >
+      <View style={[styles.item]}>
+        <View style={[styles.itemRow]}>
+          <View style={[{ flex: 1 }]}>
+            <Text style={[styles.itemText]}>{project.description}</Text>
+            {/* <Text style={[styles.itemSubText, { color: colors.error }]}>
+              {project.area}
+            </Text>
+            <Text style={[styles.itemSubText, { color: colors.error }]}>
+              {project.code}
+            </Text> */}
           </View>
-          <Divider />
+          {/* <TouchableWithoutFeedback
+                onPress={() => dialog.show(project)}
+                containerStyle={[styles.iconContainer]}
+              >
+                <Icon
+                  name={'trash-alt'}
+                  style={[{ color: colors.danger, fontSize: 18 }]}
+                />
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback
+                onPress={() => onPress(project)}
+                containerStyle={[styles.iconContainer]}
+              >
+                <Icon
+                  name={'pen'}
+                  style={[{ color: colors.inverseSurface, fontSize: 18 }]}
+                />
+              </TouchableWithoutFeedback> */}
         </View>
-      </TouchableRipple>
-    ), [colors.error, props.navigation]);
+        <Divider />
+      </View>
+    </TouchableRipple>
+  ), [props.navigation]);
 
-    const renderListItem = useCallback((project: ProjectOutDTO, index: number) => {
-      switch (props.type) {
-        case 'daily':
-          return renderProjectForDaily(project, index);
+  const renderListItem = useCallback((project: ProjectOutDTO, index: number) => {
+    switch (type) {
+      case 'daily':
+        return renderProjectForDaily(project, index);
 
-        case 'monthly':
-          return renderProjectForMonthly(project, index);
+      case 'monthly':
+        return renderProjectForMonthly(project, index);
 
-        case 'project':
-        default:
-          return renderProject(project, index);
-      }
-    }, [props.type, renderProject, renderProjectForDaily, renderProjectForMonthly]);
+      case 'project':
+        return renderProject(project, index);
 
-    const dialogRenderOptions: RenderOptionsFunction<ProjectOutDTO> = useCallback((project) => ({
-      title: `Delete project '${project?.description}'`,
-      message: 'Are you sure?',
-      buttons: [
-        {
-          label: 'Delete',
-          textColor: colors.danger,
-          onPress: () => deleteProject.mutate(project.id),
-        },
-        () => <View style={{ flex: 1 }} />,
-        { label: 'Cancel' },
-      ],
-    }), [colors.danger, deleteProject]);
+      case 'site':
+        return renderProjectForSite(project, index);
+      default:
+        return null;
+    }
+  }, [type, renderProjectForDaily, renderProjectForMonthly, renderProject, renderProjectForSite]);
 
-    return (
-      <ScreenContainer scrollContainerStyle={[styles.scrollContainer]}>
-        <View style={[styles.list]}>
-          {projects.data?.data?.map(renderListItem)}
-        </View>
-        {dialog.renderDialog(dialogRenderOptions)}
-      </ScreenContainer>
-    );
-  },
-);
+  const dialogRenderOptions: RenderOptionsFunction<ProjectOutDTO> = useCallback((project) => ({
+    title: `Delete project '${project?.description}'`,
+    message: 'Are you sure?',
+    buttons: [
+      {
+        label: 'Delete',
+        textColor: colors.danger,
+        onPress: () => deleteProject.mutate(project.id),
+      },
+      () => <View style={{ flex: 1 }} />,
+      { label: 'Cancel' },
+    ],
+  }), [colors.danger, deleteProject]);
+
+  return (
+    <ScreenContainer
+      loading={projects.isLoading || deleteProject.isLoading}
+      scrollContainerStyle={[styles.scrollContainer]}
+    >
+      <View style={[styles.list]}>
+        {projects.data?.data?.map(renderListItem)}
+      </View>
+      {dialog.renderDialog(dialogRenderOptions)}
+    </ScreenContainer>
+  );
+});
 
 const styles = StyleSheet.create({
   scrollContainer: {

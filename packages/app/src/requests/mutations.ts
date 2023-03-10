@@ -96,6 +96,29 @@ export class Mutations {
     >;
   }
 
+  static createReport(projectId: number, { onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: [`report-project-${projectId}`],
+      mutationFn: async (body) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `http://192.168.0.102:4000/v1/report/${projectId}`,
+          {
+            body: body as any,
+            method: 'POST',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<
+      FetchResponse<any>,
+      FetchError,
+      any,
+      unknown
+    >;
+  }
+
   static mutationFn = async <T>(
     input: RequestInfo,
     init?: RequestInit,
