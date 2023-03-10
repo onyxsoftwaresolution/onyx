@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import {
   useNavigationBuilder,
   createNavigatorFactory,
@@ -10,8 +10,8 @@ import {
   TabActionHelpers,
 } from '@react-navigation/native';
 import { BottomTabNavigationEventMap, BottomTabNavigationOptions, BottomTabView } from '@react-navigation/bottom-tabs';
-import { StyleProp, View, Text, ViewStyle } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { StyleProp, View, ViewStyle, FlatList, ListRenderItemInfo } from 'react-native';
+import { useTheme, Text, TouchableRipple, Divider } from 'react-native-paper';
 
 // Props accepted by the view
 type TabNavigationConfig = {
@@ -72,6 +72,16 @@ function CustomBottomTabNavigator({
 
   const { colors } = useTheme();
 
+  const data = useMemo(() => state.routes.map(route => descriptors[route.key]), [descriptors, state.routes]);
+
+  const renderItem = useCallback((item: ListRenderItemInfo<typeof descriptors[0]>) => {
+    return (
+      <TouchableRipple style={[{ paddingLeft: 10, paddingVertical: 10 }]} onPress={() => navigation.navigate(item.item.route.name, item.item.route.params)}>
+        <Text style={[{ fontSize: 18 }]}>{item.item.options.title}</Text>
+      </TouchableRipple>
+    )
+  }, [navigation])
+
   return (
     <NavigationContent>
       <View
@@ -80,6 +90,7 @@ function CustomBottomTabNavigator({
             flexDirection: 'row',
             height: '100%',
             flex: 1,
+            position: 'relative',
           },
           containerStyle,
         ]}
@@ -89,12 +100,23 @@ function CustomBottomTabNavigator({
             {
               width: 200,
               borderRightWidth: 1,
-              borderRightColor: colors.inverseSurface,
+              borderRightColor: colors.elevation.level5,
+              shadowColor: colors.elevation.level5,
+              shadowOffset: { width: 3, height: 3 },
+              shadowOpacity: 1,
+              shadowRadius: 4,
+              zIndex: 1,
+              paddingTop: 10,
             },
             menuBarStyle,
           ]}
         >
-          <Text>menu</Text>
+          <FlatList
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={(descriptor) => descriptor.route.key}
+            ItemSeparatorComponent={Divider}
+          />
         </View>
         <View style={[{ flex: 1 }, contentStyle]}>
           <BottomTabView
