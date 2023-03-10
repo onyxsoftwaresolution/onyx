@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { memo, useMemo } from 'react';
 import { useUser } from '../context/userContext';
-import AppMenuNavigator from './app/AppMenuNavigator';
+import AppTabNavigator from './app/AppTabNavigator';
 import LoadingScreen from './LoadingScreen';
 import LoginStackNavigator from './login/LoginStackNavigator';
 import { Screens } from './Screens';
@@ -33,8 +33,8 @@ export default memo(function MainStackNavigator() {
             />
           ) : (
             <Stack.Screen
-              name={Screens.APP_MENU_NAVIGATOR}
-              component={AppMenuNavigator}
+              name={Screens.APP_NAVIGATOR}
+              component={AppTabNavigator}
               options={{ title: '' }}
             />
           )}

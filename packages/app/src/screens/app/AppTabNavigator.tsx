@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { Screens } from '../Screens';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DailyReportStackNavigator from './daily/DailyReportStackNavigator';
 import MonthlyReportStackNavigator from './monthly/MonthlyReportStackNavigator';
 import ProjectStackNavigator from './projects/ProjectStackNavigator';
@@ -9,8 +8,9 @@ import { useTheme } from 'react-native-paper';
 import { useWindowDimensions } from 'react-native';
 import { AppTheme } from '../../theme/type';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import { createCustomBottomTabNavigator } from '../../components/navigator/CustomBottomTabNavigator';
 
-const Tab = createBottomTabNavigator();
+const Tab = createCustomBottomTabNavigator();
 
 export default memo(function AppTabNavigator() {
   const theme = useTheme<AppTheme>();
@@ -19,6 +19,10 @@ export default memo(function AppTabNavigator() {
   return (
     <Tab.Navigator
       initialRouteName={Screens.APP_DAILY_REPORT_NAVIGATOR}
+      menuBarStyle={[
+        { display: dimensions.width >= theme.breakpoint ? 'flex' : 'none' },
+      ]}
+      containerStyle={[{ backgroundColor: theme.colors.surface }]}
       screenOptions={{
         headerShown: false,
         // tabBarActiveBackgroundColor: theme.colors.surface,

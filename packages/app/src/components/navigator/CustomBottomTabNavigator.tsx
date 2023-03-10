@@ -1,34 +1,27 @@
 import * as React from 'react';
 import {
-  View,
-  Text,
-  Pressable,
-  StyleProp,
-  ViewStyle,
-  StyleSheet,
-} from 'react-native';
-import {
-  createNavigatorFactory,
-  DefaultNavigatorOptions,
-  ParamListBase,
-  CommonActions,
-  StackActionHelpers,
-  StackNavigationState,
-  StackRouter,
-  DefaultRouterOptions,
   useNavigationBuilder,
+  createNavigatorFactory,
+  TabRouter,
+  TabNavigationState,
+  ParamListBase,
+  DefaultNavigatorOptions,
+  TabRouterOptions,
+  TabActionHelpers,
 } from '@react-navigation/native';
+import { BottomTabNavigationEventMap, BottomTabNavigationOptions, BottomTabView } from '@react-navigation/bottom-tabs';
+import { StyleProp, View, Text, ViewStyle } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 // Props accepted by the view
-type MenuNavigationConfig = {
+type TabNavigationConfig = {
   menuBarStyle?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
 };
 
 // Supported screen options
-type MenuNavigationOptions = {
+type TabNavigationOptions = BottomTabNavigationOptions & {
   title?: string;
 };
 
@@ -36,7 +29,7 @@ type MenuNavigationOptions = {
 //
 // canPreventDefault: true adds the defaultPrevented property to the
 // emitted events.
-type MenuNavigationEventMap = {
+type TabNavigationEventMap = BottomTabNavigationEventMap & {
   tabPress: {
     data: { isAlreadyFocused: boolean };
     canPreventDefault: true;
@@ -46,32 +39,35 @@ type MenuNavigationEventMap = {
 // The props accepted by the component is a combination of 3 things
 type Props = DefaultNavigatorOptions<
   ParamListBase,
-  StackNavigationState<ParamListBase>,
-  MenuNavigationOptions,
-  MenuNavigationEventMap
+  TabNavigationState<ParamListBase>,
+  TabNavigationOptions,
+  TabNavigationEventMap
 > &
-  DefaultRouterOptions &
-  MenuNavigationConfig;
+  TabRouterOptions &
+  TabNavigationConfig;
 
-function MenuNavigator({
+function CustomBottomTabNavigator({
   initialRouteName,
+  backBehavior,
   children,
   screenOptions,
   menuBarStyle,
   contentStyle,
   containerStyle,
+  ...rest
 }: Props) {
-  const { state, navigation, descriptors, NavigationContent } =
+  const { state, descriptors, navigation, NavigationContent } =
     useNavigationBuilder<
-      StackNavigationState<ParamListBase>,
-      DefaultRouterOptions,
-      StackActionHelpers<ParamListBase>,
-      MenuNavigationOptions,
-      MenuNavigationEventMap
-    >(StackRouter, {
+      TabNavigationState<ParamListBase>,
+      TabRouterOptions,
+      TabActionHelpers<ParamListBase>,
+      TabNavigationOptions,
+      TabNavigationEventMap
+    >(TabRouter, {
+      initialRouteName,
+      backBehavior,
       children,
       screenOptions,
-      initialRouteName,
     });
 
   const { colors } = useTheme();
@@ -101,16 +97,21 @@ function MenuNavigator({
           <Text>menu</Text>
         </View>
         <View style={[{ flex: 1 }, contentStyle]}>
-          {state.routes?.[0] && descriptors[state.routes[0].key].render()}
+          <BottomTabView
+            {...rest}
+            state={state}
+            navigation={navigation}
+            descriptors={descriptors}
+          />
         </View>
       </View>
     </NavigationContent>
   );
 }
 
-export const createMenuNavigator = createNavigatorFactory<
-  StackNavigationState<ParamListBase>,
-  MenuNavigationOptions,
-  MenuNavigationEventMap,
-  typeof MenuNavigator
->(MenuNavigator);
+export const createCustomBottomTabNavigator = createNavigatorFactory<
+  TabNavigationState<ParamListBase>,
+  TabNavigationOptions,
+  TabNavigationEventMap,
+  typeof CustomBottomTabNavigator
+>(CustomBottomTabNavigator);

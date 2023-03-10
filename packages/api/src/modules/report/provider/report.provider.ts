@@ -63,7 +63,6 @@ export class ReportProvider {
   }
 
   async createMonthlyReport(projectId: number) {
-    debugger
     const project = await this.prismaService.client.project.findFirst({
       where: { id: projectId },
       select: {
