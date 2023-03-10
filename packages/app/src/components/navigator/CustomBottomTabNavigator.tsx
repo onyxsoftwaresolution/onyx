@@ -75,12 +75,17 @@ function CustomBottomTabNavigator({
   const data = useMemo(() => state.routes.map(route => descriptors[route.key]), [descriptors, state.routes]);
 
   const renderItem = useCallback((item: ListRenderItemInfo<typeof descriptors[0]>) => {
+    const isCurrentLink = state.history.at(-1)?.key === item.item.route.key;
+
     return (
-      <TouchableRipple style={[{ paddingLeft: 10, paddingVertical: 10 }]} onPress={() => navigation.navigate(item.item.route.name, item.item.route.params)}>
-        <Text style={[{ fontSize: 18 }]}>{item.item.options.title}</Text>
+      <TouchableRipple
+        style={[{ paddingLeft: 10, paddingVertical: 10 }]}
+        onPress={() => navigation.navigate(item.item.route.name, item.item.route.params)}
+      >
+        <Text style={[{ fontSize: 18, color: isCurrentLink ? colors.primary : undefined }]}>{item.item.options.title}</Text>
       </TouchableRipple>
     )
-  }, [navigation])
+  }, [colors.primary, navigation, state.history])
 
   return (
     <NavigationContent>
