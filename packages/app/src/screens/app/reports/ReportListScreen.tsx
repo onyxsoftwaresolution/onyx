@@ -41,6 +41,7 @@ export default memo<Props>(function ReportListScreen(props) {
   const dialog = useDialog<ReportListItemOutDTO>();
 
   useFocusEffect(() => {
+    if (reports.isLoading || reports.isFetchedAfterMount) return
     reports.refetch();
   });
 

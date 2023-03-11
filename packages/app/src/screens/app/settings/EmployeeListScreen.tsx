@@ -17,6 +17,7 @@ export default memo<NativeStackScreenProps<any, string>>(
     const { colors } = useTheme();
 
     useFocusEffect(() => {
+      if (employees.isLoading || employees.isFetchedAfterMount) return
       employees.refetch();
     });
 

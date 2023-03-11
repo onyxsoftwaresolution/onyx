@@ -39,6 +39,7 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
   const dialog = useDialog<ProjectOutDTO>();
 
   useFocusEffect(() => {
+    if (projects.isLoading || projects.isFetchedAfterMount) return
     projects.refetch();
   });
 
