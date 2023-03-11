@@ -1,1 +1,14 @@
-{}
+{
+  "sqltools.connections": [
+    {
+      "mysqlOptions": {
+        "authProtocol": "default"
+      },
+      "previewLimit": 50,
+      "server": "localhost",
+      "driver": "MySQL",
+      "connectString": "mysql://nk9bcf5oh482idzahsht:pscale_pw_LT6G77JkanGqI6Jta7SnI8dVQUrWxwcTk2XrOeJgXrH@gcp-us-central1.connect.psdb.cloud/master?sslaccept=strict&ssl=true",
+      "name": "onyx"
+    }
+  ]
+}

@@ -12,7 +12,7 @@ export default memo<Props>(function MGButton(props) {
     <Button
       mode="contained-tonal"
       style={[{ backgroundColor: theme.colors.primary }, style]}
-      labelStyle={[{ color: theme.colors.inverseSurface }]}
+      labelStyle={[{ color: theme.colors.surface }]}
       {...rest}
     >
       {props.children ?? props.label}

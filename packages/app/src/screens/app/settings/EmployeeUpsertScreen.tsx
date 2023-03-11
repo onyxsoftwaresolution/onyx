@@ -16,7 +16,7 @@ export default memo<NativeStackScreenProps<any, string>>(
     const params: { name: string; position: string; id: number } =
       props.route.params ?? {};
 
-    const employee = useMutation(Mutations.upsertEmployee());
+    const upsert = useMutation(Mutations.upsertEmployee());
 
     const {
       control,
@@ -33,28 +33,28 @@ export default memo<NativeStackScreenProps<any, string>>(
     });
 
     useEffect(() => {
-      if (employee.isSuccess) {
+      if (upsert.isSuccess) {
         if (props.navigation.canGoBack()) {
           props.navigation.goBack();
         } else {
           props.navigation.navigate(Screens.APP_EMPLOYEE_LIST);
         }
       }
-    }, [employee.isSuccess, props.navigation]);
+    }, [upsert.isSuccess, props.navigation]);
 
     const submit = useCallback(
       ({ id, name, position }: unknown) => {
         if (params.id != null) {
-          employee.mutate({ id, name, position });
+          upsert.mutate({ id, name, position });
         } else {
-          employee.mutate({ name, position });
+          upsert.mutate({ name, position });
         }
       },
-      [employee, params.id],
+      [upsert, params.id],
     );
 
     return (
-      <ScreenContainer scrollContainerStyle={[styles.scrollContainer]}>
+      <ScreenContainer loading={upsert.isLoading} scrollContainerStyle={[styles.scrollContainer]}>
         <View style={[styles.view]}>
           <Controller
             control={control}
@@ -72,9 +72,9 @@ export default memo<NativeStackScreenProps<any, string>>(
                 {errors.name != null ? (
                   <HelperText type="error">{errors.name.message}</HelperText>
                 ) : null}
-                {employee?.isError ? (
+                {upsert?.isError ? (
                   <HelperText type="error">
-                    Error: {employee?.error?.data.code}
+                    Error: {upsert?.error?.data.code}
                   </HelperText>
                 ) : null}
                 <MGTextInput
@@ -105,9 +105,9 @@ export default memo<NativeStackScreenProps<any, string>>(
                     {errors.position.message}
                   </HelperText>
                 ) : null}
-                {employee?.isError ? (
+                {upsert?.isError ? (
                   <HelperText type="error">
-                    Error: {employee?.error?.data.code}
+                    Error: {upsert?.error?.data.code}
                   </HelperText>
                 ) : null}
                 <MGTextInput

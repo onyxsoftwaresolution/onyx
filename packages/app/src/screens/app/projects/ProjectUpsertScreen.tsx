@@ -306,7 +306,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
             <Select
               type='input'
               getter={Queries.getEmployees as any}
-              text={(data: EmployeeOutDTO) => data?.name ?? ""}
+              text={(data: EmployeeOutDTO) => data?.name ?? value?.name ?? ""}
               onSelect={({ id, name }: EmployeeOutDTO) => { onChange({ id, name }) }}
               label="Local admin"
               containerStyle={[{ marginBottom: 7 }]}
@@ -337,7 +337,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
             <Select
               type='input'
               getter={Queries.getEmployees as any}
-              text={(data: EmployeeOutDTO) => data?.name ?? ""}
+              text={(data: EmployeeOutDTO) => data?.name ?? value?.name ?? ""}
               onSelect={({ id, name }: EmployeeOutDTO) => { onChange({ id, name }) }}
               label="Area admin"
               containerStyle={[{ marginBottom: 7 }]}
@@ -350,7 +350,10 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
   }, [control, errors.areaAdmin, upsert?.error?.data.code, upsert?.isError]);
 
   return (
-    <ScreenContainer scrollContainerStyle={[styles.scrollContainer]}>
+    <ScreenContainer
+      loading={project.isLoading || upsert.isLoading}
+      scrollContainerStyle={[styles.scrollContainer]}
+    >
       <View style={[styles.view]}>
         {renderDescription()}
         {renderArea()}

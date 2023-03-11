@@ -22,7 +22,11 @@ export class ProjectService {
   }
 
   async upsertProject(data: UpsertProjectDTO): Promise<ProjectOutDTO> {
-    return new ProjectOutDTO(await this.projectProvider.upsertProject(data));
+    const project = await this.projectProvider.upsertProject(data);
+    project.localAdmin = new EmployeeOutDTO(project.localAdmin);
+    project.areaAdmin = new EmployeeOutDTO(project.areaAdmin);
+    project.projectActivities = project.projectActivities.map(pa => new ProjectActivityOutDTO(pa))
+    return new ProjectOutDTO(project);
   }
 
   async deleteProject(id: number) {

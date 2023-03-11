@@ -60,7 +60,7 @@ export default memo<NativeStackScreenProps<any, string>>(
     );
 
     return (
-      <ScreenContainer scrollContainerStyle={[styles.scrollContainer]}>
+      <ScreenContainer loading={employees.isLoading} scrollContainerStyle={[styles.scrollContainer]}>
         <View style={[styles.list]}>
           {employees.data?.data?.map(renderEmployee)}
         </View>

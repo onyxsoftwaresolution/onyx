@@ -67,7 +67,10 @@ export default memo<NativeStackScreenProps<any, string>>(
     );
 
     return (
-      <ScreenContainer scrollContainerStyle={[styles.scrollContainer]}>
+      <ScreenContainer
+        loading={activities.isLoading}
+        scrollContainerStyle={[styles.scrollContainer]}
+      >
         <View style={[styles.list]}>
           {activities.data?.data?.map(renderActivity)}
         </View>

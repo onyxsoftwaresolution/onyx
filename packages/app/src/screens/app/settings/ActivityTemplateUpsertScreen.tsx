@@ -20,7 +20,7 @@ export default memo<NativeStackScreenProps<any, string>>(
       id: number;
     } = props.route.params ?? {};
 
-    const activity = useMutation(Mutations.upsertActivityTemplate());
+    const upsert = useMutation(Mutations.upsertActivityTemplate());
 
     const {
       control,
@@ -38,28 +38,28 @@ export default memo<NativeStackScreenProps<any, string>>(
     });
 
     useEffect(() => {
-      if (activity.isSuccess) {
+      if (upsert.isSuccess) {
         if (props.navigation.canGoBack()) {
           props.navigation.goBack();
         } else {
           props.navigation.navigate(Screens.APP_ACTIVITY_TEMPLATE_LIST);
         }
       }
-    }, [activity.isSuccess, props.navigation]);
+    }, [upsert.isSuccess, props.navigation]);
 
     const submit = useCallback(
       ({ id, description, material, cost }: unknown) => {
         if (params.id != null) {
-          activity.mutate({ id, description, material, cost });
+          upsert.mutate({ id, description, material, cost });
         } else {
-          activity.mutate({ description, material, cost });
+          upsert.mutate({ description, material, cost });
         }
       },
-      [activity, params.id],
+      [upsert, params.id],
     );
 
     return (
-      <ScreenContainer scrollContainerStyle={[styles.scrollContainer]}>
+      <ScreenContainer loading={upsert.isLoading} scrollContainerStyle={[styles.scrollContainer]}>
         <View style={[styles.view]}>
           <Controller
             control={control}
@@ -79,9 +79,9 @@ export default memo<NativeStackScreenProps<any, string>>(
                     {errors.description.message}
                   </HelperText>
                 ) : null}
-                {activity?.isError ? (
+                {upsert?.isError ? (
                   <HelperText type="error">
-                    Error: {activity?.error?.data.code}
+                    Error: {upsert?.error?.data.code}
                   </HelperText>
                 ) : null}
                 <MGTextInput
@@ -112,9 +112,9 @@ export default memo<NativeStackScreenProps<any, string>>(
                     {errors.material.message}
                   </HelperText>
                 ) : null}
-                {activity?.isError ? (
+                {upsert?.isError ? (
                   <HelperText type="error">
-                    Error: {activity?.error?.data.code}
+                    Error: {upsert?.error?.data.code}
                   </HelperText>
                 ) : null}
                 <MGTextInput
@@ -143,9 +143,9 @@ export default memo<NativeStackScreenProps<any, string>>(
                 {errors.cost != null ? (
                   <HelperText type="error">{errors.cost.message}</HelperText>
                 ) : null}
-                {activity?.isError ? (
+                {upsert?.isError ? (
                   <HelperText type="error">
-                    Error: {activity?.error?.data.code}
+                    Error: {upsert?.error?.data.code}
                   </HelperText>
                 ) : null}
                 <MGTextInput
