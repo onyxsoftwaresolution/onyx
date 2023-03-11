@@ -1,26 +1,21 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { memo, useCallback } from 'react';
-import { View, StyleSheet, Platform, TouchableOpacity } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import ScreenContainer from '../../../components/ScreenContainer';
 import { Queries } from '../../../requests/Queries';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Screens } from '../../Screens';
-import { HeaderButtonProps } from '@react-navigation/native-stack/lib/typescript/src/types';
-import { useFocusEffect } from '@react-navigation/native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
+import { useIsFocused } from '@react-navigation/native';
 
 export default memo<NativeStackScreenProps<any, string>>(
   function ActivityTemplateListScreen(props) {
-    const activities = useQuery(Queries.getActivityTemplates());
+    const enabled = useIsFocused();
+    const activities = useQuery(Queries.getActivityTemplates({ enabled }));
     const { colors } = useTheme();
-
-    useFocusEffect(() => {
-      if (activities.isLoading || activities.isFetchedAfterMount) return
-      activities.refetch();
-    });
 
     const onPress = useCallback(
       (activity: ActivityTemplateOutDTO) => {
@@ -66,6 +61,8 @@ export default memo<NativeStackScreenProps<any, string>>(
       ),
       [colors.error, colors.inverseSurface, onPress],
     );
+
+    // console.log(activities.isLoading, activities.isFetching, activities.isRefetching)
 
     return (
       <ScreenContainer

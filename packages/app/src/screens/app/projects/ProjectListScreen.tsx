@@ -1,4 +1,4 @@
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ProjectOutDTO } from '@workspace/api/src/modules/project/dtos/project.out.dto';
@@ -25,7 +25,8 @@ type Props = NativeStackScreenProps<any, string> & {
 export default memo<Props>(function ProjectListScreen({ type, ...props }) {
   type ??= 'project';
 
-  const projects = useQuery(Queries.getProjects());
+  const enabled = useIsFocused();
+  const projects = useQuery(Queries.getProjects({ enabled }));
   const deleteProject = useMutation(
     Mutations.deleteProject({
       onSuccess() {
@@ -37,11 +38,6 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
   const { colors } = useTheme<AppTheme>();
 
   const dialog = useDialog<ProjectOutDTO>();
-
-  useFocusEffect(() => {
-    if (projects.isLoading || projects.isFetchedAfterMount) return
-    projects.refetch();
-  });
 
   const onPress = useCallback(
     (project: ProjectOutDTO) => {

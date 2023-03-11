@@ -51,13 +51,13 @@ export class ReportProvider {
       data: {
         date: dayjs().toDate(),
         projectId,
-        dailyActivityReports: {
-          createMany: {
-            data: project.projectActivities.map(pa => ({
-              dailyProjectActivityId: pa.id,
-            }))
-          }
-        },
+        // dailyActivityReports: {
+        //   createMany: {
+        //     data: project.projectActivities.map(pa => ({
+        //       dailyProjectActivityId: pa.id,
+        //     }))
+        //   }
+        // },
       },
     });
   }
@@ -79,29 +79,29 @@ export class ReportProvider {
       data: {
         date: dayjs().toDate(),
         projectId,
-        monthlyActivityReports: {
-          createMany: {
-            data: project.projectActivities.map(pa => ({
-              monthlyProjectActivityId: pa.id,
-            }))
-          }
-        },
+        // monthlyActivityReports: {
+        //   createMany: {
+        //     data: project.projectActivities.map(pa => ({
+        //       monthlyProjectActivityId: pa.id,
+        //     }))
+        //   }
+        // },
       },
     });
   }
 
-  async getDailyReport(projectId: number) {
+  async getDailyReport(projectReportId: number) {
     return await this.prismaService.client.projectReport.findFirst({
-      where: { projectId, deleted: false },
+      where: { id: projectReportId, deleted: false },
       select: {
         dailyActivityReports: true,
       }
     });
   }
 
-  async getMonthlyReport(projectId: number) {
+  async getMonthlyReport(projectReportId: number) {
     return await this.prismaService.client.projectReport.findFirst({
-      where: { projectId, deleted: false },
+      where: { id: projectReportId, deleted: false },
       select: {
         monthlyActivityReports: true,
       }

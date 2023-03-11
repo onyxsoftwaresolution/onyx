@@ -9,7 +9,7 @@ import { ProjectService } from '../service/project.service';
   path: '',
 })
 export class ProjectController {
-  constructor(private projectService: ProjectService) {}
+  constructor(private projectService: ProjectService) { }
 
   @Get('projects')
   @Roles(Role.ADMIN, Role.USER)

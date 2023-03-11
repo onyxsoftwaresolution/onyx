@@ -19,7 +19,6 @@ type Props = React.PropsWithChildren<unknown>;
 
 export const Provider = memo<Props>(function Provider(props) {
   const value = useState<unknown>();
-
   useQuery(
     Queries.getSelf({
       onError(error) {

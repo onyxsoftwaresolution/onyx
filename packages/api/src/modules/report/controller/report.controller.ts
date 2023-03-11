@@ -22,6 +22,18 @@ export class ReportController {
     return await this.reportService.listMonthlyReports(projectId);
   }
 
+  @Get('daily-report/:projectReportId')
+  @Roles(Role.ADMIN, Role.USER)
+  async getDailyReports(@Param('projectReportId') projectReportId: number) {
+    return await this.reportService.getDailyReport(projectReportId);
+  }
+
+  @Get('monthly-report/:projectReportId')
+  @Roles(Role.ADMIN, Role.USER)
+  async getMonthlyReports(@Param('projectReportId') projectReportId: number) {
+    return await this.reportService.getMonthlyReport(projectReportId);
+  }
+
   @Post('daily-report/:projectId')
   @Roles(Role.ADMIN, Role.USER)
   async createDailyReport(

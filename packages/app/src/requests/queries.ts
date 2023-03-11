@@ -9,6 +9,7 @@ import { Report } from '../screens/app/reports/Report';
 
 type Options = Partial<Pick<UseQueryOptions, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
+  enabled?: boolean;
 };
 
 export class Queries {
@@ -33,8 +34,7 @@ export class Queries {
     return response;
   };
 
-  static getSelf = ({ onError, onLoading, onSuccess }: Options = {}) =>
-  ({
+  static getSelf = ({ enabled = true, onError, onLoading, onSuccess }: Options = {}) => ({
     queryKey: ['self'],
     queryFn: async () => {
       onLoading?.();
@@ -42,10 +42,10 @@ export class Queries {
     },
     onError,
     onSuccess,
+    enabled,
   } as UseQueryOptions);
 
-  static getEmployees = ({ onError, onLoading, onSuccess }: Options = {}) =>
-  ({
+  static getEmployees = ({ enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
     queryKey: ['employees'],
     queryFn: async () => {
       onLoading?.();
@@ -53,10 +53,10 @@ export class Queries {
     },
     onError,
     onSuccess,
+    enabled,
   } as UseQueryOptions<FetchResponse<EmployeeOutDTO>, FetchError>);
 
-  static getActivityTemplates = ({ onError, onLoading, onSuccess }: Options = {}) =>
-  ({
+  static getActivityTemplates = ({ enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
     queryKey: ['activity-templates'],
     queryFn: async () => {
       onLoading?.();
@@ -64,10 +64,10 @@ export class Queries {
     },
     onError,
     onSuccess,
+    enabled,
   } as UseQueryOptions<FetchResponse<ActivityTemplateOutDTO[]>, FetchError>);
 
-  static getProjects = ({ onError, onLoading, onSuccess }: Options = {}) =>
-  ({
+  static getProjects = ({ enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
     queryKey: ['projects'],
     queryFn: async () => {
       onLoading?.();
@@ -75,22 +75,21 @@ export class Queries {
     },
     onError,
     onSuccess,
+    enabled,
   } as UseQueryOptions<FetchResponse<ProjectOutDTO[]>>);
 
-  static getProject = (id: number, { onError, onLoading, onSuccess }: Options = {}) =>
-  ({
+  static getProject = (id: number, { enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
     queryKey: [`project-${id}`],
     queryFn: async () => {
       onLoading?.();
-      if (id == null) return;
       return await Queries.queryFn(`http://192.168.0.102:4000/v1/project/${id}`);
     },
     onError,
     onSuccess,
+    enabled,
   } as UseQueryOptions<FetchResponse<ProjectOutDTO>, FetchError>);
 
-  static getReports = (type: Report, projectId: number, { onError, onLoading, onSuccess }: Options = {}) =>
-  ({
+  static getReports = (type: Report, projectId: number, { enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
     queryKey: [`/v1/${type}-reports/${projectId}`],
     queryFn: async () => {
       onLoading?.();
@@ -98,5 +97,17 @@ export class Queries {
     },
     onError,
     onSuccess,
+    enabled,
   } as UseQueryOptions<FetchResponse<ReportListItemOutDTO[]>>);
+
+  static getReport = (type: Report, projectId: number, { enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
+    queryKey: [`/v1/${type}-report/${projectId}`],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`http://192.168.0.102:4000/v1/${type}-report/${projectId}`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<ProjectOutDTO>, FetchError>);
 }

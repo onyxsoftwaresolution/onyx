@@ -1,10 +1,9 @@
 import { UpsertEmployeeDTO } from '@modules/employee/dtos/employee.in.dto';
-import { Prisma, ProjectActivity } from '@prisma/client';
 import { IsArray, IsDateString, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpsertProjectDTO {
   @IsInt()
-  @IsNotEmpty()
+  @IsOptional()
   id?: number;
 
   @IsString()

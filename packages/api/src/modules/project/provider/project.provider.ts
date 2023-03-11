@@ -13,6 +13,8 @@ export class ProjectProvider {
 
     const remainingProjectActivityIds = projectActivities.filter(pa => pa.id != null).map(pa => pa.id);
     const deleteProjectActivityIds = currentProjectActivities.map(pa => pa.id).filter(id => !remainingProjectActivityIds.includes(id));
+    const createProjectActivities = projectActivities.filter(pa => pa.id == null);
+    const updateProjectActivities = projectActivities.filter(pa => pa.id != null);
 
     await this.prismaService.client.project.upsert({
       where: { id },
@@ -23,18 +25,22 @@ export class ProjectProvider {
         id, area, code, description, end, start, areaAdminId: areaAdmin.id, localAdminId: localAdmin.id,
         projectActivities: {
           createMany: {
-            data: projectActivities
-              .filter(pa => pa.id == null)
-              .map(({ description, cost, material, quantity }) => ({ description, cost, material, quantity })),
+            data: createProjectActivities.map(({ description, cost, material, quantity }) => ({ description, cost, material, quantity })),
           },
-          updateMany: {
-            where: {
-              OR: deleteProjectActivityIds.map(id => ({ id })),
+          updateMany: [
+            {
+              where: {
+                OR: deleteProjectActivityIds.map(id => ({ id })),
+              },
+              data: {
+                deleted: true,
+              },
             },
-            data: {
-              deleted: true,
-            },
-          },
+          ],
+          update: updateProjectActivities.map(({ id, description, cost, material, quantity }) => ({
+            where: { id },
+            data: { description, cost, material, quantity },
+          })),
         }
       }
     });

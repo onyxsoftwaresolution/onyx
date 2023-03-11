@@ -129,14 +129,28 @@ model ActivityReport {
   modified DateTime @default(now())
   deleted  Boolean  @default(false)
 
-  dailyProjectActivityId   Int?             @map("dailyId")
+  // daily
+  todayStock        Int
+  addedStock        Int
+  totalStock        Int
+  noImplToday       Int
+  finalStockToday   Int
+  totalImplToday    Int
+  totalProjectUnits Int
+  remainingUnits    Int
+
+  // monthly
+  monthlyNoImplUnits  Int // suma noImplToday
+  monthlyActivityCost Float
+
+  dailyProjectActivityId   Int?
   dailyProjectActivity     ProjectActivity? @relation("daily_activity_report", fields: [dailyProjectActivityId], references: [id])
-  monthlyProjectActivityId Int?             @map("monthlyId")
+  monthlyProjectActivityId Int?
   monthlyProjectActivity   ProjectActivity? @relation("monthly_activity_report", fields: [monthlyProjectActivityId], references: [id])
 
-  dailyProjectReportId   Int?           @map("dailyReportId")
+  dailyProjectReportId   Int?
   dailyProjectReport     ProjectReport? @relation("daily_report", fields: [dailyProjectReportId], references: [id])
-  monthlyProjectReportId Int?           @map("monthlyReportId")
+  monthlyProjectReportId Int?
   monthlyProjectReport   ProjectReport? @relation("monthly_report", fields: [monthlyProjectReportId], references: [id])
 
   @@index([monthlyProjectActivityId])

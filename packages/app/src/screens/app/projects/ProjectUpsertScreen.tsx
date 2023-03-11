@@ -15,6 +15,7 @@ import Select from '../../../components/Select';
 import { Mutations } from '../../../requests/Mutations';
 import { Queries } from '../../../requests/Queries';
 import { EmployeeOutDTO } from "@workspace/api/src/modules/employee/dtos/employee.out.dto"
+import { useIsFocused } from '@react-navigation/native';
 
 type Params = {
   id: number;
@@ -23,7 +24,8 @@ type Params = {
 export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertScreen(props) {
   const params = props.route.params as unknown as Params;
 
-  const project = useQuery(Queries.getProject(params?.id, { onSuccess: () => !isDirty && reset() }));
+  const enabled = useIsFocused();
+  const project = useQuery(Queries.getProject(params?.id, { enabled, onSuccess: () => !isDirty && reset() }));
   const upsert = useMutation(Mutations.upsertProject());
 
   const values: UpsertProjectDTO = useMemo(() => {
@@ -207,7 +209,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               : null}
             <MGTextInput
               value={value.toString()}
-              onChangeText={onChange}
+              onChangeText={text => onChange(parseFloat(text))}
               style={{ marginBottom: 7 }}
               label={'Quantity'}
             />
@@ -265,7 +267,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               : null}
             <MGTextInput
               value={value.toString()}
-              onChangeText={onChange}
+              onChangeText={text => onChange(parseFloat(text))}
               style={{ marginBottom: 7 }}
               label={'Cost'}
             />

@@ -8,6 +8,7 @@ import {
   DefaultNavigatorOptions,
   TabRouterOptions,
   TabActionHelpers,
+  StackActionHelpers,
 } from '@react-navigation/native';
 import { BottomTabNavigationEventMap, BottomTabNavigationOptions, BottomTabView } from '@react-navigation/bottom-tabs';
 import { StyleProp, View, ViewStyle, FlatList, ListRenderItemInfo } from 'react-native';
@@ -60,7 +61,7 @@ function CustomBottomTabNavigator({
     useNavigationBuilder<
       TabNavigationState<ParamListBase>,
       TabRouterOptions,
-      TabActionHelpers<ParamListBase>,
+      TabActionHelpers<ParamListBase> & StackActionHelpers<ParamListBase>,
       TabNavigationOptions,
       TabNavigationEventMap
     >(TabRouter, {
@@ -77,12 +78,27 @@ function CustomBottomTabNavigator({
   const renderItem = useCallback((item: ListRenderItemInfo<typeof descriptors[0]>) => {
     const isCurrentLink = state.history.at(-1)?.key === item.item.route.key;
 
+    const onPressed = () => {
+      if (isCurrentLink) {
+        navigation.popToTop();
+        return;
+      }
+      navigation.navigate(item.item.route.name, item.item.route.params)
+    }
+
     return (
       <TouchableRipple
         style={[{ paddingLeft: 10, paddingVertical: 10 }]}
-        onPress={() => navigation.navigate(item.item.route.name, item.item.route.params)}
+        onPress={onPressed}
       >
-        <Text style={[{ fontSize: 18, color: isCurrentLink ? colors.primary : undefined }]}>{item.item.options.title}</Text>
+        <View style={[{ flexDirection: 'row' }]}>
+          {item.item.options.tabBarIcon?.({
+            color: isCurrentLink ? colors.primary : '',
+            focused: isCurrentLink,
+            size: 18,
+          })}
+          <Text style={[{ fontSize: 18, color: isCurrentLink ? colors.primary : undefined, paddingLeft: 10 }]}>{item.item.options.title}</Text>
+        </View>
       </TouchableRipple>
     )
   }, [colors.primary, navigation, state.history])
@@ -111,7 +127,7 @@ function CustomBottomTabNavigator({
               shadowOpacity: 1,
               shadowRadius: 4,
               zIndex: 1,
-              paddingTop: 10,
+              paddingTop: 20,
             },
             menuBarStyle,
           ]}

@@ -1,4 +1,4 @@
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ReportListItemOutDTO } from '@workspace/api/src/modules/report/dtos/report-out.dto';
@@ -26,7 +26,8 @@ type Props = NativeStackScreenProps<any, string> & {
 export default memo<Props>(function ReportListScreen(props) {
   const { projectId } = props.route.params as { projectId: number };
 
-  const reports = useQuery(Queries.getReports(props.type, projectId));
+  const enabled = useIsFocused();
+  const reports = useQuery(Queries.getReports(props.type, projectId, { enabled }));
 
   // const deleteProject = useMutation(
   //   Mutations.deleteProject({
@@ -40,20 +41,24 @@ export default memo<Props>(function ReportListScreen(props) {
 
   const dialog = useDialog<ReportListItemOutDTO>();
 
-  useFocusEffect(() => {
-    if (reports.isLoading || reports.isFetchedAfterMount) return
-    reports.refetch();
-  });
-
-  const onPress = useCallback((project: ReportListItemOutDTO) => {
-    props.navigation.navigate(Screens.APP_PROJECT_UPSERT, project);
-  }, [props.navigation]);
+  const onGoToUpsertScreen = useCallback(() => {
+    switch (props.type) {
+      case Report.DAILY:
+        props.navigation.push(Screens.APP_DAILY_REPORT__UPSERT_SCREEN, { projectId });
+        break;
+      case Report.MONTHLY:
+        props.navigation.push(Screens.APP_MONTHLY_REPORT__UPSERT_SCREEN, { projectId });
+        break;
+      default:
+        break;
+    }
+  }, [projectId, props.navigation, props.type]);
 
   const renderReport = useCallback((report: ReportListItemOutDTO, index: number) => (
     <TouchableRipple
       style={[styles.touchStyle]}
       key={report.id}
-      onPress={() => { }}
+      onPress={onGoToUpsertScreen}
     >
       <View style={[styles.item]}>
         <View style={[styles.itemRow]}>
@@ -68,8 +73,8 @@ export default memo<Props>(function ReportListScreen(props) {
               name={'trash-alt'}
               style={[{ color: colors.danger, fontSize: 18 }]}
             />
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback
+          </TouchableWithoutFeedback> */}
+          {/* <TouchableWithoutFeedback
             onPress={() => onPress(report)}
             containerStyle={[styles.iconContainer]}
           >
@@ -82,7 +87,7 @@ export default memo<Props>(function ReportListScreen(props) {
         <Divider />
       </View>
     </TouchableRipple>
-  ), []);
+  ), [onGoToUpsertScreen]);
 
   const renderListItem = useCallback((project: ReportListItemOutDTO, index: number) => {
     switch (props.type) {

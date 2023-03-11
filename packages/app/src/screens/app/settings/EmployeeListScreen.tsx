@@ -1,25 +1,20 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { memo, useCallback } from 'react';
-import { View, StyleSheet, Platform, TouchableOpacity } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import ScreenContainer from '../../../components/ScreenContainer';
 import { Queries } from '../../../requests/Queries';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Screens } from '../../Screens';
-import { HeaderButtonProps } from '@react-navigation/native-stack/lib/typescript/src/types';
-import { useFocusEffect } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 export default memo<NativeStackScreenProps<any, string>>(
   function EmployeeListScreen(props) {
-    const employees = useQuery(Queries.getEmployees());
+    const enabled = useIsFocused();
+    const employees = useQuery(Queries.getEmployees({ enabled }));
     const { colors } = useTheme();
-
-    useFocusEffect(() => {
-      if (employees.isLoading || employees.isFetchedAfterMount) return
-      employees.refetch();
-    });
 
     const onPress = useCallback(
       (employee) => {

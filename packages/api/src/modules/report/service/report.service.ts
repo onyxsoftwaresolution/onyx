@@ -11,6 +11,12 @@ export class ReportService {
     return reports.map(r => new ReportListItemOutDTO(r));
   }
 
+  async getDailyReport(projectReportId: number) {
+    return this.reportProvider.getDailyReport(projectReportId);
+  }
+
+  async getMonthlyReport(projectReportId: number) { }
+
   async listMonthlyReports(projectId: number) {
     const reports = await this.reportProvider.listMonthlyReports(projectId);
     return reports.map(r => new ReportListItemOutDTO(r));
