@@ -19,7 +19,8 @@ import { useIsFocused } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { dayOrNull } from '../../../dayOrNull';
 import MGCard from '../../../components/MGCard';
-import { useSnackbar } from '../../../components/snackbar/useSnackbar';
+import { useSnackbar } from '../../../components/useSnackbar';
+import MGRow from '../../../components/MGRow';
 
 type Params = {
   id: number;
@@ -105,7 +106,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               value={value}
               onChangeText={onChange}
               style={{ marginBottom: 7, height: 77 }}
-              label={'Description'}
+              label={'Nume proiect'}
             />
           </>
         )}
@@ -135,7 +136,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               value={value}
               onChangeText={onChange}
               style={{ marginBottom: 7 }}
-              label={'Area'}
+              label={'Aria'}
             />
           </>
         )}
@@ -164,7 +165,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               value={value}
               onChangeText={onChange}
               style={{ marginBottom: 7 }}
-              label={'Code'}
+              label={'Cod'}
             />
           </>
         )}
@@ -194,7 +195,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               value={dayOrNull(dayjs(value))?.toDate()}
               onDateChange={d => onChange(d.date)}
               containerStyle={{ marginBottom: 7 }}
-              label={'Start'}
+              label={'Data inceput'}
             />
           </>
         )}
@@ -224,7 +225,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               value={dayOrNull(dayjs(value))?.toDate()}
               onDateChange={d => onChange(d.date)}
               containerStyle={{ marginBottom: 7 }}
-              label={'End'}
+              label={'Data sfarsit'}
             />
           </>
         )}
@@ -254,7 +255,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               value={value}
               onChangeText={onChange}
               style={{ marginBottom: 7, height: 77 }}
-              label={'Description'}
+              label={'Nume activitate'}
             />
           </>
         )}
@@ -354,9 +355,11 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
     return (
       <MGCard key={index} title={`Activitate ${index + 1}`}>
         {renderProjectActivityDescription(index)}
-        {renderProjectActivityMaterial(index)}
-        {renderProjectActivityCost(index)}
-        {renderProjectActivityQuantity(index)}
+        <MGRow>
+          {renderProjectActivityMaterial(index)}
+          {renderProjectActivityCost(index)}
+          {renderProjectActivityQuantity(index)}
+        </MGRow>
       </MGCard>
     );
   }, [renderProjectActivityCost, renderProjectActivityDescription, renderProjectActivityMaterial, renderProjectActivityQuantity]);
@@ -383,7 +386,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               text={(data: EmployeeOutDTO) => data?.name ?? value?.name ?? ""}
               data={value}
               onSelect={({ id, name }: EmployeeOutDTO) => { onChange({ id, name }) }}
-              label="Local admin"
+              label="Sef santier"
               containerStyle={[{ marginBottom: 7 }]}
             />
           </>
@@ -415,7 +418,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               text={(data: EmployeeOutDTO) => data?.name ?? value?.name ?? ""}
               data={value}
               onSelect={({ id, name }: EmployeeOutDTO) => { onChange({ id, name }) }}
-              label="Area admin"
+              label="Sef punct de lucru"
               containerStyle={[{ marginBottom: 7 }]}
             />
           </>
@@ -433,13 +436,17 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
       <View style={[styles.view]}>
         <MGCard title={'Detalii proiect'}>
           {renderDescription()}
-          {renderArea()}
-          {renderCode()}
-          {renderStart()}
-          {renderEnd()}
+          <MGRow>
+            {renderArea()}
+            {renderCode()}
+          </MGRow>
+          <MGRow>
+            {renderStart()}
+            {renderEnd()}
+          </MGRow>
         </MGCard>
         <View>
-          {fields.map((field, index) => renderProjectActivity(index))}
+          {fields.map((_, index) => renderProjectActivity(index))}
           <MGSelect
             getter={() => Queries.getActivityTemplates({ enabled }) as any}
             text={(data: ActivityTemplateOutDTO) => data?.description ?? ''}
@@ -452,8 +459,10 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           />
         </View>
         <MGCard title={`Angajati`}>
-          {renderLocalAdmin()}
-          {renderAreaAdmin()}
+          <MGRow>
+            {renderLocalAdmin()}
+            {renderAreaAdmin()}
+          </MGRow>
         </MGCard>
         <MGButton
           icon="send"

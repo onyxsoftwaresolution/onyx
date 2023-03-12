@@ -2,6 +2,7 @@ import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ProjectOutDTO } from '@workspace/api/src/modules/project/dtos/project.out.dto';
+import dayjs from 'dayjs';
 import { memo, useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -10,9 +11,9 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {
   RenderOptionsFunction,
   useDialog,
-} from '../../../components/dialog/useDialog';
+} from '../../../components/useDialog';
 import ScreenContainer from '../../../components/ScreenContainer';
-import { useSnackbar } from '../../../components/snackbar/useSnackbar';
+import { useSnackbar } from '../../../components/useSnackbar';
 import { Mutations } from '../../../requests/Mutations';
 import { Queries } from '../../../requests/Queries';
 import { AppTheme } from '../../../theme/type';
@@ -27,18 +28,14 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
   type ??= 'project';
 
   const enabled = useIsFocused();
-  const projects = useQuery(
-    Queries.getProjects({
-      enabled,
-      onError() { snackbar.show('A aparut o eroare la afisarea proiectelor!') },
-    })
-  );
-  const deleteProject = useMutation(
-    Mutations.deleteProject({
-      onSuccess() { projects.refetch(); },
-      onError() { snackbar.show('A aparut o eroare la stergerea proiectului!') },
-    }),
-  );
+  const projects = useQuery(Queries.getProjects({
+    enabled,
+    onError() { snackbar.show('A aparut o eroare la afisarea proiectelor!') },
+  }),);
+  const deleteProject = useMutation(Mutations.deleteProject({
+    onSuccess() { projects.refetch(); },
+    onError() { snackbar.show('A aparut o eroare la stergerea proiectului!') },
+  }),);
 
   const { colors } = useTheme<AppTheme>();
 
@@ -63,11 +60,15 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
           <View style={[{ flex: 1 }]}>
             <Text style={[styles.itemText]}>{project.description}</Text>
             <Text style={[styles.itemSubText, { color: colors.error }]}>
+              {dayjs(project.start).format('DD/MM/YYYY')} - {dayjs(project.end).format('DD/MM/YYYY')}
+            </Text>
+            <Text style={[styles.itemSubText, { color: colors.error }]}>
               {project.area}
             </Text>
             <Text style={[styles.itemSubText, { color: colors.error }]}>
               {project.code}
             </Text>
+            <View style={[{ marginBottom: 10 }]} />
           </View>
           <TouchableWithoutFeedback
             onPress={() => dialog.show(project)}
@@ -103,36 +104,16 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
         <View style={[styles.itemRow]}>
           <View style={[{ flex: 1 }]}>
             <Text style={[styles.itemText]}>{project.description}</Text>
-            {/* <Text style={[styles.itemSubText, { color: colors.error }]}>
-              {project.area}
-            </Text>
             <Text style={[styles.itemSubText, { color: colors.error }]}>
-              {project.code}
-            </Text> */}
+              {dayjs(project.start).format('DD/MM/YYYY')} - {dayjs(project.end).format('DD/MM/YYYY')}
+            </Text>
+            <View style={[{ marginBottom: 10 }]} />
           </View>
-          {/* <TouchableWithoutFeedback
-                onPress={() => dialog.show(project)}
-                containerStyle={[styles.iconContainer]}
-              >
-                <Icon
-                  name={'trash-alt'}
-                  style={[{ color: colors.danger, fontSize: 18 }]}
-                />
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback
-                onPress={() => onPress(project)}
-                containerStyle={[styles.iconContainer]}
-              >
-                <Icon
-                  name={'pen'}
-                  style={[{ color: colors.inverseSurface, fontSize: 18 }]}
-                />
-              </TouchableWithoutFeedback> */}
         </View>
         <Divider />
       </View>
     </TouchableRipple>
-  ), [props.navigation]);
+  ), [colors.error, props.navigation]);
 
   const renderProjectForMonthly = useCallback((project: ProjectOutDTO, index: number) => (
     <TouchableRipple
@@ -144,36 +125,16 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
         <View style={[styles.itemRow]}>
           <View style={[{ flex: 1 }]}>
             <Text style={[styles.itemText]}>{project.description}</Text>
-            {/* <Text style={[styles.itemSubText, { color: colors.error }]}>
-              {project.area}
-            </Text>
             <Text style={[styles.itemSubText, { color: colors.error }]}>
-              {project.code}
-            </Text> */}
+              {dayjs(project.start).format('DD/MM/YYYY')} - {dayjs(project.end).format('DD/MM/YYYY')}
+            </Text>
+            <View style={[{ marginBottom: 10 }]} />
           </View>
-          {/* <TouchableWithoutFeedback
-                onPress={() => dialog.show(project)}
-                containerStyle={[styles.iconContainer]}
-              >
-                <Icon
-                  name={'trash-alt'}
-                  style={[{ color: colors.danger, fontSize: 18 }]}
-                />
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback
-                onPress={() => onPress(project)}
-                containerStyle={[styles.iconContainer]}
-              >
-                <Icon
-                  name={'pen'}
-                  style={[{ color: colors.inverseSurface, fontSize: 18 }]}
-                />
-              </TouchableWithoutFeedback> */}
         </View>
         <Divider />
       </View>
     </TouchableRipple>
-  ), [props.navigation]);
+  ), [colors.error, props.navigation]);
 
   const renderListItem = useCallback((project: ProjectOutDTO, index: number) => {
     switch (type) {
@@ -192,16 +153,16 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
   }, [type, renderProjectForDaily, renderProjectForMonthly, renderProject]);
 
   const dialogRenderOptions: RenderOptionsFunction<ProjectOutDTO> = useCallback((project) => ({
-    title: `Delete project '${project?.description}'`,
-    message: 'Are you sure?',
+    title: `Sterge proiect '${project?.description}'`,
+    message: 'Esti sigur?',
     buttons: [
       {
-        label: 'Delete',
+        label: 'Sterge',
         textColor: colors.danger,
         onPress: () => deleteProject.mutate(project.id),
       },
       () => <View style={{ flex: 1 }} />,
-      { label: 'Cancel' },
+      { label: 'Renunta' },
     ],
   }), [colors.danger, deleteProject]);
 
@@ -212,7 +173,9 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
     >
       {projects.data?.data.length === 0
         ? <View style={[styles.list]}>
-          <Text style={{ textAlign: 'center' }} variant="bodyLarge">Nu ai nici un proiect adaugat!</Text>
+          <Text style={{ textAlign: 'center' }} variant="bodyLarge">
+            Nu ai nici un proiect adaugat!
+          </Text>
         </View>
         : null}
       <View style={[styles.list]}>

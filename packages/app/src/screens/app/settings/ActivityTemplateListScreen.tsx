@@ -10,7 +10,7 @@ import { Screens } from '../../Screens';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
 import { useIsFocused } from '@react-navigation/native';
-import { useSnackbar } from '../../../components/snackbar/useSnackbar';
+import { useSnackbar } from '../../../components/useSnackbar';
 
 export default memo<NativeStackScreenProps<any, string>>(
   function ActivityTemplateListScreen(props) {
@@ -52,6 +52,7 @@ export default memo<NativeStackScreenProps<any, string>>(
                 <Text style={[styles.itemSubText, { color: colors.error }]}>
                   {activity.cost}
                 </Text>
+                <View style={[{ marginBottom: 10 }]} />
               </View>
               <TouchableWithoutFeedback
                 onPress={() => onPress(activity)}

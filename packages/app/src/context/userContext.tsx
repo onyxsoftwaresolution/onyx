@@ -1,16 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
+import { JwtUserDTO } from '@workspace/api/src/modules/user/dtos/jwt.user.dto';
 import { createContext, memo, useContext, useEffect, useState } from 'react';
 import { Queries } from '../requests/Queries';
 
-type UserState = {
-  id: number;
-  username: string;
-  role: string;
-};
+type Value = {
+  error?: unknown,
+  isError?: boolean,
+  isLoading?: boolean;
+  data?: JwtUserDTO,
+}
 
 type UserContext = [
-  state?: unknown,
-  setState?: React.Dispatch<React.SetStateAction<UserState | undefined>>,
+  state?: Value | undefined,
+  setState?: React.Dispatch<React.SetStateAction<Value | undefined>>,
 ];
 
 const userContext = createContext<UserContext>([]);
@@ -18,7 +20,7 @@ const userContext = createContext<UserContext>([]);
 type Props = React.PropsWithChildren<unknown>;
 
 export const Provider = memo<Props>(function Provider(props) {
-  const value = useState<unknown>();
+  const value = useState<Value>();
   useQuery(
     Queries.getSelf({
       onError(error) {

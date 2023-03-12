@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo } from "react";
-import { StyleSheet } from "react-native";
 import { Portal, Snackbar } from "react-native-paper";
 
 export const useSnackbar = () => {

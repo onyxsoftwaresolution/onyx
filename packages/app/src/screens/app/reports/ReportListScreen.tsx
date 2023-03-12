@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {
   RenderOptionsFunction,
   useDialog,
-} from '../../../components/dialog/useDialog';
+} from '../../../components/useDialog';
 import ScreenContainer from '../../../components/ScreenContainer';
 import { Mutations } from '../../../requests/Mutations';
 import { Queries } from '../../../requests/Queries';

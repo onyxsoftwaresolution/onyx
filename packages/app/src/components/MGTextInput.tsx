@@ -13,7 +13,7 @@ export default memo<TextInputProps>(function MGTextInput(props) {
         {
           backgroundColor: theme.colors.surface,
           // backgroundColor: theme.colors.textInputColor,
-          width: '100%',
+          flex: 1,
           height: height ?? 40,
         },
         style,

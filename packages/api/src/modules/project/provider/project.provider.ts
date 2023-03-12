@@ -20,6 +20,11 @@ export class ProjectProvider {
       where: { id: id ?? -1 },
       create: {
         area, code, description, end, start, areaAdminId: areaAdmin.id, localAdminId: localAdmin.id,
+        projectActivities: {
+          createMany: {
+            data: createProjectActivities.map(({ description, cost, material, quantity }) => ({ description, cost, material, quantity })),
+          },
+        }
       },
       update: {
         id, area, code, description, end, start, areaAdminId: areaAdmin.id, localAdminId: localAdmin.id,

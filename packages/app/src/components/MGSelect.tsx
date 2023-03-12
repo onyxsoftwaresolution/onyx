@@ -1,6 +1,6 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { Fragment, memo, PropsWithChildren, useCallback, useState } from "react";
-import { RenderOptionsFunction, useDialog } from "./dialog/useDialog";
+import { RenderOptionsFunction, useDialog } from "./useDialog";
 import { TouchableRipple, useTheme, Text, RadioButton, Divider } from "react-native-paper";
 import { AppTheme } from "../theme/type";
 import { StyleProp, View, ViewStyle } from "react-native";
@@ -76,7 +76,7 @@ export default memo(function MGSelect<T extends { id: number }>(props: SelectPro
 
   return (
     <>
-      <View style={[props.containerStyle]}>
+      <View style={[{ flex: 1 }, props.containerStyle]}>
         {type === "button"
           ? <MGButton
             icon={"plus"}
@@ -85,9 +85,10 @@ export default memo(function MGSelect<T extends { id: number }>(props: SelectPro
           />
           : null}
         {type === "input"
-          ? <TouchableRipple onPress={() => dialog.show(undefined)}>
-            <View pointerEvents="none">
+          ? <TouchableRipple style={[{ flex: 1 }]} onPress={() => dialog.show(undefined)}>
+            <View pointerEvents="none" style={[{ flex: 1 }]}>
               <MGTextInput
+                style={[{ flex: 1 }]}
                 value={props.text(props.data)}
                 onChangeText={() => {/**/ }}
                 label={props.label}

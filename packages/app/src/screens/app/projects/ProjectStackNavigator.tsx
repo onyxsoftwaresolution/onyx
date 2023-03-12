@@ -38,7 +38,16 @@ export default memo(function ProjectStackNavigator() {
       <Stack.Screen
         name={Screens.APP_PROJECT_UPSERT}
         component={ProjectUpsertScreen}
-        options={options('Adauga/Modifica proiect')}
+        options={screenProps => {
+          return ({
+            ...options(''),
+            title:
+              // @ts-expect-error missing type
+              screenProps.route.params?.id != null
+                ? 'Modifica proiect'
+                : 'Adauga proiect',
+          })
+        }}
       />
     </Stack.Navigator>
   );

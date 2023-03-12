@@ -10,7 +10,7 @@ import { Screens } from '../../Screens';
 import { useIsFocused } from '@react-navigation/native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { EmployeeOutDTO } from '@workspace/api/src/modules/employee/dtos/employee.out.dto';
-import { useSnackbar } from '../../../components/snackbar/useSnackbar';
+import { useSnackbar } from '../../../components/useSnackbar';
 
 export default memo<NativeStackScreenProps<any, string>>(
   function EmployeeListScreen(props) {
@@ -46,6 +46,7 @@ export default memo<NativeStackScreenProps<any, string>>(
                 <Text style={[styles.itemSubText, { color: colors.error }]}>
                   {employee.position}
                 </Text>
+                <View style={[{ marginBottom: 10 }]} />
               </View>
               <TouchableWithoutFeedback
                 onPress={() => onPress(employee)}

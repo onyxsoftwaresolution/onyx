@@ -8,7 +8,7 @@ import { useTheme } from 'react-native-paper';
 import { useWindowDimensions } from 'react-native';
 import { AppTheme } from '../../theme/type';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { createCustomBottomTabNavigator } from '../../components/navigator/CustomBottomTabNavigator';
+import { createCustomBottomTabNavigator } from '../../components/CustomBottomTabNavigator';
 
 const Tab = createCustomBottomTabNavigator();
 

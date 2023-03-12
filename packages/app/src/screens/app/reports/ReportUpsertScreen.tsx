@@ -4,11 +4,12 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { ProjectActivityOutDTO } from "@workspace/api/src/modules/project/dtos/project.out.dto";
 import { ActivityReportOutDTO } from "@workspace/api/src/modules/report/dtos/report-out.dto";
 import { isNotEmpty } from "class-validator";
-import { memo, PropsWithChildren, useCallback, useEffect, useMemo } from "react";
+import { memo, PropsWithChildren, useCallback, useMemo } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import MGCard from "../../../components/MGCard";
+import MGRow from "../../../components/MGRow";
 import MGTextInput from "../../../components/MGTextInput";
 import ScreenContainer from "../../../components/ScreenContainer";
 import { Mutations } from "../../../requests/Mutations";
@@ -35,14 +36,14 @@ export default memo<Props>(function ReportUpsertScreen(props) {
   const values: FormState = useMemo(() => {
     const activityReports = (project.data?.data.projectActivities ?? []).map(activity => ({
       projectActivityId: activity.id,
-      prevStock: 0,
+      todayStock: 0,
       addedStock: 0,
       totalStock: 0,
-      doneTodayStock: 0,
-      nextStock: 0,
-      totalDoneStock: 0,
-      projectStock: 0,
-      remainingStock: 0,
+      noImplToday: 0,
+      finalStockToday: 0,
+      totalImplToday: 0,
+      totalProjectUnits: 0,
+      remainingUnits: 0,
     } as FormState['activityReports'][0]));
     return ({ activityReports });
   }, [project.data?.data.projectActivities]);
@@ -74,7 +75,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
   }, [project.data?.data.area, project.data?.data.code, project.data?.data.description])
 
 
-  const renderActivityReportPrevStock = useCallback((index: number) => {
+  const renderActivityReportTodayStock = useCallback((index: number) => {
     return (
       <Controller
         control={control}
@@ -85,6 +86,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         render={({ field: { onChange, value } }) => (
           <>
             <MGTextInput
+              disabled
               value={value.toString()}
               onChangeText={onChange}
               style={{ marginBottom: 7 }}
@@ -92,7 +94,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             />
           </>
         )}
-        name={`activityReports.${index}.prevStock`}
+        name={`activityReports.${index}.todayStock`}
       />
     );
   }, [control]);
@@ -143,7 +145,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
     );
   }, [control]);
 
-  const renderActivityReportDoneTodayStock = useCallback((index: number) => {
+  const renderActivityReportNoImplToday = useCallback((index: number) => {
     return (
       <Controller
         control={control}
@@ -161,12 +163,12 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             />
           </>
         )}
-        name={`activityReports.${index}.doneTodayStock`}
+        name={`activityReports.${index}.noImplToday`}
       />
     );
   }, [control]);
 
-  const renderActivityReportNextStock = useCallback((index: number) => {
+  const renderActivityReportFinalStockToday = useCallback((index: number) => {
     return (
       <Controller
         control={control}
@@ -177,6 +179,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         render={({ field: { onChange, value } }) => (
           <>
             <MGTextInput
+              disabled
               value={value.toString()}
               onChangeText={onChange}
               style={{ marginBottom: 7 }}
@@ -184,12 +187,12 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             />
           </>
         )}
-        name={`activityReports.${index}.nextStock`}
+        name={`activityReports.${index}.finalStockToday`}
       />
     );
   }, [control]);
 
-  const renderActivityReportTotalDoneStock = useCallback((index: number) => {
+  const renderActivityReportTotalImplToday = useCallback((index: number) => {
     return (
       <Controller
         control={control}
@@ -200,6 +203,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         render={({ field: { onChange, value } }) => (
           <>
             <MGTextInput
+              disabled
               value={value.toString()}
               onChangeText={onChange}
               style={{ marginBottom: 7 }}
@@ -207,12 +211,12 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             />
           </>
         )}
-        name={`activityReports.${index}.totalDoneStock`}
+        name={`activityReports.${index}.totalImplToday`}
       />
     );
   }, [control]);
 
-  const renderActivityReportProjectStock = useCallback((index: number) => {
+  const renderActivityReportTotalProjectUnits = useCallback((index: number) => {
     return (
       <Controller
         control={control}
@@ -223,6 +227,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         render={({ field: { onChange, value } }) => (
           <>
             <MGTextInput
+              disabled
               value={value.toString()}
               onChangeText={onChange}
               style={{ marginBottom: 7 }}
@@ -230,12 +235,12 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             />
           </>
         )}
-        name={`activityReports.${index}.projectStock`}
+        name={`activityReports.${index}.totalProjectUnits`}
       />
     );
   }, [control]);
 
-  const renderActivityReportRemainingStock = useCallback((index: number) => {
+  const renderActivityReportRemainingUnits = useCallback((index: number) => {
     return (
       <Controller
         control={control}
@@ -246,6 +251,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         render={({ field: { onChange, value } }) => (
           <>
             <MGTextInput
+              disabled
               value={value.toString()}
               onChangeText={onChange}
               style={{ marginBottom: 7 }}
@@ -253,7 +259,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             />
           </>
         )}
-        name={`activityReports.${index}.remainingStock`}
+        name={`activityReports.${index}.remainingUnits`}
       />
     );
   }, [control]);
@@ -261,17 +267,25 @@ export default memo<Props>(function ReportUpsertScreen(props) {
   const renderDailyActivityReport = useCallback((report: ActivityReportOutDTO, index: number) => {
     return (
       <View key={index}>
-        {renderActivityReportPrevStock(index)}
-        {renderActivityReportAddedStock(index)}
-        {renderActivityReportTotalStock(index)}
-        {renderActivityReportDoneTodayStock(index)}
-        {renderActivityReportNextStock(index)}
-        {renderActivityReportTotalDoneStock(index)}
-        {renderActivityReportProjectStock(index)}
-        {renderActivityReportRemainingStock(index)}
+        <MGRow>
+          {renderActivityReportTodayStock(index)}
+          {renderActivityReportAddedStock(index)}
+        </MGRow>
+        <MGRow>
+          {renderActivityReportTotalStock(index)}
+          {renderActivityReportNoImplToday(index)}
+        </MGRow>
+        <MGRow>
+          {renderActivityReportFinalStockToday(index)}
+          {renderActivityReportTotalImplToday(index)}
+        </MGRow>
+        <MGRow>
+          {renderActivityReportTotalProjectUnits(index)}
+          {renderActivityReportRemainingUnits(index)}
+        </MGRow>
       </View>
     );
-  }, [renderActivityReportAddedStock, renderActivityReportDoneTodayStock, renderActivityReportNextStock, renderActivityReportPrevStock, renderActivityReportProjectStock, renderActivityReportRemainingStock, renderActivityReportTotalDoneStock, renderActivityReportTotalStock]);
+  }, [renderActivityReportAddedStock, renderActivityReportNoImplToday, renderActivityReportFinalStockToday, renderActivityReportTodayStock, renderActivityReportTotalProjectUnits, renderActivityReportRemainingUnits, renderActivityReportTotalImplToday, renderActivityReportTotalStock]);
 
   const renderMonthlyActivityReport = useCallback((report: ActivityReportOutDTO, index: number) => {
     return (
@@ -300,11 +314,11 @@ export default memo<Props>(function ReportUpsertScreen(props) {
     return (
       <>
         <View style={[{ paddingLeft: 10, alignSelf: 'flex-start', paddingTop: 10 }]}>
-          <Text style={[{ fontSize: 18 }]}>{'Project'}</Text>
+          <Text style={[{ fontSize: 18 }]}>{'Proiect'}</Text>
         </View>
         {renderProjectInfo()}
         <View style={[{ paddingLeft: 10, alignSelf: 'flex-start', paddingTop: 10 }]}>
-          <Text style={[{ fontSize: 18 }]}>{'Activities'}</Text>
+          <Text style={[{ fontSize: 18 }]}>{'Activitati'}</Text>
         </View>
         {project.data?.data?.projectActivities.map((activity, index) => renderActivity(activity, index))}
       </>
@@ -317,6 +331,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
       scrollContainerStyle={[styles.scrollContainer]}
     >
       {render()}
+      <View style={[{ height: 20 }]} />
     </ScreenContainer>
   );
 });

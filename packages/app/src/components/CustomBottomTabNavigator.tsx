@@ -13,6 +13,7 @@ import {
 import { BottomTabNavigationEventMap, BottomTabNavigationOptions, BottomTabView } from '@react-navigation/bottom-tabs';
 import { StyleProp, View, ViewStyle, FlatList, ListRenderItemInfo } from 'react-native';
 import { useTheme, Text, TouchableRipple, Divider } from 'react-native-paper';
+import { AppTheme } from '../theme/type';
 
 // Props accepted by the view
 type TabNavigationConfig = {
@@ -71,7 +72,7 @@ function CustomBottomTabNavigator({
       screenOptions,
     });
 
-  const { colors } = useTheme();
+  const { colors, menuWidth } = useTheme<AppTheme>();
 
   const data = useMemo(() => state.routes.map(route => descriptors[route.key]), [descriptors, state.routes]);
 
@@ -119,7 +120,7 @@ function CustomBottomTabNavigator({
         <View
           style={[
             {
-              width: 200,
+              width: menuWidth,
               borderRightWidth: 1,
               borderRightColor: colors.elevation.level5,
               shadowColor: colors.elevation.level5,

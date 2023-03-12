@@ -11,5 +11,7 @@ export const darkTheme = {
     primary: '#007AFF',
     danger: '#ff0800',
   },
+  menuWidth: 200,
+  iphoneWidth: 390,
   breakpoint: 390 + 200,
 };

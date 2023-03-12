@@ -14,21 +14,21 @@ export class ActivityReportOutDTO extends EntityOutDTO implements Partial<Activi
   @Expose()
   id?: number;
   @Expose()
-  prevStock: number;
+  todayStock: number;
   @Expose()
   addedStock: number;
   @Expose()
   totalStock: number;
   @Expose()
-  doneTodayStock: number;
+  noImplToday: number;
   @Expose()
-  nextStock: number;
+  finalStockToday: number;
   @Expose()
-  totalDoneStock: number;
+  totalImplToday: number;
   @Expose()
-  projectStock: number;
+  totalProjectUnits: number;
   @Expose()
-  remainingStock: number;
+  remainingUnits: number;
   @Expose()
   dailyProjectActivityId: number;
   @Expose()

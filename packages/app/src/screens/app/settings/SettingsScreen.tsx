@@ -101,7 +101,7 @@ export default memo<NativeStackScreenProps<any, string>>(
             <Text
               style={[styles.itemText, { paddingLeft: 0, marginBottom: 18 }]}
             >
-              Hello {user?.data?.username}!
+              Buna {user?.data?.username}!
             </Text>
           </View>
           {settings.map((s, i) => renderItem({ item: s, index: i }))}

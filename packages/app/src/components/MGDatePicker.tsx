@@ -43,7 +43,7 @@ export default memo<MGDatePickerProps>(function MGDatePicker(props) {
   }, [setDatePickerVisibility]);
 
   return (
-    <View style={[props.containerStyle]}>
+    <View style={[{ flex: 1 }, props.containerStyle]}>
       <TouchableRipple onPress={showDatePicker}>
         <View pointerEvents="none">
           <MGTextInput

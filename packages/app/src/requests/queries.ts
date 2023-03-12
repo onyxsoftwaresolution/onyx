@@ -6,6 +6,7 @@ import { ActivityTemplateOutDTO } from "@workspace/api/src/modules/activity-temp
 import { EmployeeOutDTO } from "@workspace/api/src/modules/employee/dtos/employee.out.dto"
 import { ReportListItemOutDTO } from '@workspace/api/src/modules/report/dtos/report-out.dto';
 import { Report } from '../screens/app/reports/Report';
+import { JwtUserDTO } from '@workspace/api/src/modules/user/dtos/jwt.user.dto';
 
 type Options<T = unknown> = Partial<Pick<UseQueryOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -34,7 +35,7 @@ export class Queries {
     return response;
   };
 
-  static getSelf = ({ enabled = true, onError, onLoading, onSuccess }: Options = {}) => ({
+  static getSelf = ({ enabled = true, onError, onLoading, onSuccess }: Options<FetchResponse<JwtUserDTO>> = {}) => ({
     queryKey: ['self'],
     queryFn: async () => {
       onLoading?.();
@@ -43,7 +44,7 @@ export class Queries {
     onError,
     onSuccess,
     enabled,
-  } as UseQueryOptions);
+  } as UseQueryOptions<FetchResponse<JwtUserDTO>, FetchError>);
 
   static getEmployees = ({ enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
     queryKey: ['employees'],
