@@ -10,28 +10,18 @@ import { ReportService } from '../service/report.service';
 export class ReportController {
   constructor(public reportService: ReportService) { }
 
+  //#region daily
+
   @Get('daily-reports/:projectId')
   @Roles(Role.ADMIN, Role.USER)
   async listDailyReports(@Param('projectId') projectId: number) {
     return await this.reportService.listDailyReports(projectId);
   }
 
-  @Get('monthly-reports/:projectId')
-  @Roles(Role.ADMIN, Role.USER)
-  async listMonthlyReports(@Param('projectId') projectId: number) {
-    return await this.reportService.listMonthlyReports(projectId);
-  }
-
   @Get('daily-report/:projectReportId')
   @Roles(Role.ADMIN, Role.USER)
   async getDailyReports(@Param('projectReportId') projectReportId: number) {
     return await this.reportService.getDailyReport(projectReportId);
-  }
-
-  @Get('monthly-report/:projectReportId')
-  @Roles(Role.ADMIN, Role.USER)
-  async getMonthlyReports(@Param('projectReportId') projectReportId: number) {
-    return await this.reportService.getMonthlyReport(projectReportId);
   }
 
   @Post('daily-report/:projectId')
@@ -44,6 +34,22 @@ export class ReportController {
     return await this.reportService.createDailyReport(projectId);
   }
 
+  //#endregion daily
+
+  //#region monthly
+
+  @Get('monthly-reports/:projectId')
+  @Roles(Role.ADMIN, Role.USER)
+  async listMonthlyReports(@Param('projectId') projectId: number) {
+    return await this.reportService.listMonthlyReports(projectId);
+  }
+
+  @Get('monthly-report/:projectReportId')
+  @Roles(Role.ADMIN, Role.USER)
+  async getMonthlyReports(@Param('projectReportId') projectReportId: number) {
+    return await this.reportService.getMonthlyReport(projectReportId);
+  }
+
   @Post('monthly-report/:projectId')
   @Roles(Role.ADMIN, Role.USER)
   async createMonthlyReport(
@@ -53,4 +59,6 @@ export class ReportController {
   ) {
     return await this.reportService.createMonthlyReport(projectId);
   }
+
+  //#endregion monthly
 }

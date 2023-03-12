@@ -7,7 +7,7 @@ import { EmployeeOutDTO } from "@workspace/api/src/modules/employee/dtos/employe
 import { ReportListItemOutDTO } from '@workspace/api/src/modules/report/dtos/report-out.dto';
 import { Report } from '../screens/app/reports/Report';
 
-type Options = Partial<Pick<UseQueryOptions, 'onError' | 'onSuccess'>> & {
+type Options<T = unknown> = Partial<Pick<UseQueryOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
   enabled?: boolean;
 };
@@ -54,7 +54,7 @@ export class Queries {
     onError,
     onSuccess,
     enabled,
-  } as UseQueryOptions<FetchResponse<EmployeeOutDTO>, FetchError>);
+  } as UseQueryOptions<FetchResponse<EmployeeOutDTO[]>, FetchError>);
 
   static getActivityTemplates = ({ enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
     queryKey: ['activity-templates'],
@@ -67,16 +67,18 @@ export class Queries {
     enabled,
   } as UseQueryOptions<FetchResponse<ActivityTemplateOutDTO[]>, FetchError>);
 
-  static getProjects = ({ enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
-    queryKey: ['projects'],
-    queryFn: async () => {
-      onLoading?.();
-      return await Queries.queryFn(`http://192.168.0.102:4000/v1/projects`);
-    },
-    onError,
-    onSuccess,
-    enabled,
-  } as UseQueryOptions<FetchResponse<ProjectOutDTO[]>>);
+  static getProjects({ enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<ProjectOutDTO[]>> = {}) {
+    return ({
+      queryKey: ['projects'],
+      async queryFn() {
+        onLoading?.();
+        return await Queries.queryFn(`http://192.168.0.102:4000/v1/projects`);
+      },
+      onError,
+      onSuccess,
+      enabled,
+    } as UseQueryOptions<FetchResponse<ProjectOutDTO[]>>);
+  }
 
   static getProject = (id: number, { enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
     queryKey: [`project-${id}`],

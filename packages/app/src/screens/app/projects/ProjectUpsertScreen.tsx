@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
 import { UpsertProjectDTO } from '@workspace/api/src/modules/project/dtos/project.in.dto';
-import { isInt, isNotEmpty, isNumber, isString } from 'class-validator';
+import { isDate, isDateString, isInt, isNotEmpty, isNumber, isString } from 'class-validator';
 import { memo, useCallback, useMemo } from 'react';
 import { Controller, useForm, useFieldArray } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
@@ -11,11 +11,15 @@ import MGButton from '../../../components/MGButton';
 import MGDatePicker from '../../../components/MGDatePicker';
 import MGTextInput from '../../../components/MGTextInput';
 import ScreenContainer from '../../../components/ScreenContainer';
-import Select from '../../../components/Select';
+import MGSelect from '../../../components/MGSelect';
 import { Mutations } from '../../../requests/Mutations';
 import { Queries } from '../../../requests/Queries';
 import { EmployeeOutDTO } from "@workspace/api/src/modules/employee/dtos/employee.out.dto"
 import { useIsFocused } from '@react-navigation/native';
+import dayjs from 'dayjs';
+import { dayOrNull } from '../../../dayOrNull';
+import MGCard from '../../../components/MGCard';
+import { useSnackbar } from '../../../components/snackbar/useSnackbar';
 
 type Params = {
   id: number;
@@ -25,8 +29,16 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
   const params = props.route.params as unknown as Params;
 
   const enabled = useIsFocused();
-  const project = useQuery(Queries.getProject(params.id, { enabled: enabled && params.id != null, onSuccess: () => !isDirty && reset() }));
-  const upsert = useMutation(Mutations.upsertProject());
+  const project = useQuery(Queries.getProject(params.id, {
+    enabled: enabled && params.id != null,
+    onSuccess: () => !isDirty && reset(),
+  }));
+  const upsert = useMutation(Mutations.upsertProject({
+    onSuccess: () => props.navigation.pop(),
+    onError: () => snackbar.show(),
+  }));
+
+  const snackbar = useSnackbar();
 
   const values: UpsertProjectDTO = useMemo(() => {
     const data = project.data?.data;
@@ -161,6 +173,66 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
     );
   }, [control, errors.code, upsert?.error?.data.code, upsert?.isError]);
 
+  const renderStart = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Start field is required!' },
+          validate: (value) => (isDate(value) || isDateString(value)) && isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <>
+            {errors.start != null
+              ? <HelperText type="error">{errors.start.message}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGDatePicker
+              mode='single'
+              value={dayOrNull(dayjs(value))?.toDate()}
+              onDateChange={d => onChange(d.date)}
+              containerStyle={{ marginBottom: 7 }}
+              label={'Start'}
+            />
+          </>
+        )}
+        name="start"
+      />
+    );
+  }, [control, errors.start, upsert?.error?.data.code, upsert?.isError]);
+
+  const renderEnd = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'End field is required!' },
+          validate: (value) => (isDate(value) || isDateString(value)) && isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <>
+            {errors.end != null
+              ? <HelperText type="error">{errors.end.message}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGDatePicker
+              mode='single'
+              value={dayOrNull(dayjs(value))?.toDate()}
+              onDateChange={d => onChange(d.date)}
+              containerStyle={{ marginBottom: 7 }}
+              label={'End'}
+            />
+          </>
+        )}
+        name="end"
+      />
+    );
+  }, [control, errors.end, upsert?.error?.data.code, upsert?.isError]);
+
   const renderProjectActivityDescription = useCallback((index: number) => {
     return (
       <Controller
@@ -280,12 +352,12 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
 
   const renderProjectActivity = useCallback((index: number) => {
     return (
-      <View key={index}>
+      <MGCard key={index} title={`Activitate ${index + 1}`}>
         {renderProjectActivityDescription(index)}
         {renderProjectActivityMaterial(index)}
         {renderProjectActivityCost(index)}
         {renderProjectActivityQuantity(index)}
-      </View>
+      </MGCard>
     );
   }, [renderProjectActivityCost, renderProjectActivityDescription, renderProjectActivityMaterial, renderProjectActivityQuantity]);
 
@@ -305,7 +377,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
             {upsert?.isError
               ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
               : null}
-            <Select
+            <MGSelect
               type='input'
               getter={Queries.getEmployees as any}
               text={(data: EmployeeOutDTO) => data?.name ?? value?.name ?? ""}
@@ -337,7 +409,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
             {upsert?.isError
               ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
               : null}
-            <Select
+            <MGSelect
               type='input'
               getter={() => Queries.getEmployees({ enabled }) as any}
               text={(data: EmployeeOutDTO) => data?.name ?? value?.name ?? ""}
@@ -355,32 +427,43 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
 
   return (
     <ScreenContainer
-      loading={(project.isLoading && !project.isStale) || upsert.isLoading}
+      loading={(project.isLoading && params.id != null) || upsert.isLoading}
       scrollContainerStyle={[styles.scrollContainer]}
     >
       <View style={[styles.view]}>
-        {renderDescription()}
-        {renderArea()}
-        {renderCode()}
-        <MGDatePicker label={"Start date"} containerStyle={[{ marginBottom: 7 }]} mode="single" />
-        <MGDatePicker label={"End date"} containerStyle={[{ marginBottom: 7 }]} mode="single" />
+        <MGCard title={'Detalii proiect'}>
+          {renderDescription()}
+          {renderArea()}
+          {renderCode()}
+          {renderStart()}
+          {renderEnd()}
+        </MGCard>
         <View>
           {fields.map((field, index) => renderProjectActivity(index))}
+          <MGSelect
+            getter={() => Queries.getActivityTemplates({ enabled }) as any}
+            text={(data: ActivityTemplateOutDTO) => data?.description ?? ''}
+            data={undefined}
+            onSelect={(data: ActivityTemplateOutDTO) => {
+              append({ cost: data.cost, description: data.description, material: data.material, quantity: 0 })
+            }}
+            label="Adauga activitate"
+            containerStyle={[{ marginTop: 10, marginHorizontal: 10 }]}
+          />
         </View>
-        <Select
-          getter={() => Queries.getActivityTemplates({ enabled }) as any}
-          text={(data: ActivityTemplateOutDTO) => data?.description ?? ''}
-          data={undefined}
-          onSelect={(data: ActivityTemplateOutDTO) => {
-            append({ cost: data.cost, description: data.description, material: data.material, quantity: 0 })
-          }}
-          label="Add activity"
-          containerStyle={[{ marginBottom: 7 }]}
+        <MGCard title={`Angajati`}>
+          {renderLocalAdmin()}
+          {renderAreaAdmin()}
+        </MGCard>
+        <MGButton
+          icon="send"
+          label={'Salveaza'}
+          onPress={handleSubmit(submit)}
+          style={[{ marginTop: 10, marginHorizontal: 10 }]}
         />
-        {renderLocalAdmin()}
-        {renderAreaAdmin()}
-        <MGButton icon="send" label={'Submit'} onPress={handleSubmit(submit)} />
+        <View style={[{ height: 20 }]} />
       </View>
+      {snackbar.renderSnackbar('An error occurred!')}
     </ScreenContainer>
   );
 });

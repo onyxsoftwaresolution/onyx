@@ -17,7 +17,7 @@ export class ProjectProvider {
     const updateProjectActivities = projectActivities.filter(pa => pa.id != null);
 
     await this.prismaService.client.project.upsert({
-      where: { id },
+      where: { id: id ?? -1 },
       create: {
         area, code, description, end, start, areaAdminId: areaAdmin.id, localAdminId: localAdmin.id,
       },

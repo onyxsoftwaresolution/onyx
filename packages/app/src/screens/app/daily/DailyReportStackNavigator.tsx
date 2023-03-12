@@ -23,13 +23,13 @@ export default memo(function DailyReportStackNavigator() {
       <Stack.Screen
         name={Screens.APP_DAILY_REPORT__PROJECT_LIST_SCREEN}
         component={DailyReportProjectListScreen}
-        options={options('Select a project...')}
+        options={options('Alege un proiect...')}
       />
       <Stack.Screen
         name={Screens.APP_DAILY_REPORT__REPORT_LIST_SCREEN}
         component={DailyReportsScreen}
         options={(screenProps) => ({
-          ...options('Daily Reports'),
+          ...options('Rapoarte zilnice'),
           headerRight: (headerProps) => (
             <HeaderAddButton
               {...screenProps}
@@ -44,7 +44,16 @@ export default memo(function DailyReportStackNavigator() {
       <Stack.Screen
         name={Screens.APP_DAILY_REPORT__UPSERT_SCREEN}
         component={DailyReportUpsertScreen}
-        options={options('Add/Edit Daily Report')}
+        options={screenProps => {
+          return ({
+            ...options(''),
+            title:
+              // @ts-expect-error missing type
+              screenProps.route.params?.projectReportId != null
+                ? 'Modifica report zilnic'
+                : 'Adauga report zilnic',
+          })
+        }}
       />
     </Stack.Navigator>
   );

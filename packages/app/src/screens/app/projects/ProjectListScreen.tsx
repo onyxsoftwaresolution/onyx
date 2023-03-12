@@ -12,6 +12,7 @@ import {
   useDialog,
 } from '../../../components/dialog/useDialog';
 import ScreenContainer from '../../../components/ScreenContainer';
+import { useSnackbar } from '../../../components/snackbar/useSnackbar';
 import { Mutations } from '../../../requests/Mutations';
 import { Queries } from '../../../requests/Queries';
 import { AppTheme } from '../../../theme/type';
@@ -26,18 +27,23 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
   type ??= 'project';
 
   const enabled = useIsFocused();
-  const projects = useQuery(Queries.getProjects({ enabled }));
+  const projects = useQuery(
+    Queries.getProjects({
+      enabled,
+      onError() { snackbar.show('A aparut o eroare la afisarea proiectelor!') },
+    })
+  );
   const deleteProject = useMutation(
     Mutations.deleteProject({
-      onSuccess() {
-        projects.refetch();
-      },
+      onSuccess() { projects.refetch(); },
+      onError() { snackbar.show('A aparut o eroare la stergerea proiectului!') },
     }),
   );
 
   const { colors } = useTheme<AppTheme>();
 
   const dialog = useDialog<ProjectOutDTO>();
+  const snackbar = useSnackbar();
 
   const onPress = useCallback(
     (project: ProjectOutDTO) => {
@@ -204,10 +210,16 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
       loading={projects.isLoading || deleteProject.isLoading}
       scrollContainerStyle={[styles.scrollContainer]}
     >
+      {projects.data?.data.length === 0
+        ? <View style={[styles.list]}>
+          <Text style={{ textAlign: 'center' }} variant="bodyLarge">Nu ai nici un proiect adaugat!</Text>
+        </View>
+        : null}
       <View style={[styles.list]}>
         {projects.data?.data?.map(renderListItem)}
       </View>
       {dialog.renderDialog(dialogRenderOptions)}
+      {snackbar.renderSnackbar()}
     </ScreenContainer>
   );
 });

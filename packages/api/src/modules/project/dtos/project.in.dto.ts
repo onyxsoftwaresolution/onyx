@@ -1,5 +1,7 @@
+import { IsNonPrimitiveArray } from '@common/validator/IsNonPrimitiveArray';
 import { UpsertEmployeeDTO } from '@modules/employee/dtos/employee.in.dto';
-import { IsArray, IsDateString, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsDateString, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested, } from 'class-validator';
 
 export class UpsertProjectDTO {
   @IsInt()
@@ -27,14 +29,17 @@ export class UpsertProjectDTO {
   end: Date | string;
 
   @IsArray()
-  projectActivities: ProjectActivityInDTO[];
+  @ValidateNested({ each: true })
+  @IsNonPrimitiveArray()
+  @Type(() => UpsertProjectActivityDTO)
+  projectActivities: UpsertProjectActivityDTO[];
 
   areaAdmin: UpsertEmployeeDTO;
 
   localAdmin: UpsertEmployeeDTO;
 }
 
-export class ProjectActivityInDTO {
+export class UpsertProjectActivityDTO {
   @IsInt()
   @IsOptional()
   id?: number;

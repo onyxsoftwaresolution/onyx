@@ -10,11 +10,19 @@ import { Screens } from '../../Screens';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
 import { useIsFocused } from '@react-navigation/native';
+import { useSnackbar } from '../../../components/snackbar/useSnackbar';
 
 export default memo<NativeStackScreenProps<any, string>>(
   function ActivityTemplateListScreen(props) {
+    const snackbar = useSnackbar();
+
     const enabled = useIsFocused();
-    const activities = useQuery(Queries.getActivityTemplates({ enabled }));
+    const activities = useQuery(
+      Queries.getActivityTemplates({
+        enabled,
+        onError() { snackbar.show('A aparut o eroare la listarea activitatilor!') },
+      })
+    );
     const { colors } = useTheme();
 
     const onPress = useCallback(
@@ -62,8 +70,6 @@ export default memo<NativeStackScreenProps<any, string>>(
       [colors.error, colors.inverseSurface, onPress],
     );
 
-    // console.log(activities.isLoading, activities.isFetching, activities.isRefetching)
-
     return (
       <ScreenContainer
         loading={activities.isLoading}
@@ -72,6 +78,7 @@ export default memo<NativeStackScreenProps<any, string>>(
         <View style={[styles.list]}>
           {activities.data?.data?.map(renderActivity)}
         </View>
+        {snackbar.renderSnackbar()}
       </ScreenContainer>
     );
   },

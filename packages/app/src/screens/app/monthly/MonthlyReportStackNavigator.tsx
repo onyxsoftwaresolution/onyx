@@ -24,13 +24,13 @@ export default memo(function MonthlyReportStackNavigator() {
       <Stack.Screen
         name={Screens.APP_MONTHLY_REPORT__PROJECT_LIST_SCREEN}
         component={MonthlyReportProjectListScreen}
-        options={options('Select a project...')}
+        options={options('Alege un proiect...')}
       />
       <Stack.Screen
         name={Screens.APP_MONTHLY_REPORT__REPORT_LIST_SCREEN}
         component={MonthlyReportsScreen}
         options={(screenProps) => ({
-          ...options('Monthly Reports'),
+          ...options('Rapoarte saptamanale'),
           headerRight: (headerProps) => (
             <HeaderAddButton
               {...screenProps}
@@ -45,7 +45,16 @@ export default memo(function MonthlyReportStackNavigator() {
       <Stack.Screen
         name={Screens.APP_MONTHLY_REPORT__UPSERT_SCREEN}
         component={MonthlyReportUpsertScreen}
-        options={options('Add/Edit Project')}
+        options={screenProps => {
+          return ({
+            ...options(''),
+            title:
+              // @ts-expect-error missing type
+              screenProps.route.params?.projectReportId != null
+                ? 'Modifica report saptamanal'
+                : 'Adauga report saptamanal',
+          })
+        }}
       />
     </Stack.Navigator>
   );

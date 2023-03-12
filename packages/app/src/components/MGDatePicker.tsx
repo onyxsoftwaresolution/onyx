@@ -2,7 +2,7 @@ import { memo, useCallback, useState } from "react";
 import { StyleProp, TextStyle, View, ViewStyle } from "react-native";
 import { Portal, TextInputProps, TouchableRipple, Text } from "react-native-paper";
 import { enGB, registerTranslation, DatePickerModal, DatePickerModalSingleProps } from "react-native-paper-dates";
-import { MultiConfirm, ValidRangeType } from "react-native-paper-dates/lib/typescript/Date/Calendar";
+import { SingleChange, ValidRangeType } from "react-native-paper-dates/lib/typescript/Date/Calendar";
 import dayjs from "dayjs";
 import { dayOrNull } from "../dayOrNull";
 import MGTextInput from "./MGTextInput";
@@ -12,7 +12,7 @@ registerTranslation('en-GB', enGB);
 interface MGDatePickerProps extends Pick<DatePickerModalSingleProps, "uppercase" | "startYear" | "endYear"> {
   value?: Date | null;
   defaultValue?: Date;
-  onDateChange?: MultiConfirm;
+  onDateChange?: SingleChange;
   mode: 'range' | 'single' | 'multiple';
   inputMode?: TextInputProps["mode"];
   label?: string;
@@ -30,7 +30,7 @@ export default memo<MGDatePickerProps>(function MGDatePicker(props) {
     setDatePickerVisibility(true);
   }, []);
 
-  const onConfirm: MultiConfirm = useCallback(
+  const onConfirm: SingleChange = useCallback(
     (params) => {
       setDatePickerVisibility(false);
       props.onDateChange?.(params);
@@ -47,7 +47,7 @@ export default memo<MGDatePickerProps>(function MGDatePicker(props) {
       <TouchableRipple onPress={showDatePicker}>
         <View pointerEvents="none">
           <MGTextInput
-            value={dayOrNull(dayjs(props.value))?.format('DD/MM/YYYY') ?? ""}
+            value={dayOrNull(dayjs(props.value ?? ''))?.format('DD/MM/YYYY') ?? ""}
             label={props.label}
           />
         </View>
@@ -56,8 +56,8 @@ export default memo<MGDatePickerProps>(function MGDatePicker(props) {
         <DatePickerModal
           locale={'en-GB'}
           visible={isDatePickerVisible}
-          date={props.value ?? props.defaultValue}
-          mode={props.mode as "multiple"}
+          date={props.value ?? props.defaultValue ?? dayjs().toDate()}
+          mode={props.mode as "single"}
           onConfirm={onConfirm}
           label={props.label}
           onDismiss={onDismiss}

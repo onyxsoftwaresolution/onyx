@@ -39,7 +39,7 @@ export default memo(function AppTabNavigator() {
         name={Screens.APP_DAILY_REPORT_NAVIGATOR}
         component={DailyReportStackNavigator}
         options={{
-          title: 'Daily',
+          title: 'Zilnice',
           tabBarIcon: (props) => (
             <>
               <Icon
@@ -55,7 +55,7 @@ export default memo(function AppTabNavigator() {
         name={Screens.APP_MONTHLY_REPORT_NAVIGATOR}
         component={MonthlyReportStackNavigator}
         options={{
-          title: 'Monthly',
+          title: 'Saptamanale',
           tabBarIcon: (props) => (
             <>
               <Icon
@@ -71,7 +71,7 @@ export default memo(function AppTabNavigator() {
         name={Screens.APP_PROJECT_NAVIGATOR}
         component={ProjectStackNavigator}
         options={{
-          title: 'Projects',
+          title: 'Proiecte',
           tabBarIcon: (props) => (
             <>
               <Icon
@@ -87,7 +87,7 @@ export default memo(function AppTabNavigator() {
         name={Screens.APP_SETTINGS_NAVIGATOR}
         component={SettingsStackNavigator}
         options={{
-          title: 'Settings',
+          title: 'Setari',
           tabBarIcon: (props) => (
             <>
               <Icon

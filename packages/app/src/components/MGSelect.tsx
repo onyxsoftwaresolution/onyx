@@ -19,7 +19,7 @@ type SelectProps<T extends { id: number }> = PropsWithChildren & {
   containerStyle?: StyleProp<ViewStyle>;
 }
 
-export default memo(function Select<T extends { id: number }>(props: SelectProps<T>) {
+export default memo(function MGSelect<T extends { id: number }>(props: SelectProps<T>) {
   const type = props.type ?? "button";
 
   const dialog = useDialog<void>();

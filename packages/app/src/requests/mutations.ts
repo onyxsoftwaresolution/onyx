@@ -6,12 +6,39 @@ import { LoginDTO } from '@workspace/api/src/modules/auth/dtos/login.dto';
 import { Store } from '../storage/Store';
 import { FetchError, FetchResponse, request } from './request';
 import { Report } from '../screens/app/reports/Report';
+import { EmployeeOutDTO } from '@workspace/api/src/modules/employee/dtos/employee.out.dto';
+import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
 
-type Options = Partial<Pick<UseMutationOptions, 'onError' | 'onSuccess'>> & {
+type Options<T = unknown> = Partial<Pick<UseMutationOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
 };
 
 export class Mutations {
+  static mutationFn = async <T>(
+    input: RequestInfo,
+    init?: RequestInit,
+    onSuccess?: (result: FetchResponse<T>) => void,
+  ) => {
+    const token = await Store.get('access_token');
+    const auth =
+      token != null
+        ? {
+          Authorization: `Bearer ${token}`,
+        }
+        : {};
+    const response = await request<T>(input, {
+      ...init,
+      body: JSON.stringify(init?.body),
+      headers: {
+        ...auth,
+        'content-type': 'application/json',
+        ...init?.headers,
+      } as any,
+    });
+    onSuccess?.(response);
+    return response;
+  };
+
   static postLogin() {
     return {
       mutationKey: ['login'],
@@ -27,25 +54,30 @@ export class Mutations {
     } as UseMutationOptions<FetchResponse<LoginTokenDTO>, unknown, LoginDTO>;
   }
 
-  static upsertEmployee() {
+  static upsertEmployee({ onError, onLoading, onSuccess }: Options<FetchResponse<EmployeeOutDTO>> = {}) {
     return {
       mutationKey: ['employee'],
-      mutationFn: async (body: any) => {
+      mutationFn: async (body) => {
+        onLoading?.();
         return await Mutations.mutationFn(
           `http://192.168.0.102:4000/v1/employee`,
           {
+            // @ts-expect-error a simple typescript mistake
             body,
             method: 'PUT',
           },
         );
       },
-    } as UseMutationOptions;
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<EmployeeOutDTO>, FetchError, Partial<EmployeeOutDTO>>;
   }
 
-  static upsertActivityTemplate() {
+  static upsertActivityTemplate({ onError, onLoading, onSuccess }: Options<FetchResponse<ActivityTemplateOutDTO>> = {}) {
     return {
       mutationKey: ['activity-template'],
       mutationFn: async (body: any) => {
+        onLoading?.();
         return await Mutations.mutationFn(
           `http://192.168.0.102:4000/v1/activity-template`,
           {
@@ -54,7 +86,9 @@ export class Mutations {
           },
         );
       },
-    } as UseMutationOptions;
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<ActivityTemplateOutDTO>, FetchError, Partial<ActivityTemplateOutDTO>>;
   }
 
   static deleteProject({ onError, onLoading, onSuccess }: Options = {}) {
@@ -119,29 +153,4 @@ export class Mutations {
       unknown
     >;
   }
-
-  static mutationFn = async <T>(
-    input: RequestInfo,
-    init?: RequestInit,
-    onSuccess?: (result: FetchResponse<T>) => void,
-  ) => {
-    const token = await Store.get('access_token');
-    const auth =
-      token != null
-        ? {
-          Authorization: `Bearer ${token}`,
-        }
-        : {};
-    const response = await request<T>(input, {
-      ...init,
-      body: JSON.stringify(init?.body),
-      headers: {
-        ...auth,
-        'content-type': 'application/json',
-        ...init?.headers,
-      } as any,
-    });
-    onSuccess?.(response);
-    return response;
-  };
 }

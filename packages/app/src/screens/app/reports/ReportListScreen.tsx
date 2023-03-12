@@ -121,6 +121,11 @@ export default memo<Props>(function ReportListScreen(props) {
       loading={reports.isLoading}
       scrollContainerStyle={[styles.scrollContainer]}
     >
+      {reports.data?.data.length === 0
+        ? <View style={[styles.list]}>
+          <Text style={{ textAlign: 'center' }} variant="bodyLarge">Nu ai nici un raport adaugat!</Text>
+        </View>
+        : null}
       <View style={[styles.list]}>
         {reports.data?.data?.map(renderListItem)}
       </View>

@@ -118,8 +118,8 @@ enum Links {
 }
 
 const settings = [
-  { label: 'Employees', value: Links.EMPLOYEES },
-  { label: 'Activities', value: Links.ACTIVITIES },
+  { label: 'Angajati', value: Links.EMPLOYEES },
+  { label: 'Activitati', value: Links.ACTIVITIES },
   { label: 'Logout', value: Links.LOGOUT },
 ];
 

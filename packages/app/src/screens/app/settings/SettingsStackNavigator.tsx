@@ -37,13 +37,13 @@ export default memo(function SettingsStackNavigator() {
       <Stack.Screen
         name={Screens.APP_SETTINGS_SCREEN}
         component={SettingsScreen}
-        options={options('Settings')}
+        options={options('Setari')}
       />
       <Stack.Screen
         name={Screens.APP_EMPLOYEE_LIST}
         component={EmployeeListScreen}
         options={(screenProps) => ({
-          ...options('Employees'),
+          ...options('Angajati'),
           headerRight: (headerProps) => (
             <HeaderAddButton
               {...screenProps}
@@ -57,18 +57,19 @@ export default memo(function SettingsStackNavigator() {
         name={Screens.APP_EMPLOYEE_UPSERT}
         component={EmployeeAddScreen}
         options={(screenProps) => ({
-          ...options('Add Employee'),
+          ...options(''),
           title:
+            // @ts-expect-error missing type
             screenProps.route.params?.name != null
-              ? 'Edit Employee'
-              : 'Add Employee',
+              ? 'Modifica angajat'
+              : 'Adauga angajat',
         })}
       />
       <Stack.Screen
         name={Screens.APP_ACTIVITY_TEMPLATE_LIST}
         component={ActivityTemplateListScreen}
         options={(screenProps) => ({
-          ...options('Activity Templates'),
+          ...options('Sablon activitati'),
           headerRight: (headerProps) => (
             <HeaderAddButton
               {...screenProps}
@@ -82,11 +83,12 @@ export default memo(function SettingsStackNavigator() {
         name={Screens.APP_ACTIVITY_TEMPLATE_UPSERT}
         component={ActivityTemplateUpsertScreen}
         options={(screenProps) => ({
-          ...options('Add Activity Template'),
+          ...options(''),
           title:
+            // @ts-expect-error missing type
             screenProps.route.params?.description != null
-              ? 'Edit Activity Template'
-              : 'Add Activity Template',
+              ? 'Modifica sablon activitate'
+              : 'Adauga sablon activitate',
         })}
       />
     </Stack.Navigator>

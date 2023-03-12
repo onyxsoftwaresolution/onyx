@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation } from '@tanstack/react-query';
+import { EmployeeOutDTO } from '@workspace/api/src/modules/employee/dtos/employee.out.dto';
 import { isNotEmpty, isString } from 'class-validator';
 import { memo, useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -8,22 +9,31 @@ import { HelperText } from 'react-native-paper';
 import MGButton from '../../../components/MGButton';
 import MGTextInput from '../../../components/MGTextInput';
 import ScreenContainer from '../../../components/ScreenContainer';
+import { useSnackbar } from '../../../components/snackbar/useSnackbar';
 import { Mutations } from '../../../requests/Mutations';
 import { Screens } from '../../Screens';
 
+type Params = { name: string; position: string; id: number };
+
 export default memo<NativeStackScreenProps<any, string>>(
   function EmployeeUpsertScreen(props) {
-    const params: { name: string; position: string; id: number } =
-      props.route.params ?? {};
+    const params = (props.route.params ?? {}) as Params;
 
-    const upsert = useMutation(Mutations.upsertEmployee());
+    const snackbar = useSnackbar();
+
+    const upsert = useMutation(
+      Mutations.upsertEmployee({
+        onSuccess: () => props.navigation.pop(),
+        onError() { snackbar.show('A aparut o eroare la salvarea angajatului!') }
+      })
+    );
 
     const {
       control,
       handleSubmit,
       formState: { errors, isValid },
       getValues,
-    } = useForm<unknown>({
+    } = useForm<Partial<EmployeeOutDTO>>({
       mode: 'onChange',
       values: {
         id: params.id ?? '',
@@ -43,7 +53,7 @@ export default memo<NativeStackScreenProps<any, string>>(
     }, [upsert.isSuccess, props.navigation]);
 
     const submit = useCallback(
-      ({ id, name, position }: unknown) => {
+      ({ id, name, position }: Partial<EmployeeOutDTO>) => {
         if (params.id != null) {
           upsert.mutate({ id, name, position });
         } else {
@@ -81,7 +91,7 @@ export default memo<NativeStackScreenProps<any, string>>(
                   value={value}
                   onChangeText={onChange}
                   style={{ marginBottom: 7 }}
-                  placeholder={'Name'}
+                  label={'Nume'}
                 />
               </>
             )}
@@ -114,7 +124,7 @@ export default memo<NativeStackScreenProps<any, string>>(
                   value={value}
                   onChangeText={onChange}
                   style={{ marginBottom: 7 }}
-                  placeholder={'Position'}
+                  label={'Rol'}
                 />
               </>
             )}

@@ -9,22 +9,31 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Screens } from '../../Screens';
 import { useIsFocused } from '@react-navigation/native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { EmployeeOutDTO } from '@workspace/api/src/modules/employee/dtos/employee.out.dto';
+import { useSnackbar } from '../../../components/snackbar/useSnackbar';
 
 export default memo<NativeStackScreenProps<any, string>>(
   function EmployeeListScreen(props) {
+    const snackbar = useSnackbar()
+
     const enabled = useIsFocused();
-    const employees = useQuery(Queries.getEmployees({ enabled }));
+    const employees = useQuery(
+      Queries.getEmployees({
+        enabled,
+        onError() { snackbar.show('A aparut o eroare la listarea angajatilor!') }
+      })
+    );
     const { colors } = useTheme();
 
     const onPress = useCallback(
-      (employee) => {
+      (employee: EmployeeOutDTO) => {
         props.navigation.navigate(Screens.APP_EMPLOYEE_UPSERT, employee);
       },
       [props.navigation],
     );
 
     const renderEmployee = useCallback(
-      (employee, i) => (
+      (employee: EmployeeOutDTO, index: number) => (
         <TouchableRipple
           style={[styles.touchStyle]}
           key={employee.id}
@@ -60,6 +69,7 @@ export default memo<NativeStackScreenProps<any, string>>(
         <View style={[styles.list]}>
           {employees.data?.data?.map(renderEmployee)}
         </View>
+        {snackbar.renderSnackbar()}
       </ScreenContainer>
     );
   },

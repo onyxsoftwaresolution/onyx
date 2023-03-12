@@ -7,7 +7,8 @@ import { isNotEmpty } from "class-validator";
 import { memo, PropsWithChildren, useCallback, useEffect, useMemo } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
-import { Card, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
+import MGCard from "../../../components/MGCard";
 import MGTextInput from "../../../components/MGTextInput";
 import ScreenContainer from "../../../components/ScreenContainer";
 import { Mutations } from "../../../requests/Mutations";
@@ -65,15 +66,10 @@ export default memo<Props>(function ReportUpsertScreen(props) {
 
   const renderProjectInfo = useCallback(() => {
     return (
-      <View style={[{ width: '100%', marginTop: 10 }]}>
-        <Card style={[{ marginHorizontal: 10, flex: 1 }]}>
-          <Card.Title title={project.data?.data.description} />
-          <Card.Content>
-            <View><Text>{project.data?.data.area}</Text></View>
-            <View><Text>{project.data?.data.code}</Text></View>
-          </Card.Content>
-        </Card>
-      </View>
+      <MGCard title={project.data?.data.description}>
+        <View><Text>{project.data?.data.area}</Text></View>
+        <View><Text>{project.data?.data.code}</Text></View>
+      </MGCard>
     );
   }, [project.data?.data.area, project.data?.data.code, project.data?.data.description])
 
@@ -288,17 +284,14 @@ export default memo<Props>(function ReportUpsertScreen(props) {
   const renderActivity = useCallback((activity: ProjectActivityOutDTO, index: number) => {
     return (
       <View key={index} style={[{ width: '100%', marginTop: 10 }]}>
-        <Card style={[{ marginHorizontal: 10, flex: 1 }]}>
-          <Card.Title title={activity.description} />
-          <Card.Content>
-            {props.type === Report.DAILY &&
-              fields[index] != null &&
-              renderDailyActivityReport(fields[index], index)}
-            {props.type === Report.MONTHLY &&
-              fields[index] != null &&
-              renderMonthlyActivityReport(fields[index], index)}
-          </Card.Content>
-        </Card>
+        <MGCard title={activity.description}>
+          {props.type === Report.DAILY &&
+            fields[index] != null &&
+            renderDailyActivityReport(fields[index], index)}
+          {props.type === Report.MONTHLY &&
+            fields[index] != null &&
+            renderMonthlyActivityReport(fields[index], index)}
+        </MGCard>
       </View>
     );
   }, [fields, props.type, renderDailyActivityReport, renderMonthlyActivityReport])

@@ -24,7 +24,7 @@ export default memo(function ProjectStackNavigator() {
         name={Screens.APP_PROJECT_LIST}
         component={component}
         options={(screenProps) => ({
-          ...options('Projects'),
+          ...options('Proiecte'),
           headerRight: (headerProps) => (
             <HeaderAddButton
               {...screenProps}
@@ -38,7 +38,7 @@ export default memo(function ProjectStackNavigator() {
       <Stack.Screen
         name={Screens.APP_PROJECT_UPSERT}
         component={ProjectUpsertScreen}
-        options={options('Add/Edit Project')}
+        options={options('Adauga/Modifica proiect')}
       />
     </Stack.Navigator>
   );

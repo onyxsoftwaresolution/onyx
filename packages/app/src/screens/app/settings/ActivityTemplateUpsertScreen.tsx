@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation } from '@tanstack/react-query';
+import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
 import { isNotEmpty, isString } from 'class-validator';
 import { memo, useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -8,26 +9,36 @@ import { HelperText } from 'react-native-paper';
 import MGButton from '../../../components/MGButton';
 import MGTextInput from '../../../components/MGTextInput';
 import ScreenContainer from '../../../components/ScreenContainer';
+import { useSnackbar } from '../../../components/snackbar/useSnackbar';
 import { Mutations } from '../../../requests/Mutations';
 import { Screens } from '../../Screens';
 
+type Params = {
+  description: string;
+  material: string;
+  cost: number;
+  id: number;
+}
+
 export default memo<NativeStackScreenProps<any, string>>(
   function ActivityTemplateUpsertScreen(props) {
-    const params: {
-      description: string;
-      material: string;
-      cost: number;
-      id: number;
-    } = props.route.params ?? {};
+    const params = (props.route.params ?? {}) as Params;
 
-    const upsert = useMutation(Mutations.upsertActivityTemplate());
+    const snackbar = useSnackbar();
+
+    const upsert = useMutation(
+      Mutations.upsertActivityTemplate({
+        onSuccess: () => props.navigation.pop(),
+        onError() { snackbar.show('A aparut o eroare la salvarea activitatii!') },
+      })
+    );
 
     const {
       control,
       handleSubmit,
       formState: { errors, isValid },
       getValues,
-    } = useForm<unknown>({
+    } = useForm<Partial<ActivityTemplateOutDTO>>({
       mode: 'onChange',
       values: {
         id: params.id ?? '',
@@ -48,7 +59,7 @@ export default memo<NativeStackScreenProps<any, string>>(
     }, [upsert.isSuccess, props.navigation]);
 
     const submit = useCallback(
-      ({ id, description, material, cost }: unknown) => {
+      ({ id, description, material, cost }: Partial<ActivityTemplateOutDTO>) => {
         if (params.id != null) {
           upsert.mutate({ id, description, material, cost });
         } else {
@@ -88,7 +99,7 @@ export default memo<NativeStackScreenProps<any, string>>(
                   value={value}
                   onChangeText={onChange}
                   style={{ marginBottom: 7 }}
-                  placeholder={'Description'}
+                  label={'Descriere'}
                 />
               </>
             )}
@@ -121,7 +132,7 @@ export default memo<NativeStackScreenProps<any, string>>(
                   value={value}
                   onChangeText={onChange}
                   style={{ marginBottom: 7 }}
-                  placeholder={'Material'}
+                  label={'Material'}
                 />
               </>
             )}
@@ -149,10 +160,10 @@ export default memo<NativeStackScreenProps<any, string>>(
                   </HelperText>
                 ) : null}
                 <MGTextInput
-                  value={value}
+                  value={value?.toString()}
                   onChangeText={onChange}
                   style={{ marginBottom: 7 }}
-                  placeholder={'Cost'}
+                  label={'Cost'}
                 />
               </>
             )}
@@ -164,6 +175,7 @@ export default memo<NativeStackScreenProps<any, string>>(
             onPress={handleSubmit(submit)}
           />
         </View>
+        {snackbar.renderSnackbar()}
       </ScreenContainer>
     );
   },
