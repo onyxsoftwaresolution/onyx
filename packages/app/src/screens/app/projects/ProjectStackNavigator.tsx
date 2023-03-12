@@ -30,6 +30,7 @@ export default memo(function ProjectStackNavigator() {
               {...screenProps}
               {...headerProps}
               screenName={Screens.APP_PROJECT_UPSERT}
+              params={{}}
             />
           ),
         })}

@@ -25,7 +25,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
   const params = props.route.params as unknown as Params;
 
   const enabled = useIsFocused();
-  const project = useQuery(Queries.getProject(params?.id, { enabled, onSuccess: () => !isDirty && reset() }));
+  const project = useQuery(Queries.getProject(params.id, { enabled: enabled && params.id != null, onSuccess: () => !isDirty && reset() }));
   const upsert = useMutation(Mutations.upsertProject());
 
   const values: UpsertProjectDTO = useMemo(() => {
@@ -309,6 +309,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               type='input'
               getter={Queries.getEmployees as any}
               text={(data: EmployeeOutDTO) => data?.name ?? value?.name ?? ""}
+              data={value}
               onSelect={({ id, name }: EmployeeOutDTO) => { onChange({ id, name }) }}
               label="Local admin"
               containerStyle={[{ marginBottom: 7 }]}
@@ -338,8 +339,9 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               : null}
             <Select
               type='input'
-              getter={Queries.getEmployees as any}
+              getter={() => Queries.getEmployees({ enabled }) as any}
               text={(data: EmployeeOutDTO) => data?.name ?? value?.name ?? ""}
+              data={value}
               onSelect={({ id, name }: EmployeeOutDTO) => { onChange({ id, name }) }}
               label="Area admin"
               containerStyle={[{ marginBottom: 7 }]}
@@ -349,11 +351,11 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
         name={`areaAdmin`}
       />
     );
-  }, [control, errors.areaAdmin, upsert?.error?.data.code, upsert?.isError]);
+  }, [control, enabled, errors.areaAdmin, upsert?.error?.data.code, upsert?.isError]);
 
   return (
     <ScreenContainer
-      loading={project.isLoading || upsert.isLoading}
+      loading={(project.isLoading && !project.isStale) || upsert.isLoading}
       scrollContainerStyle={[styles.scrollContainer]}
     >
       <View style={[styles.view]}>
@@ -366,8 +368,9 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           {fields.map((field, index) => renderProjectActivity(index))}
         </View>
         <Select
-          getter={Queries.getActivityTemplates as any}
-          text={(data: ActivityTemplateOutDTO) => data.description}
+          getter={() => Queries.getActivityTemplates({ enabled }) as any}
+          text={(data: ActivityTemplateOutDTO) => data?.description ?? ''}
+          data={undefined}
           onSelect={(data: ActivityTemplateOutDTO) => {
             append({ cost: data.cost, description: data.description, material: data.material, quantity: 0 })
           }}

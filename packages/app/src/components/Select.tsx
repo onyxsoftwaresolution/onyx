@@ -10,6 +10,7 @@ import { FetchError, FetchResponse } from "../requests/request";
 import MGTextInput from "./MGTextInput";
 
 type SelectProps<T extends { id: number }> = PropsWithChildren & {
+  data: T | undefined;
   onSelect(data: T | undefined): void;
   getter(): UseQueryOptions<FetchResponse<T[]>, FetchError>;
   text(data: T | undefined): string;
@@ -27,42 +28,51 @@ export default memo(function Select<T extends { id: number }>(props: SelectProps
 
   const datas = useQuery(props.getter());
 
-  const dialogRenderOptions: RenderOptionsFunction<void> =
-    useCallback(
-      () => ({
-        title: `Select Activity`,
-        scrollMessage: (
-          <ScrollView style={[{ width: "100%" }]}>
-            {datas?.data?.data?.map((a, i) => (
-              <Fragment key={a.id}>
-                {i > 0 && <Divider />}
-                <TouchableRipple style={[{ width: "100%", padding: 10 }]} onPress={() => setData(a)}>
-                  <View style={[{ flexDirection: "row", width: "100%" }]}>
-                    <RadioButton status={a.id === data?.id ? "checked" : "unchecked"} value="first" />
-                    <View style={[{ justifyContent: "center", flex: 1 }]}><Text>{props.text(a)}</Text></View>
-                  </View>
-                </TouchableRipple>
-                {i < datas?.data?.data?.length - 1 && <Divider />}
-              </Fragment>
-            ))}
-          </ScrollView>
-        ),
-        buttons: [
-          {
-            label: 'Select',
-            textColor: colors.danger,
-            onPress: () => { props.onSelect(data); type === "button" && setData(undefined); },
-          },
-          () => <View style={{ flex: 1 }} />,
-          {
-            label: 'Cancel',
-            onPress: () => { type === "button" && setData(undefined); },
-          },
-        ],
-        onDismiss: () => { type === "button" && setData(undefined); },
-      }),
-      [datas?.data?.data, colors.danger, data, props, type],
-    );
+  const onSelect = useCallback((a: T) => {
+    setData(a);
+  }, []);
+
+  const onSubmit = useCallback(() => {
+    props.onSelect(data); type === "button" && setData(undefined);
+  }, [data, props, type]);
+
+  const onDismiss = useCallback(() => {
+    setData(undefined);
+  }, []);
+
+  const dialogRenderOptions: RenderOptionsFunction<void> = useCallback(() => ({
+    title: `Select Activity`,
+    scrollMessage: (
+      <ScrollView style={[{ width: "100%" }]}>
+        {datas?.data?.data?.map((a, i) => (
+          <Fragment key={a.id}>
+            {i > 0 && <Divider />}
+            <TouchableRipple style={[{ width: "100%", padding: 10 }]} onPress={() => onSelect(a)}>
+              <View style={[{ flexDirection: "row", width: "100%" }]}>
+                <RadioButton status={a.id === data?.id ? "checked" : "unchecked"} value="first" />
+                <View style={[{ justifyContent: "center", flex: 1 }]}><Text>{props.text(a)}</Text></View>
+              </View>
+            </TouchableRipple>
+            {i < datas?.data?.data?.length - 1 && <Divider />}
+          </Fragment>
+        ))}
+      </ScrollView>
+    ),
+    buttons: [
+      {
+        label: 'Select',
+        textColor: colors.danger,
+        onPress: onSubmit,
+        disabled: data == null,
+      },
+      () => <View style={{ flex: 1 }} />,
+      {
+        label: 'Cancel',
+        onPress: onDismiss,
+      },
+    ],
+    onDismiss,
+  }), [datas?.data?.data, colors.danger, onSubmit, data, onDismiss, props, onSelect]);
 
   return (
     <>
@@ -78,8 +88,8 @@ export default memo(function Select<T extends { id: number }>(props: SelectProps
           ? <TouchableRipple onPress={() => dialog.show(undefined)}>
             <View pointerEvents="none">
               <MGTextInput
-                value={props.text(data)}
-                onChangeText={() => { }}
+                value={props.text(props.data)}
+                onChangeText={() => {/**/ }}
                 label={props.label}
               />
             </View>
