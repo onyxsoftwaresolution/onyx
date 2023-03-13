@@ -107,6 +107,7 @@ export class ReportProvider {
       return await this.prismaService.client.projectReport.findFirst({
         where: { id: projectReportId, deleted: false },
         include: {
+          project: true,
           dailyActivityReports: {
             include: {
               dailyProjectActivity: true
@@ -121,20 +122,33 @@ export class ReportProvider {
         projectActivities: true,
       }
     });
-    const { projectActivities, ...rest } = project;
+    const { projectActivities, ...restProject } = project;
+    const previousReport = await this.prismaService.client.projectReport.findFirst({
+      where: { projectId },
+      orderBy: {
+        date: 'desc',
+      },
+      include: {
+        dailyActivityReports: true
+      }
+    });
+    const map = new Map<number, typeof previousReport['dailyActivityReports'][0]>();
+    previousReport?.dailyActivityReports?.forEach(dar => {
+      map.set(dar.dailyProjectActivityId, dar);
+    });
     return ({
       id: -1,
       date: dayjs().toDate(),
       projectId: projectId,
-      project: rest,
+      project: restProject,
       dailyActivityReports: project.projectActivities.map(pa => ({
         dailyProjectActivityId: pa.id,
         dailyProjectActivity: pa,
-        todayStock: 0,
+        todayStock: map.get(pa.id)?.finalStockToday ?? 0,
         addedStock: 0,
         totalStock: 0,
         noImplToday: 0,
-        finalStockToday: 0,
+        finalStockToday: map.get(pa.id)?.finalStockToday ?? 0,
         totalImplToday: 0,
         totalProjectUnits: pa.quantity,
         remainingUnits: 0,
