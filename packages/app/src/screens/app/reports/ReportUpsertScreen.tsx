@@ -67,9 +67,14 @@ export default memo<Props>(function ReportUpsertScreen(props) {
     values,
   });
 
-  const { fields } = useFieldArray({
+  const { fields: daily } = useFieldArray({
     control,
     name: "dailyActivityReports",
+  });
+
+  const { fields: monthly } = useFieldArray({
+    control,
+    name: "monthlyActivityReports",
   });
 
   const submit = useCallback(
@@ -150,6 +155,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         render={({ field: { onChange, value } }) => (
           <>
             <MGTextInput
+              disabled
               value={value.toString()}
               onChangeText={onChange}
               style={{ marginBottom: 7 }}
@@ -304,28 +310,129 @@ export default memo<Props>(function ReportUpsertScreen(props) {
     );
   }, [renderActivityReportAddedStock, renderActivityReportNoImplToday, renderActivityReportFinalStockToday, renderActivityReportTodayStock, renderActivityReportTotalProjectUnits, renderActivityReportRemainingUnits, renderActivityReportTotalImplToday, renderActivityReportTotalStock]);
 
+  const renderActivityReportMonthlyNoImplUnits = useCallback((index: number) => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Field is required!' },
+          validate: (value) => isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <>
+            <MGTextInput
+              value={value.toString()}
+              onChangeText={onChange}
+              style={{ marginBottom: 7 }}
+              label={'Unitati implementate'}
+            />
+          </>
+        )}
+        name={`monthlyActivityReports.${index}.monthlyNoImplUnits`}
+      />
+    );
+  }, [control]);
+
+  const renderActivityReportMonthlyTotalProjectUnits = useCallback((index: number) => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Field is required!' },
+          validate: (value) => isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <>
+            <MGTextInput
+              disabled
+              value={value.toString()}
+              onChangeText={onChange}
+              style={{ marginBottom: 7 }}
+              label={'Total la nivel de proiect'}
+            />
+          </>
+        )}
+        name={`monthlyActivityReports.${index}.monthlyProjectActivity.quantity`}
+      />
+    );
+  }, [control]);
+
+  const renderActivityReportActivityCost = useCallback((index: number) => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Field is required!' },
+          validate: (value) => isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <>
+            <MGTextInput
+              disabled
+              value={value.toString()}
+              onChangeText={onChange}
+              style={{ marginBottom: 7 }}
+              label={'Cost per activitate'}
+            />
+          </>
+        )}
+        name={`monthlyActivityReports.${index}.monthlyProjectActivity.cost`}
+      />
+    );
+  }, [control]);
+
+  const renderActivityReportMonthlyActivityCost = useCallback((index: number) => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Field is required!' },
+          validate: (value) => isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <>
+            <MGTextInput
+              value={value.toString()}
+              onChangeText={onChange}
+              style={{ marginBottom: 7 }}
+              label={'Cost total'}
+            />
+          </>
+        )}
+        name={`monthlyActivityReports.${index}.monthlyActivityCost`}
+      />
+    );
+  }, [control]);
+
   const renderMonthlyActivityReport = useCallback((report: ActivityReportOutDTO, index: number) => {
     return (
       <View key={index}>
-
+        <MGRow>
+          {renderActivityReportMonthlyNoImplUnits(index)}
+          {renderActivityReportMonthlyTotalProjectUnits(index)}
+        </MGRow>
+        <MGRow>
+          {renderActivityReportActivityCost(index)}
+          {renderActivityReportMonthlyActivityCost(index)}
+        </MGRow>
       </View>
     );
-  }, []);
+  }, [renderActivityReportActivityCost, renderActivityReportMonthlyActivityCost, renderActivityReportMonthlyNoImplUnits, renderActivityReportMonthlyTotalProjectUnits]);
 
   const renderActivity = useCallback((report: ActivityReportOutDTO, index: number) => {
     return (
       <View key={index} style={[{ width: '100%', marginTop: 10 }]}>
-        <MGCard title={report.dailyProjectActivity.description}>
+        <MGCard title={report.dailyProjectActivity?.description ?? report.monthlyProjectActivity?.description}>
           {props.type === Report.DAILY &&
-            fields[index] != null &&
-            renderDailyActivityReport(fields[index], index)}
+            daily[index] != null &&
+            renderDailyActivityReport(daily[index], index)}
           {props.type === Report.MONTHLY &&
-            fields[index] != null &&
-            renderMonthlyActivityReport(fields[index], index)}
+            monthly[index] != null &&
+            renderMonthlyActivityReport(monthly[index], index)}
         </MGCard>
       </View>
     );
-  }, [fields, props.type, renderDailyActivityReport, renderMonthlyActivityReport])
+  }, [daily, monthly, props.type, renderDailyActivityReport, renderMonthlyActivityReport])
 
   const render = useCallback(() => {
     return (
@@ -337,10 +444,11 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         <View style={[{ paddingLeft: 10, alignSelf: 'flex-start', paddingTop: 10 }]}>
           <Text style={[{ fontSize: 18 }]}>{'Activitati'}</Text>
         </View>
-        {report.data?.data.dailyActivityReports.map((report, index) => renderActivity(report, index))}
+        {report.data?.data.dailyActivityReports?.map((report, index) => renderActivity(report, index))}
+        {report.data?.data.monthlyActivityReports?.map((report, index) => renderActivity(report, index))}
       </>
     );
-  }, [renderActivity, renderProjectInfo, report.data?.data.dailyActivityReports]);
+  }, [renderActivity, renderProjectInfo, report.data?.data.dailyActivityReports, report.data?.data.monthlyActivityReports]);
 
   return (
     <ScreenContainer

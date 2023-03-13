@@ -33,6 +33,10 @@ export class ActivityReportOutDTO extends EntityOutDTO implements Partial<Activi
   @Expose()
   remainingUnits: number;
   @Expose()
+  monthlyNoImplUnits: number;
+  @Expose()
+  monthlyActivityCost: number;
+  @Expose()
   dailyProjectActivityId: number;
   @Expose()
   @Type(() => ProjectActivityOutDTO)
@@ -40,7 +44,6 @@ export class ActivityReportOutDTO extends EntityOutDTO implements Partial<Activi
   @Expose()
   monthlyProjectActivityId: number;
   @Expose()
-  @ValidateNested()
   @Type(() => ProjectActivityOutDTO)
   monthlyProjectActivity: ProjectActivityOutDTO;
   @Expose()

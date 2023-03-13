@@ -31,6 +31,6 @@ export class ReportService {
   }
 
   async getMonthlyReport(projectId: number, projectReportId: number) {
-    return new ProjectReportOutDTO(this.reportProvider.getMonthlyReport(projectId, projectReportId));
+    return new ProjectReportOutDTO(await this.reportProvider.getMonthlyReport(projectId, projectReportId));
   }
 }

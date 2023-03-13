@@ -1,11 +1,11 @@
 import { EntityInDTO } from "@common/dtos/entity.in.dto";
 import { Type } from "class-transformer";
 import { ProjectReport } from "@prisma/client";
-import { IsArray, IsDate, IsInt, IsNotEmpty, IsOptional, ValidateNested } from "class-validator";
+import { IsArray, IsDate, IsInt, IsNotEmpty, IsNumber, IsOptional, ValidateNested } from "class-validator";
 import { IsNonPrimitiveArray } from "@common/validator/IsNonPrimitiveArray";
 import { UpsertBasicProjectDTO, UpsertProjectActivityDTO } from "@modules/project/dtos/project.in.dto";
 
-export class UpsertActivityReportDTO {
+export class UpsertDailyActivityReportDTO {
   @IsInt()
   @IsOptional()
   id?: number;
@@ -48,6 +48,20 @@ export class UpsertActivityReportDTO {
 
   @Type(() => UpsertProjectActivityDTO)
   dailyProjectActivity: UpsertProjectActivityDTO;
+}
+
+export class UpsertMonthlyActivityReportDTO {
+  @IsInt()
+  @IsOptional()
+  id?: number;
+
+  @IsInt()
+  @IsOptional()
+  monthlyNoImplUnits: number;
+
+  @IsNumber()
+  @IsOptional()
+  monthlyActivityCost: number;
 
   @IsInt()
   @IsOptional()
@@ -78,13 +92,13 @@ export class UpsertProjectReportDTO {
   @IsOptional()
   @ValidateNested({ each: true })
   @IsNonPrimitiveArray()
-  @Type(() => UpsertActivityReportDTO)
-  dailyActivityReports: UpsertActivityReportDTO[];
+  @Type(() => UpsertDailyActivityReportDTO)
+  dailyActivityReports: UpsertDailyActivityReportDTO[];
 
   @IsArray()
   @IsOptional()
   @ValidateNested({ each: true })
   @IsNonPrimitiveArray()
-  @Type(() => UpsertActivityReportDTO)
-  monthlyActivityReports: UpsertActivityReportDTO[];
+  @Type(() => UpsertMonthlyActivityReportDTO)
+  monthlyActivityReports: UpsertMonthlyActivityReportDTO[];
 }
