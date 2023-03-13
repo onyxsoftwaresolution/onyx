@@ -1,5 +1,7 @@
+import { ProjectActivityOutDTO } from '@modules/project/dtos/project.out.dto';
 import { Injectable } from '@nestjs/common';
-import { ReportListItemOutDTO } from '../dtos/report-out.dto';
+import { UpsertProjectReportDTO } from '../dtos/report-in.dto';
+import { ActivityReportOutDTO, ProjectReportOutDTO, ReportListItemOutDTO } from '../dtos/report-out.dto';
 import { ReportProvider } from '../provider/report.provider';
 
 @Injectable()
@@ -11,22 +13,24 @@ export class ReportService {
     return reports.map(r => new ReportListItemOutDTO(r));
   }
 
-  async getDailyReport(projectReportId: number) {
-    return this.reportProvider.getDailyReport(projectReportId);
-  }
-
-  async getMonthlyReport(projectReportId: number) { }
-
   async listMonthlyReports(projectId: number) {
     const reports = await this.reportProvider.listMonthlyReports(projectId);
     return reports.map(r => new ReportListItemOutDTO(r));
   }
 
-  async createDailyReport(projectId: number) {
-    return await this.reportProvider.createDailyReport(projectId);
+  async upsertDailyReport(projectId: number, projectReportId: number | undefined, body: UpsertProjectReportDTO) {
+    return new ProjectReportOutDTO(await this.reportProvider.upsertDailyReport(projectId, projectReportId, body));
   }
 
-  async createMonthlyReport(projectId: number) {
-    return await this.reportProvider.createMonthlyReport(projectId);
+  async upsertMonthlyReport(projectId: number, projectReportId: number | undefined, body: UpsertProjectReportDTO) {
+    return new ProjectReportOutDTO(await this.reportProvider.upsertMonthlyReport(projectId, projectReportId, body));
+  }
+
+  async getDailyReport(projectId: number, projectReportId: number | undefined) {
+    return new ProjectReportOutDTO(await this.reportProvider.getDailyReport(projectId, projectReportId));
+  }
+
+  async getMonthlyReport(projectId: number, projectReportId: number) {
+    return new ProjectReportOutDTO(this.reportProvider.getMonthlyReport(projectId, projectReportId));
   }
 }

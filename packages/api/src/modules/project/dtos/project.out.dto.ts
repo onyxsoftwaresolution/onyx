@@ -1,7 +1,9 @@
 import { EntityOutDTO } from '@common/dtos/entity.out.dto';
+import { IsNonPrimitiveArray } from '@common/validator/IsNonPrimitiveArray';
 import { EmployeeOutDTO } from '@modules/employee/dtos/employee.out.dto';
 import { Project, ProjectActivity } from '@prisma/client';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
+import { IsArray, ValidateNested } from 'class-validator';
 
 export class ProjectActivityOutDTO extends EntityOutDTO implements ProjectActivity {
   @Expose()
@@ -68,5 +70,9 @@ export class ProjectOutDTO extends EntityOutDTO implements Project {
   available: boolean;
 
   @Expose()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @IsNonPrimitiveArray()
+  @Type(() => ProjectActivityOutDTO)
   projectActivities: ProjectActivityOutDTO[];
 }

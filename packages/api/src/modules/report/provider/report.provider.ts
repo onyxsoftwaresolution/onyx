@@ -1,6 +1,11 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
+import { ProjectActivityOutDTO } from '@modules/project/dtos/project.out.dto';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ActivityReport, ProjectReport } from '@prisma/client';
 import * as dayjs from 'dayjs';
+import { UpsertProjectReportDTO } from '../dtos/report-in.dto';
+import { ProjectReportOutDTO } from '../dtos/report-out.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ReportProvider {
@@ -34,7 +39,42 @@ export class ReportProvider {
     });
   }
 
-  async createDailyReport(projectId: number) {
+  async upsertDailyReport(
+    projectId: number,
+    projectReportId: number | undefined,
+    { date, dailyActivityReports }: UpsertProjectReportDTO
+  ) {
+    if (isNaN(projectReportId) || projectReportId <= 0)
+      projectReportId = undefined;
+    const args: Prisma.SelectSubset<Prisma.ProjectReportUpsertArgs, Prisma.ProjectReportUpsertArgs> = {
+      where: { id: projectReportId ?? -1 },
+      create: {
+        date,
+        projectId,
+        dailyActivityReports: {
+          create: dailyActivityReports.map(({ todayStock, addedStock, totalStock, noImplToday, finalStockToday, totalImplToday, totalProjectUnits, remainingUnits, dailyProjectActivityId }) => ({
+            todayStock, addedStock, totalStock, noImplToday, finalStockToday, totalImplToday, totalProjectUnits, remainingUnits, dailyProjectActivityId
+          })),
+        },
+      },
+      update: {
+        date,
+        projectId,
+        dailyActivityReports: {
+          update: dailyActivityReports.map(({ id, todayStock, addedStock, totalStock, noImplToday, finalStockToday, totalImplToday, totalProjectUnits, remainingUnits, dailyProjectActivityId }) => ({
+            where: { id: id ?? -1 },
+            data: { todayStock, addedStock, totalStock, noImplToday, finalStockToday, totalImplToday, totalProjectUnits, remainingUnits, dailyProjectActivityId }
+          })),
+        }
+      },
+    }
+    return await this.prismaService.client.projectReport.upsert(args);
+  }
+
+  async upsertMonthlyReport(
+    projectId: number,
+    projectReportId: number | undefined,
+    body: UpsertProjectReportDTO) {
     const project = await this.prismaService.client.project.findFirst({
       where: { id: projectId },
       select: {
@@ -46,65 +86,87 @@ export class ReportProvider {
       }
     });
     if (project.projectActivities.length === 0)
-      throw new InternalServerErrorException();
-    return await this.prismaService.client.projectReport.create({
-      data: {
-        date: dayjs().toDate(),
-        projectId,
-        // dailyActivityReports: {
-        //   createMany: {
-        //     data: project.projectActivities.map(pa => ({
-        //       dailyProjectActivityId: pa.id,
-        //     }))
-        //   }
-        // },
-      },
-    });
+
+      return await this.prismaService.client.projectReport.create({
+        data: {
+          date: dayjs().toDate(),
+          projectId,
+          // monthlyActivityReports: {
+          //   createMany: {
+          //     data: project.projectActivities.map(pa => ({
+          //       monthlyProjectActivityId: pa.id,
+          //     }))
+          //   }
+          // },
+        },
+      });
   }
 
-  async createMonthlyReport(projectId: number) {
-    const project = await this.prismaService.client.project.findFirst({
-      where: { id: projectId },
-      select: {
-        projectActivities: {
-          select: {
-            id: true,
-          }
+  async getDailyReport(projectId: number, projectReportId: number | undefined) {
+    if (projectReportId != null && !isNaN(projectReportId)) {
+      return await this.prismaService.client.projectReport.findFirst({
+        where: { id: projectReportId, deleted: false },
+        include: {
+          dailyActivityReports: {
+            include: {
+              dailyProjectActivity: true
+            }
+          },
         }
+      });
+    }
+    const project = await this.prismaService.client.project.findFirst({
+      where: { id: projectId, deleted: false },
+      include: {
+        projectActivities: true,
       }
     });
-    if (project.projectActivities.length === 0)
-      throw new InternalServerErrorException();
-    return await this.prismaService.client.projectReport.create({
-      data: {
-        date: dayjs().toDate(),
-        projectId,
-        // monthlyActivityReports: {
-        //   createMany: {
-        //     data: project.projectActivities.map(pa => ({
-        //       monthlyProjectActivityId: pa.id,
-        //     }))
-        //   }
-        // },
-      },
+    const { projectActivities, ...rest } = project;
+    return ({
+      id: -1,
+      date: dayjs().toDate(),
+      projectId: projectId,
+      project: rest,
+      dailyActivityReports: project.projectActivities.map(pa => ({
+        dailyProjectActivityId: pa.id,
+        dailyProjectActivity: pa,
+        todayStock: 0,
+        addedStock: 0,
+        totalStock: 0,
+        noImplToday: 0,
+        finalStockToday: 0,
+        totalImplToday: 0,
+        totalProjectUnits: pa.quantity,
+        remainingUnits: 0,
+      })),
     });
   }
 
-  async getDailyReport(projectReportId: number) {
-    return await this.prismaService.client.projectReport.findFirst({
-      where: { id: projectReportId, deleted: false },
+  async getMonthlyReport(projectId: number, projectReportId: number | undefined) {
+    if (projectReportId != null) {
+      return await this.prismaService.client.projectReport.findFirst({
+        where: { id: projectReportId, deleted: false },
+        select: {
+          monthlyActivityReports: true,
+        }
+      });
+    }
+    const project = await this.prismaService.client.project.findFirst({
+      where: { id: projectId, deleted: false },
       select: {
-        dailyActivityReports: true,
+        projectActivities: true,
       }
     });
-  }
-
-  async getMonthlyReport(projectReportId: number) {
-    return await this.prismaService.client.projectReport.findFirst({
-      where: { id: projectReportId, deleted: false },
-      select: {
-        monthlyActivityReports: true,
-      }
+    return ({
+      id: -1,
+      date: dayjs().toDate(),
+      projectId: projectId,
+      monthlyActivityReports: project.projectActivities.map(pa => ({
+        monthlyProjectActivityId: pa.id,
+        monthlyProjectActivity: pa,
+        monthlyNoImplUnits: 0,
+        monthlyActivityCost: 0,
+      })),
     });
   }
 }

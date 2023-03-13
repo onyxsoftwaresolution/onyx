@@ -75,7 +75,6 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
 
   const submit = useCallback(
     ({ id, ...rest }: UpsertProjectDTO) => {
-      console.log({ id, ...rest })
       if (params?.id != null) {
         upsert.mutate({ id, ...rest });
       } else {

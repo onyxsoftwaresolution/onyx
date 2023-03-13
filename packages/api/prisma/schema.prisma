@@ -130,18 +130,18 @@ model ActivityReport {
   deleted  Boolean  @default(false)
 
   // daily
-  todayStock        Int
-  addedStock        Int
-  totalStock        Int
-  noImplToday       Int
-  finalStockToday   Int
-  totalImplToday    Int
-  totalProjectUnits Int
-  remainingUnits    Int
+  todayStock        Int?
+  addedStock        Int?
+  totalStock        Int?
+  noImplToday       Int?
+  finalStockToday   Int?
+  totalImplToday    Int?
+  totalProjectUnits Int?
+  remainingUnits    Int?
 
   // monthly
-  monthlyNoImplUnits  Int // suma noImplToday
-  monthlyActivityCost Float
+  monthlyNoImplUnits  Int? // suma noImplToday
+  monthlyActivityCost Float?
 
   dailyProjectActivityId   Int?
   dailyProjectActivity     ProjectActivity? @relation("daily_activity_report", fields: [dailyProjectActivityId], references: [id])

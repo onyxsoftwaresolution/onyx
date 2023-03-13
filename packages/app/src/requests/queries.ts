@@ -4,7 +4,7 @@ import { FetchError, FetchResponse, request } from './request';
 import { ProjectOutDTO } from '@workspace/api/src/modules/project/dtos/project.out.dto';
 import { ActivityTemplateOutDTO } from "@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto"
 import { EmployeeOutDTO } from "@workspace/api/src/modules/employee/dtos/employee.out.dto"
-import { ReportListItemOutDTO } from '@workspace/api/src/modules/report/dtos/report-out.dto';
+import { ProjectReportOutDTO, ReportListItemOutDTO } from '@workspace/api/src/modules/report/dtos/report-out.dto';
 import { Report } from '../screens/app/reports/Report';
 import { JwtUserDTO } from '@workspace/api/src/modules/user/dtos/jwt.user.dto';
 
@@ -103,14 +103,19 @@ export class Queries {
     enabled,
   } as UseQueryOptions<FetchResponse<ReportListItemOutDTO[]>>);
 
-  static getReport = (type: Report, projectId: number, { enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
+  static getReport = (
+    type: Report,
+    projectId: number,
+    projectReportId: number | undefined,
+    { enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<ProjectReportOutDTO>> = {}) =>
+  ({
     queryKey: [`/v1/${type}-report/${projectId}`],
     queryFn: async () => {
       onLoading?.();
-      return await Queries.queryFn(`http://192.168.0.102:4000/v1/${type}-report/${projectId}`);
+      return await Queries.queryFn(`http://192.168.0.102:4000/v1/${type}-report/${projectId}/${projectReportId ?? ''}`);
     },
     onError,
     onSuccess,
     enabled,
-  } as UseQueryOptions<FetchResponse<ProjectOutDTO>, FetchError>);
+  } as UseQueryOptions<FetchResponse<ProjectReportOutDTO>, FetchError>);
 }

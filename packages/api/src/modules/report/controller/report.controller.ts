@@ -1,6 +1,8 @@
 import { Roles } from '@modules/auth/rbac/role.decorator';
-import { Body, Controller, Get, Param, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, Req } from '@nestjs/common';
 import { Role } from '@prisma/client';
+import { UpsertProjectReportDTO } from '../dtos/report-in.dto';
+import { ProjectReportOutDTO } from '../dtos/report-out.dto';
 import { ReportService } from '../service/report.service';
 
 @Controller({
@@ -10,33 +12,11 @@ import { ReportService } from '../service/report.service';
 export class ReportController {
   constructor(public reportService: ReportService) { }
 
-  //#region daily
-
   @Get('daily-reports/:projectId')
   @Roles(Role.ADMIN, Role.USER)
   async listDailyReports(@Param('projectId') projectId: number) {
     return await this.reportService.listDailyReports(projectId);
   }
-
-  @Get('daily-report/:projectReportId')
-  @Roles(Role.ADMIN, Role.USER)
-  async getDailyReports(@Param('projectReportId') projectReportId: number) {
-    return await this.reportService.getDailyReport(projectReportId);
-  }
-
-  @Post('daily-report/:projectId')
-  @Roles(Role.ADMIN, Role.USER)
-  async createDailyReport(
-    @Param('projectId') projectId: number,
-    @Body() body: any,
-    @Req() req: any,
-  ) {
-    return await this.reportService.createDailyReport(projectId);
-  }
-
-  //#endregion daily
-
-  //#region monthly
 
   @Get('monthly-reports/:projectId')
   @Roles(Role.ADMIN, Role.USER)
@@ -44,21 +24,43 @@ export class ReportController {
     return await this.reportService.listMonthlyReports(projectId);
   }
 
-  @Get('monthly-report/:projectReportId')
+  @Put('daily-report/:projectId/:projectReportId?')
   @Roles(Role.ADMIN, Role.USER)
-  async getMonthlyReports(@Param('projectReportId') projectReportId: number) {
-    return await this.reportService.getMonthlyReport(projectReportId);
-  }
-
-  @Post('monthly-report/:projectId')
-  @Roles(Role.ADMIN, Role.USER)
-  async createMonthlyReport(
+  async upsertDailyReport(
     @Param('projectId') projectId: number,
-    @Body() body: any,
+    @Param('projectReportId') projectReportId: number | undefined,
+    @Body() body: UpsertProjectReportDTO,
     @Req() req: any,
   ) {
-    return await this.reportService.createMonthlyReport(projectId);
+    return await this.reportService.upsertDailyReport(projectId, projectReportId, body);
   }
 
-  //#endregion monthly
+  @Put('monthly-report/:projectId/:projectReportId?')
+  @Roles(Role.ADMIN, Role.USER)
+  async upsertMonthlyReport(
+    @Param('projectId') projectId: number,
+    @Param('projectReportId') projectReportId: number | undefined,
+    @Body() body: UpsertProjectReportDTO,
+    @Req() req: any,
+  ) {
+    return await this.reportService.upsertMonthlyReport(projectId, projectReportId, body);
+  }
+
+  @Get('daily-report/:projectId/:projectReportId?')
+  @Roles(Role.ADMIN, Role.USER)
+  async getDailyReport(
+    @Param('projectId') projectId: number,
+    @Param('projectReportId') projectReportId: number | undefined,
+  ) {
+    return await this.reportService.getDailyReport(projectId, projectReportId);
+  }
+
+  @Get('monthly-report/:projectId/:projectReportId?')
+  @Roles(Role.ADMIN, Role.USER)
+  async getMonthlyReport(
+    @Param('projectId') projectId: number,
+    @Param('projectReportId') projectReportId: number | undefined,
+  ) {
+    return await this.reportService.getMonthlyReport(projectId, projectReportId);
+  }
 }

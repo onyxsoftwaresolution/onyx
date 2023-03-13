@@ -39,6 +39,32 @@ export class UpsertProjectDTO {
   localAdmin: UpsertEmployeeDTO;
 }
 
+export class UpsertBasicProjectDTO {
+  @IsInt()
+  @IsOptional()
+  id?: number;
+
+  @IsString()
+  @IsNotEmpty()
+  code: string;
+
+  @IsString()
+  @IsNotEmpty()
+  description: string;
+
+  @IsString()
+  @IsNotEmpty()
+  area: string;
+
+  @IsDateString()
+  @IsNotEmpty()
+  start: Date | string;
+
+  @IsDateString()
+  @IsNotEmpty()
+  end: Date | string;
+}
+
 export class UpsertProjectActivityDTO {
   @IsInt()
   @IsOptional()

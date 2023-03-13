@@ -131,16 +131,19 @@ export class Mutations {
     >;
   }
 
-  static createReport(type: Report, projectId: number, { onError, onLoading, onSuccess }: Options = {}) {
+  static upsertReport(
+    type: Report, projectId: number, projectReportId: number | undefined,
+    { onError, onLoading, onSuccess }: Options = {}
+  ) {
     return {
       mutationKey: [`report-project-${projectId}`],
       mutationFn: async (body) => {
         onLoading?.();
         return await Mutations.mutationFn(
-          `http://192.168.0.102:4000/v1/${type}-report/${projectId}`,
+          `http://192.168.0.102:4000/v1/${type}-report/${projectId}/${projectReportId ?? ''}`,
           {
             body: body as any,
-            method: 'POST',
+            method: 'PUT',
           },
         );
       },

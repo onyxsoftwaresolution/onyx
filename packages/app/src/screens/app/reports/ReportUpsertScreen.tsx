@@ -2,16 +2,18 @@ import { useIsFocused } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ProjectActivityOutDTO } from "@workspace/api/src/modules/project/dtos/project.out.dto";
-import { ActivityReportOutDTO } from "@workspace/api/src/modules/report/dtos/report-out.dto";
+import { ActivityReportOutDTO, ProjectReportOutDTO } from "@workspace/api/src/modules/report/dtos/report-out.dto";
 import { isNotEmpty } from "class-validator";
 import { memo, PropsWithChildren, useCallback, useMemo } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
+import MGButton from "../../../components/MGButton";
 import MGCard from "../../../components/MGCard";
 import MGRow from "../../../components/MGRow";
 import MGTextInput from "../../../components/MGTextInput";
 import ScreenContainer from "../../../components/ScreenContainer";
+import { useSnackbar } from "../../../components/useSnackbar";
 import { Mutations } from "../../../requests/Mutations";
 import { Queries } from "../../../requests/Queries";
 import { Report } from "./Report";
@@ -20,33 +22,38 @@ type Props = PropsWithChildren<NativeStackScreenProps<any, string>> & {
   type: Report;
 }
 
-type FormState = {
-  activityReports: (ActivityReportOutDTO & {
-    projectActivityId: number;
-  })[]
+type Params = {
+  projectId: number;
+  projectReportId?: number;
 }
 
 export default memo<Props>(function ReportUpsertScreen(props) {
-  const { projectId } = props.route.params as { projectId: number };
+  const { projectId, projectReportId } = props.route.params as Params;
+
+  const snackbar = useSnackbar();
 
   const enabled = useIsFocused();
-  const project = useQuery(Queries.getProject(projectId, { enabled }));
-  const upsert = useMutation(Mutations.createReport(props.type, projectId));
+  const report = useQuery(
+    Queries.getReport(
+      props.type, projectId, projectReportId,
+      {
+        enabled,
+        onError() { snackbar.show('A aparut o eroare la incarcarea raportului!') },
+      }
+    ));
+  const upsert = useMutation(
+    Mutations.upsertReport(
+      props.type, projectId, projectReportId,
+      {
+        onSuccess() { props.navigation.pop() },
+        onError() { snackbar.show('A aparut o eroare la salvarea raportului!') }
+      }
+    ));
 
-  const values: FormState = useMemo(() => {
-    const activityReports = (project.data?.data.projectActivities ?? []).map(activity => ({
-      projectActivityId: activity.id,
-      todayStock: 0,
-      addedStock: 0,
-      totalStock: 0,
-      noImplToday: 0,
-      finalStockToday: 0,
-      totalImplToday: 0,
-      totalProjectUnits: 0,
-      remainingUnits: 0,
-    } as FormState['activityReports'][0]));
-    return ({ activityReports });
-  }, [project.data?.data.projectActivities]);
+  // @ts-expect-error cdc
+  const values: ProjectReportOutDTO = useMemo(() => {
+    return report.data?.data ?? {}
+  }, [report.data?.data]);
 
   const {
     control,
@@ -62,18 +69,28 @@ export default memo<Props>(function ReportUpsertScreen(props) {
 
   const { fields } = useFieldArray({
     control,
-    name: "activityReports",
+    name: "dailyActivityReports",
   });
+
+  const submit = useCallback(
+    ({ id, ...rest }: ProjectActivityOutDTO) => {
+      if (id != null && id > 0) {
+        upsert.mutate({ id, ...rest });
+      } else {
+        upsert.mutate({ ...rest });
+      }
+    },
+    [upsert],
+  );
 
   const renderProjectInfo = useCallback(() => {
     return (
-      <MGCard title={project.data?.data.description}>
-        <View><Text>{project.data?.data.area}</Text></View>
-        <View><Text>{project.data?.data.code}</Text></View>
+      <MGCard title={report.data?.data.project?.description}>
+        <View><Text>{report.data?.data.project?.area}</Text></View>
+        <View><Text>{report.data?.data.project?.code}</Text></View>
       </MGCard>
     );
-  }, [project.data?.data.area, project.data?.data.code, project.data?.data.description])
-
+  }, [report.data?.data.project?.area, report.data?.data.project?.code, report.data?.data.project?.description])
 
   const renderActivityReportTodayStock = useCallback((index: number) => {
     return (
@@ -94,7 +111,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             />
           </>
         )}
-        name={`activityReports.${index}.todayStock`}
+        name={`dailyActivityReports.${index}.todayStock`}
       />
     );
   }, [control]);
@@ -117,7 +134,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             />
           </>
         )}
-        name={`activityReports.${index}.addedStock`}
+        name={`dailyActivityReports.${index}.addedStock`}
       />
     );
   }, [control]);
@@ -140,7 +157,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             />
           </>
         )}
-        name={`activityReports.${index}.totalStock`}
+        name={`dailyActivityReports.${index}.totalStock`}
       />
     );
   }, [control]);
@@ -163,7 +180,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             />
           </>
         )}
-        name={`activityReports.${index}.noImplToday`}
+        name={`dailyActivityReports.${index}.noImplToday`}
       />
     );
   }, [control]);
@@ -187,7 +204,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             />
           </>
         )}
-        name={`activityReports.${index}.finalStockToday`}
+        name={`dailyActivityReports.${index}.finalStockToday`}
       />
     );
   }, [control]);
@@ -211,7 +228,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             />
           </>
         )}
-        name={`activityReports.${index}.totalImplToday`}
+        name={`dailyActivityReports.${index}.totalImplToday`}
       />
     );
   }, [control]);
@@ -235,7 +252,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             />
           </>
         )}
-        name={`activityReports.${index}.totalProjectUnits`}
+        name={`dailyActivityReports.${index}.totalProjectUnits`}
       />
     );
   }, [control]);
@@ -259,7 +276,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             />
           </>
         )}
-        name={`activityReports.${index}.remainingUnits`}
+        name={`dailyActivityReports.${index}.remainingUnits`}
       />
     );
   }, [control]);
@@ -295,10 +312,10 @@ export default memo<Props>(function ReportUpsertScreen(props) {
     );
   }, []);
 
-  const renderActivity = useCallback((activity: ProjectActivityOutDTO, index: number) => {
+  const renderActivity = useCallback((report: ActivityReportOutDTO, index: number) => {
     return (
       <View key={index} style={[{ width: '100%', marginTop: 10 }]}>
-        <MGCard title={activity.description}>
+        <MGCard title={report.dailyProjectActivity.description}>
           {props.type === Report.DAILY &&
             fields[index] != null &&
             renderDailyActivityReport(fields[index], index)}
@@ -320,18 +337,28 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         <View style={[{ paddingLeft: 10, alignSelf: 'flex-start', paddingTop: 10 }]}>
           <Text style={[{ fontSize: 18 }]}>{'Activitati'}</Text>
         </View>
-        {project.data?.data?.projectActivities.map((activity, index) => renderActivity(activity, index))}
+        {report.data?.data.dailyActivityReports.map((report, index) => renderActivity(report, index))}
       </>
     );
-  }, [project.data?.data?.projectActivities, renderActivity, renderProjectInfo]);
+  }, [renderActivity, renderProjectInfo, report.data?.data.dailyActivityReports]);
 
   return (
     <ScreenContainer
-      loading={project.isLoading || upsert.isLoading}
+      loading={report.isLoading || upsert.isLoading}
       scrollContainerStyle={[styles.scrollContainer]}
     >
-      {render()}
-      <View style={[{ height: 20 }]} />
+      <View style={[styles.view]}>
+        {render()}
+        <MGButton
+          icon="send"
+          label={'Salveaza'}
+          // @ts-expect-error cdc
+          onPress={handleSubmit(submit)}
+          style={[{ marginTop: 10, marginHorizontal: 10, flex: 1 }]}
+        />
+        <View style={[{ height: 20 }]} />
+        {snackbar.renderSnackbar()}
+      </View>
     </ScreenContainer>
   );
 });
@@ -339,6 +366,11 @@ export default memo<Props>(function ReportUpsertScreen(props) {
 const styles = StyleSheet.create({
   scrollContainer: {
     alignItems: 'center',
+  },
+  view: {
+    maxWidth: 500,
+    width: '95%',
+    marginTop: 21,
   },
   list: {
     maxWidth: 500,
