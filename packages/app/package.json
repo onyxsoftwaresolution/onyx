@@ -7,7 +7,7 @@
     "android": "expo start --clear --android",
     "ios": "expo start --clear --ios",
     "build:web:dev": "npx rimraf .expo build dist web-build && npx cross-env APP_ENV=development GENERATE_SOURCEMAP=false npx expo export:web",
-    "deploy:web:dev": "npm run build:web:dev && firebase use onyxsoftwaresolution && firebase deploy --only hosting:onyxsoftwaresolution",
+    "deploy:web:dev": "npm run build:web:dev && firebase use onyxsoftwaresolution-dev && firebase deploy --only hosting:onyxsoftwaresolution-dev",
     "build:web:prod": "npx rimraf .expo build dist web-build && npx cross-env APP_ENV=production GENERATE_SOURCEMAP=false npx expo export:web",
     "deploy:web:prod": "npm run build:web:prod && firebase use onyxsoftwaresolution && firebase deploy --only hosting:onyxsoftwaresolution",
     "web": "npx rimraf .expo && npx cross-env BROWSER=false expo start --clear --web"
