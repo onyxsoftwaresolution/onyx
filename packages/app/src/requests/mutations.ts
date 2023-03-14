@@ -8,6 +8,7 @@ import { FetchError, FetchResponse, request } from './request';
 import { Report } from '../screens/app/reports/Report';
 import { EmployeeOutDTO } from '@workspace/api/src/modules/employee/dtos/employee.out.dto';
 import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
+import { API_URL } from '@env';
 
 type Options<T = unknown> = Partial<Pick<UseMutationOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -44,7 +45,7 @@ export class Mutations {
       mutationKey: ['login'],
       mutationFn: async (body) => {
         return await Mutations.mutationFn(
-          `http://192.168.0.102:4000/v1/auth/login`,
+          `${API_URL}/v1/auth/login`,
           { body: body as any, method: 'POST' },
           (response) => {
             Store.set('access_token', response.data?.access_token ?? null);
@@ -60,7 +61,7 @@ export class Mutations {
       mutationFn: async (body) => {
         onLoading?.();
         return await Mutations.mutationFn(
-          `http://192.168.0.102:4000/v1/employee`,
+          `${API_URL}/v1/employee`,
           {
             // @ts-expect-error a simple typescript mistake
             body,
@@ -79,7 +80,7 @@ export class Mutations {
       mutationFn: async (body: any) => {
         onLoading?.();
         return await Mutations.mutationFn(
-          `http://192.168.0.102:4000/v1/activity-template`,
+          `${API_URL}/v1/activity-template`,
           {
             body,
             method: 'PUT',
@@ -97,7 +98,7 @@ export class Mutations {
       mutationFn: async (id) => {
         onLoading?.();
         return await Mutations.mutationFn(
-          `http://192.168.0.102:4000/v1/project/${id}`,
+          `${API_URL}/v1/project/${id}`,
           {
             method: 'DELETE',
           },
@@ -114,7 +115,7 @@ export class Mutations {
       mutationFn: async (body) => {
         onLoading?.();
         return await Mutations.mutationFn(
-          `http://192.168.0.102:4000/v1/project/`,
+          `${API_URL}/v1/project/`,
           {
             body: body as any,
             method: 'PUT',
@@ -140,10 +141,35 @@ export class Mutations {
       mutationFn: async (body) => {
         onLoading?.();
         return await Mutations.mutationFn(
-          `http://192.168.0.102:4000/v1/${type}-report/${projectId}/${projectReportId ?? ''}`,
+          `${API_URL}/v1/${type}-report/${projectId}/${projectReportId ?? ''}`,
           {
             body: body as any,
             method: 'PUT',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<
+      FetchResponse<any>,
+      FetchError,
+      any,
+      unknown
+    >;
+  }
+
+  static emailReport(
+    type: Report, projectId: number, projectReportId: number,
+    { onError, onLoading, onSuccess }: Options = {}
+  ) {
+    return {
+      mutationKey: [`report-project-${projectId}`],
+      mutationFn: async (to: string) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/${type}-report/${projectId}/${projectReportId}/${to}`,
+          {
+            method: 'POST',
           },
         );
       },

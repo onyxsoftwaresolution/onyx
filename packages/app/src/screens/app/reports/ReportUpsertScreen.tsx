@@ -4,18 +4,20 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { ProjectActivityOutDTO } from "@workspace/api/src/modules/project/dtos/project.out.dto";
 import { ActivityReportOutDTO, ProjectReportOutDTO } from "@workspace/api/src/modules/report/dtos/report-out.dto";
 import { isNotEmpty } from "class-validator";
-import { memo, PropsWithChildren, useCallback, useMemo } from "react";
+import { memo, PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 import MGButton from "../../../components/MGButton";
 import MGCard from "../../../components/MGCard";
 import MGRow from "../../../components/MGRow";
 import MGTextInput from "../../../components/MGTextInput";
 import ScreenContainer from "../../../components/ScreenContainer";
+import { RenderOptionsFunction, useDialog } from "../../../components/useDialog";
 import { useSnackbar } from "../../../components/useSnackbar";
 import { Mutations } from "../../../requests/Mutations";
 import { Queries } from "../../../requests/Queries";
+import { AppTheme } from "../../../theme/type";
 import { Report } from "./Report";
 
 type Props = PropsWithChildren<NativeStackScreenProps<any, string>> & {
@@ -30,6 +32,8 @@ type Params = {
 export default memo<Props>(function ReportUpsertScreen(props) {
   const { projectId, projectReportId } = props.route.params as Params;
 
+  const { colors } = useTheme<AppTheme>();
+  const dialog = useDialog();
   const snackbar = useSnackbar();
 
   const enabled = useIsFocused();
@@ -47,6 +51,15 @@ export default memo<Props>(function ReportUpsertScreen(props) {
       {
         onSuccess() { props.navigation.pop() },
         onError() { snackbar.show('A aparut o eroare la salvarea raportului!') }
+      }
+    ));
+
+  const sendEmail = useMutation(
+    Mutations.emailReport(
+      props.type, projectId, projectReportId!,
+      {
+        onSuccess() { props.navigation.pop() },
+        onError() { snackbar.show('A aparut o eroare la trimiterea raportului!') }
       }
     ));
 
@@ -450,6 +463,26 @@ export default memo<Props>(function ReportUpsertScreen(props) {
     );
   }, [renderActivity, renderProjectInfo, report.data?.data.dailyActivityReports, report.data?.data.monthlyActivityReports]);
 
+  const [email, setEmail] = useState('');
+
+  const dialogArg: RenderOptionsFunction<unknown> = useCallback((data) => ({
+    title: `Trimite mail`,
+    message: (
+      <View style={[{ flex: 1, width: '100%' }]}>
+        <MGTextInput value={email} onChangeText={setEmail} style={[{ flex: 1, width: '100%' }]} />
+      </View>
+    ),
+    buttons: [
+      {
+        label: 'Trimite',
+        textColor: colors.danger,
+        onPress: () => { sendEmail.mutate(email) },
+      },
+      () => <View style={{ flex: 1 }} />,
+      { label: 'Renunta' },
+    ],
+  }), [colors.danger, email, sendEmail]);
+
   return (
     <ScreenContainer
       loading={report.isLoading || upsert.isLoading}
@@ -464,8 +497,17 @@ export default memo<Props>(function ReportUpsertScreen(props) {
           onPress={handleSubmit(submit)}
           style={[{ marginTop: 10, marginHorizontal: 10, flex: 1 }]}
         />
+        {projectReportId != null
+          ? <MGButton
+            icon="mail"
+            label={'Trimite raportul prin e-mail'}
+            onPress={dialog.show}
+            style={[{ marginTop: 10, marginHorizontal: 10, flex: 1 }]}
+          />
+          : null}
         <View style={[{ height: 20 }]} />
         {snackbar.renderSnackbar()}
+        {dialog.renderDialog(dialogArg)}
       </View>
     </ScreenContainer>
   );

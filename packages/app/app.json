@@ -24,10 +24,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "rgb(28, 27, 31)"
-      }
+      },
+      "package": "ro.onyxsoftware.onyx"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ed3270d6-5f87-428d-9908-36615011dda4"
+      }
     }
   }
 }

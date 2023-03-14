@@ -3,6 +3,7 @@ module.exports = function (api) {
   return {
     presets: ['babel-preset-expo'],
     plugins: [
+      'module:react-native-dotenv',
       'react-native-paper/babel',
       '@babel/plugin-proposal-export-namespace-from',
       '@babel/plugin-syntax-nullish-coalescing-operator',

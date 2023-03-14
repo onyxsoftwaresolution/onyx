@@ -7,6 +7,7 @@ import { EmployeeOutDTO } from "@workspace/api/src/modules/employee/dtos/employe
 import { ProjectReportOutDTO, ReportListItemOutDTO } from '@workspace/api/src/modules/report/dtos/report-out.dto';
 import { Report } from '../screens/app/reports/Report';
 import { JwtUserDTO } from '@workspace/api/src/modules/user/dtos/jwt.user.dto';
+import { API_URL } from '@env';
 
 type Options<T = unknown> = Partial<Pick<UseQueryOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -39,7 +40,7 @@ export class Queries {
     queryKey: ['self'],
     queryFn: async () => {
       onLoading?.();
-      return await Queries.queryFn(`http://192.168.0.102:4000/v1/user/self`);
+      return await Queries.queryFn(`${API_URL}/v1/user/self`);
     },
     onError,
     onSuccess,
@@ -50,7 +51,7 @@ export class Queries {
     queryKey: ['employees'],
     queryFn: async () => {
       onLoading?.();
-      return await Queries.queryFn(`http://192.168.0.102:4000/v1/employees`);
+      return await Queries.queryFn(`${API_URL}/v1/employees`);
     },
     onError,
     onSuccess,
@@ -61,7 +62,7 @@ export class Queries {
     queryKey: ['activity-templates'],
     queryFn: async () => {
       onLoading?.();
-      return await Queries.queryFn(`http://192.168.0.102:4000/v1/activity-templates`);
+      return await Queries.queryFn(`${API_URL}/v1/activity-templates`);
     },
     onError,
     onSuccess,
@@ -73,7 +74,7 @@ export class Queries {
       queryKey: ['projects'],
       async queryFn() {
         onLoading?.();
-        return await Queries.queryFn(`http://192.168.0.102:4000/v1/projects`);
+        return await Queries.queryFn(`${API_URL}/v1/projects`);
       },
       onError,
       onSuccess,
@@ -85,7 +86,7 @@ export class Queries {
     queryKey: [`project-${id}`],
     queryFn: async () => {
       onLoading?.();
-      return await Queries.queryFn(`http://192.168.0.102:4000/v1/project/${id}`);
+      return await Queries.queryFn(`${API_URL}/v1/project/${id}`);
     },
     onError,
     onSuccess,
@@ -96,7 +97,7 @@ export class Queries {
     queryKey: [`/v1/${type}-reports/${projectId}`],
     queryFn: async () => {
       onLoading?.();
-      return await Queries.queryFn(`http://192.168.0.102:4000/v1/${type}-reports/${projectId}`);
+      return await Queries.queryFn(`${API_URL}/v1/${type}-reports/${projectId}`);
     },
     onError,
     onSuccess,
@@ -112,7 +113,7 @@ export class Queries {
     queryKey: [`/v1/${type}-report/${projectId}`],
     queryFn: async () => {
       onLoading?.();
-      return await Queries.queryFn(`http://192.168.0.102:4000/v1/${type}-report/${projectId}/${projectReportId ?? ''}`);
+      return await Queries.queryFn(`${API_URL}/v1/${type}-report/${projectId}/${projectReportId ?? ''}`);
     },
     onError,
     onSuccess,
