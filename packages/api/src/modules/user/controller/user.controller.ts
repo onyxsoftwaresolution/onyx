@@ -9,18 +9,18 @@ import { UserOutDTO } from '../dtos/user-out.dto';
 
 @Controller({
   version: '1',
-  path: 'user',
+  path: '',
 })
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService) { }
 
-  @Get('self')
+  @Get('user/self')
   @Roles(Role.ADMIN, Role.USER)
   getSelf(@JwtUser() user: JwtUserDTO): JwtUserDTO {
     return new JwtUserDTO(user);
   }
 
-  @Post()
+  @Post('user')
   @Roles(Role.ADMIN)
   async postUser(
     @Body()
@@ -29,7 +29,7 @@ export class UserController {
     return await this.userService.createUser(body);
   }
 
-  @Get()
+  @Get('user')
   @Roles(Role.ADMIN)
   async listUsers(): Promise<Partial<User>[]> {
     return await this.userService.listUsers();

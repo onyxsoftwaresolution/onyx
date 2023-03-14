@@ -1,12 +1,17 @@
-import { ProjectActivityOutDTO } from '@modules/project/dtos/project.out.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
+import * as dayjs from 'dayjs';
 import { UpsertProjectReportDTO } from '../dtos/report-in.dto';
-import { ActivityReportOutDTO, ProjectReportOutDTO, ReportListItemOutDTO } from '../dtos/report-out.dto';
+import { ProjectReportOutDTO, ReportListItemOutDTO } from '../dtos/report-out.dto';
 import { ReportProvider } from '../provider/report.provider';
+import { getDailyPDF } from './report.pdf';
 
 @Injectable()
 export class ReportService {
-  constructor(private reportProvider: ReportProvider) { }
+  constructor(
+    private reportProvider: ReportProvider,
+    private readonly mailerService: MailerService
+  ) { }
 
   async listDailyReports(projectId: number) {
     const reports = await this.reportProvider.listDailyReports(projectId);
@@ -32,5 +37,24 @@ export class ReportService {
 
   async getMonthlyReport(projectId: number, projectReportId: number) {
     return new ProjectReportOutDTO(await this.reportProvider.getMonthlyReport(projectId, projectReportId));
+  }
+
+  async sendDailyMail(to: string, projectId: number, projectReportId: number) {
+    const report = await this.getDailyReport(projectId, projectReportId);
+    const pdf = await getDailyPDF(report);
+    await this.mailerService.sendMail({
+      to,
+      from: 'onyxsoftwaresolution@gmail.com',
+      subject: `Raport zilnic ${dayjs(report.date).format('DD/MM/YYYY')}`,
+      text: '',
+      html: '',
+      attachments: [{
+        filename: `Raport zilnic ${dayjs(report.date).format('DD/MM/YYYY')}`,
+        contentType: `application/pdf`,
+        contentDisposition: 'attachment',
+        path: '',
+        content: pdf,
+      }]
+    });
   }
 }

@@ -1,5 +1,5 @@
 import { plainToClass } from 'class-transformer';
-import { IsEnum, IsNumber, IsString, validateSync } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString, validateSync } from 'class-validator';
 
 export enum Environment {
   Development = 'development',
@@ -9,7 +9,11 @@ export enum Environment {
 
 export class EnvironmentVariables {
   @IsEnum(Environment)
+  @IsOptional()
   NODE_ENV: Environment;
+
+  @IsString()
+  APP_URL_REGEX: string;
 
   @IsNumber()
   PORT: number;

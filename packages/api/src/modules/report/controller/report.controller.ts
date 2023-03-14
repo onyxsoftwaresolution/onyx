@@ -1,8 +1,7 @@
 import { Roles } from '@modules/auth/rbac/role.decorator';
-import { Body, Controller, Get, Param, Put, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Req } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { UpsertProjectReportDTO } from '../dtos/report-in.dto';
-import { ProjectReportOutDTO } from '../dtos/report-out.dto';
 import { ReportService } from '../service/report.service';
 
 @Controller({
@@ -62,5 +61,16 @@ export class ReportController {
     @Param('projectReportId') projectReportId: number | undefined,
   ) {
     return await this.reportService.getMonthlyReport(projectId, projectReportId);
+  }
+
+  @Post('daily-report/:projectId/:projectReportId/:to')
+  @Roles(Role.ADMIN, Role.USER)
+  async sendDailyMail(
+    @Param('projectId') projectId: number,
+    @Param('projectReportId') projectReportId: number | undefined,
+    @Param('to') to: string,
+  ) {
+    await this.reportService.sendDailyMail(to, projectId, projectReportId);
+    return ({ success: true });
   }
 }

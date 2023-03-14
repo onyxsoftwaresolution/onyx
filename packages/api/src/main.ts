@@ -18,8 +18,11 @@ export async function bootstrap(app: NestExpressApplication) {
     defaultVersion: '1',
   });
 
+  const config = app.get<ConfigService>(ConfigService);
+
   app.enableCors({
-    credentials: true,
+    origin: new RegExp(`${config.get('APP_URL_REGEX')}`),
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   });
 
   // app.enable('trust proxy');
