@@ -17,6 +17,7 @@ type SelectProps<T extends { id: number }> = PropsWithChildren & {
   label?: string;
   type?: "button" | "input";
   containerStyle?: StyleProp<ViewStyle>;
+  title?: string;
 }
 
 export default memo(function MGSelect<T extends { id: number }>(props: SelectProps<T>) {
@@ -41,7 +42,7 @@ export default memo(function MGSelect<T extends { id: number }>(props: SelectPro
   }, []);
 
   const dialogRenderOptions: RenderOptionsFunction<void> = useCallback(() => ({
-    title: `Select Activity`,
+    title: props.title,
     scrollMessage: (
       <ScrollView style={[{ width: "100%" }]}>
         {datas?.data?.data?.map((a, i) => (

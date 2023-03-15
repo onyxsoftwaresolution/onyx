@@ -66,12 +66,14 @@ export default memo(function LoginScreen() {
                   Error: {login?.error?.data?.code}
                 </HelperText>
               ) : null}
-              <MGTextInput
-                value={value}
-                onChangeText={onChange}
-                style={{ marginBottom: 7 }}
-                label={'Username'}
-              />
+              <View style={[{ flexDirection: 'row' }]}>
+                <MGTextInput
+                  value={value}
+                  onChangeText={onChange}
+                  style={{ marginBottom: 7 }}
+                  label={'Username'}
+                />
+              </View>
             </>
           )}
           name="username"
@@ -97,13 +99,16 @@ export default memo(function LoginScreen() {
                   Error: {login?.error?.data?.code}
                 </HelperText>
               ) : null}
-              <MGTextInput
-                secureTextEntry
-                value={value}
-                onChangeText={onChange}
-                style={{ marginBottom: 7 }}
-                label={'Password'}
-              />
+              <View style={[{ flexDirection: 'row' }]}>
+                <MGTextInput
+                  mode='outlined'
+                  secureTextEntry
+                  value={value}
+                  onChangeText={onChange}
+                  style={{ marginBottom: 7 }}
+                  label={'Password'}
+                />
+              </View>
             </>
           )}
           name="password"

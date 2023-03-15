@@ -380,6 +380,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
               : null}
             <MGSelect
+              title='Alege angajat'
               type='input'
               getter={Queries.getEmployees as any}
               text={(data: EmployeeOutDTO) => data?.name ?? value?.name ?? ""}
@@ -412,6 +413,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
               : null}
             <MGSelect
+              title='Alege angajat'
               type='input'
               getter={() => Queries.getEmployees({ enabled }) as any}
               text={(data: EmployeeOutDTO) => data?.name ?? value?.name ?? ""}
@@ -447,6 +449,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
         <View>
           {fields.map((_, index) => renderProjectActivity(index))}
           <MGSelect
+            title='Alege activitate'
             getter={() => Queries.getActivityTemplates({ enabled }) as any}
             text={(data: ActivityTemplateOutDTO) => data?.description ?? ''}
             data={undefined}
