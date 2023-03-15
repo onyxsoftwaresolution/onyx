@@ -50,7 +50,9 @@ export default memo(function MGSelect<T extends { id: number }>(props: SelectPro
             {i > 0 && <Divider />}
             <TouchableRipple style={[{ width: "100%", padding: 10 }]} onPress={() => onSelect(a)}>
               <View style={[{ flexDirection: "row", width: "100%" }]}>
-                <RadioButton status={a.id === data?.id ? "checked" : "unchecked"} value="first" />
+                <View pointerEvents="none">
+                  <RadioButton status={a.id === data?.id ? "checked" : "unchecked"} value="first" />
+                </View>
                 <View style={[{ justifyContent: "center", flex: 1 }]}><Text>{props.text(a)}</Text></View>
               </View>
             </TouchableRipple>
