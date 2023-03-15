@@ -1,5 +1,5 @@
 import { Roles } from '@modules/auth/rbac/role.decorator';
-import { Body, Controller, Get, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { UpsertEmployeeDTO } from '../dtos/employee.in.dto';
 import { EmployeeService } from '../service/employee.service';
@@ -9,7 +9,7 @@ import { EmployeeService } from '../service/employee.service';
   path: '',
 })
 export class EmployeeController {
-  constructor(private employeeService: EmployeeService) {}
+  constructor(private employeeService: EmployeeService) { }
 
   @Get('employees')
   @Roles(Role.ADMIN, Role.USER)
@@ -21,5 +21,11 @@ export class EmployeeController {
   @Roles(Role.ADMIN, Role.USER)
   async upsertEmployee(@Body() data: UpsertEmployeeDTO) {
     return await this.employeeService.upsertEmployee(data);
+  }
+
+  @Delete('employee/:id')
+  @Roles(Role.ADMIN, Role.USER)
+  async deleteEmployee(@Param('id') id: number) {
+    return await this.employeeService.deleteEmployee(id);
   }
 }

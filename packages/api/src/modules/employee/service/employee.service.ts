@@ -9,7 +9,7 @@ import { EmployeeProvider } from '../provider/employee.provider';
 
 @Injectable()
 export class EmployeeService {
-  constructor(private employeeProvider: EmployeeProvider) {}
+  constructor(private employeeProvider: EmployeeProvider) { }
 
   async createEmployee(data: CreateEmployeeDTO) {
     return new EmployeeOutDTO(await this.employeeProvider.createEmployee(data));
@@ -26,5 +26,9 @@ export class EmployeeService {
 
   async upsertEmployee(data: UpsertEmployeeDTO) {
     return new EmployeeOutDTO(await this.employeeProvider.upsertEmployee(data));
+  }
+
+  async deleteEmployee(id: number) {
+    return new EmployeeOutDTO(await this.employeeProvider.deleteEmployee(id));
   }
 }

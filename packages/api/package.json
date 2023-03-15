@@ -26,7 +26,9 @@
     "seed:dev": "npx cross-env NODE_ENV=development npx ts-node ./prisma/seed.ts",
     "seed:prod": "npx cross-env NODE_ENV=production npx ts-node ./prisma/seed.ts",
     "push:dev": "npx dotenv -e .env.development -- npx prisma db push",
-    "push:prod": "npx dotenv -e .env.production -- npx prisma db push"
+    "push:prod": "npx dotenv -e .env.production -- npx prisma db push",
+    "studio:dev": "npx dotenv -e .env.development -- npx prisma studio",
+    "studio:prod": "npx dotenv -e .env.production -- npx prisma studio"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.8.1",

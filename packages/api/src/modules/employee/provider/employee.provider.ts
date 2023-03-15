@@ -8,7 +8,7 @@ import {
 
 @Injectable()
 export class EmployeeProvider {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService) { }
 
   async createEmployee(data: CreateEmployeeDTO) {
     return await this.prismaService.client.employee.create({
@@ -43,6 +43,13 @@ export class EmployeeProvider {
       where: id != null ? { id } : { id: -1 },
       create: data,
       update: id != null ? { id, ...data } : {},
+    });
+  }
+
+  async deleteEmployee(id: number) {
+    return await this.prismaService.client.employee.update({
+      where: { id },
+      data: { deleted: true },
     });
   }
 }

@@ -74,6 +74,41 @@ export class Mutations {
     } as UseMutationOptions<FetchResponse<EmployeeOutDTO>, FetchError, Partial<EmployeeOutDTO>>;
   }
 
+  static deleteActivityTemplate({ onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: [`/v1/activity-template/`],
+      mutationFn: async (id) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/activity-template/${id}`,
+          {
+            method: 'DELETE',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<ActivityTemplateOutDTO>, FetchError, number>;
+  }
+
+  static deleteEmployee({ onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: [`/v1/employee/`],
+      mutationFn: async (id) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/employee/${id}`,
+          {
+            method: 'DELETE',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<EmployeeOutDTO>, FetchError, number>;
+  }
+
+
   static upsertActivityTemplate({ onError, onLoading, onSuccess }: Options<FetchResponse<ActivityTemplateOutDTO>> = {}) {
     return {
       mutationKey: ['activity-template'],

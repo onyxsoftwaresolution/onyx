@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { memo, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
 import ScreenContainer from '../../../components/ScreenContainer';
@@ -11,6 +11,9 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
 import { useIsFocused } from '@react-navigation/native';
 import { useSnackbar } from '../../../components/useSnackbar';
+import { RenderOptionsFunction, useDialog } from '../../../components/useDialog';
+import { AppTheme } from '../../../theme/type';
+import { Mutations } from '../../../requests/mutations';
 
 export default memo<NativeStackScreenProps<any, string>>(
   function ActivityTemplateListScreen(props) {
@@ -23,7 +26,13 @@ export default memo<NativeStackScreenProps<any, string>>(
         onError() { snackbar.show('A aparut o eroare la listarea activitatilor!') },
       })
     );
-    const { colors } = useTheme();
+    const deleteActivity = useMutation(Mutations.deleteActivityTemplate({
+      onSuccess() { activities.refetch(); },
+      onError() { snackbar.show('A aparut o eroare la stergerea activitatii!') },
+    }),);
+
+    const { colors } = useTheme<AppTheme>();
+    const dialog = useDialog<ActivityTemplateOutDTO>();
 
     const onPress = useCallback(
       (activity: ActivityTemplateOutDTO) => {
@@ -55,6 +64,15 @@ export default memo<NativeStackScreenProps<any, string>>(
                 <View style={[{ marginBottom: 10 }]} />
               </View>
               <TouchableWithoutFeedback
+                onPress={() => dialog.show(activity)}
+                containerStyle={[styles.iconContainer]}
+              >
+                <Icon
+                  name={'trash-alt'}
+                  style={[{ color: colors.danger, fontSize: 18 }]}
+                />
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback
                 onPress={() => onPress(activity)}
                 containerStyle={[styles.iconContainer]}
               >
@@ -68,8 +86,25 @@ export default memo<NativeStackScreenProps<any, string>>(
           </View>
         </TouchableRipple>
       ),
-      [colors.error, colors.inverseSurface, onPress],
+      [colors.danger, colors.error, colors.inverseSurface, dialog, onPress],
     );
+
+    const dialogRenderOptions: RenderOptionsFunction<ActivityTemplateOutDTO> = useCallback((activity) => ({
+      title: `Sterge sablon activitate`,
+      message: <View>
+        <Text>'{activity?.description}' va fi sters!</Text>
+        <Text>Esti sigur?</Text>
+      </View>,
+      buttons: [
+        {
+          label: 'Sterge',
+          textColor: colors.danger,
+          onPress: () => deleteActivity.mutate(activity.id),
+        },
+        () => <View style={{ flex: 1 }} />,
+        { label: 'Renunta' },
+      ],
+    }), [colors.danger, deleteActivity]);
 
     return (
       <ScreenContainer
@@ -79,6 +114,7 @@ export default memo<NativeStackScreenProps<any, string>>(
         <View style={[styles.list]}>
           {activities.data?.data?.map(renderActivity)}
         </View>
+        {dialog.renderDialog(dialogRenderOptions)}
         {snackbar.renderSnackbar()}
       </ScreenContainer>
     );

@@ -7,10 +7,10 @@ import {
 
 @Injectable()
 export class ActivityTemplateProvider {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prismaService: PrismaService) { }
 
   async createActivityTemplates(activity: CreateActivityTemplateDTO) {
-    return await this.prisma.client.activityTemplate.create({
+    return await this.prismaService.client.activityTemplate.create({
       data: activity,
       select: {
         id: true,
@@ -26,15 +26,22 @@ export class ActivityTemplateProvider {
   }
 
   async upsertActivityTemplates({ id, ...data }: UpsertActivityTemplateDTO) {
-    return await this.prisma.client.activityTemplate.upsert({
+    return await this.prismaService.client.activityTemplate.upsert({
       where: id != null ? { id } : { id: -1 },
       create: data,
       update: id != null ? { id, ...data } : {},
     });
   }
 
+  async deleteActivityTemplates(id: number) {
+    return await this.prismaService.client.activityTemplate.update({
+      where: { id },
+      data: { deleted: true },
+    });
+  }
+
   async listActivityTemplates() {
-    return await this.prisma.client.activityTemplate.findMany({
+    return await this.prismaService.client.activityTemplate.findMany({
       where: { deleted: false, available: true },
     });
   }

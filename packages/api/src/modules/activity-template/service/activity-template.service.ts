@@ -8,7 +8,7 @@ import { ActivityTemplateProvider } from '../provider/activity-template.provider
 
 @Injectable()
 export class ActivityTemplateService {
-  constructor(private activityTemplateProvider: ActivityTemplateProvider) {}
+  constructor(private activityTemplateProvider: ActivityTemplateProvider) { }
 
   async createActivityTemplate(activity: CreateActivityTemplateDTO) {
     return new ActivityTemplateOutDTO(
@@ -19,6 +19,12 @@ export class ActivityTemplateService {
   async upsertActivityTemplate(activity: UpsertActivityTemplateDTO) {
     return new ActivityTemplateOutDTO(
       await this.activityTemplateProvider.upsertActivityTemplates(activity),
+    );
+  }
+
+  async deleteActivityTemplate(id: number) {
+    return new ActivityTemplateOutDTO(
+      await this.activityTemplateProvider.deleteActivityTemplates(id),
     );
   }
 
