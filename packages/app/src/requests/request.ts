@@ -19,6 +19,7 @@ export type FetchResponse<T> = {
 
 export type FetchError = FetchResponse<{
   code: string;
+  message: string[];
 }>;
 
 const getPayload = async <T>(response: Response): Promise<FetchResponse<T>> => {

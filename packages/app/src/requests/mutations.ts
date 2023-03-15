@@ -40,6 +40,15 @@ export class Mutations {
     return response;
   };
 
+  static getMutationError = (error: FetchError | null | undefined) => {
+    return error?.data.message.reduce((p, n) => {
+      const parsed: { key: string; value: string; } = JSON.parse(n);
+      if (p[parsed.key] == null) p[parsed.key] = [];
+      p[parsed.key].push(parsed.value);
+      return p;
+    }, {} as Record<string, string[]>);
+  }
+
   static postLogin() {
     return {
       mutationKey: ['login'],

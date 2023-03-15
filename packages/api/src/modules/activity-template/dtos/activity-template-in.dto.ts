@@ -6,23 +6,29 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  ValidationArguments,
 } from 'class-validator';
-import { PickType, PartialType, IntersectionType } from '@nestjs/swagger';
+import { PickType } from '@nestjs/swagger';
+
+function message(value: string) {
+  return (validationArguments: ValidationArguments) => {
+    return JSON.stringify({ key: validationArguments.property, value });
+  };
+}
 
 export class ActivityTemplateInDTO
   extends EntityInDTO
-  implements ActivityTemplate
-{
-  @IsString()
-  @IsNotEmpty()
+  implements ActivityTemplate {
+  @IsString({ message: message('Descrierea trebuie sa fie un sir de caractere!') })
+  @IsNotEmpty({ message: message('Descrierea trebuie sa fie un sir de caractere!') })
   description: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: message('Materialul trebuie sa fie un sir de caractere!') })
+  @IsNotEmpty({ message: message('Materialul trebuie sa fie un sir de caractere!') })
   material: string;
 
-  @IsNumber()
-  @IsNotEmpty()
+  @IsNumber({}, { message: message('Costul trebuie sa fie un numar!') })
+  @IsNotEmpty({ message: message('Costul trebuie sa fie un numar!') })
   cost: number;
   available: boolean;
 }
@@ -31,7 +37,7 @@ export class CreateActivityTemplateDTO extends PickType(ActivityTemplateInDTO, [
   'description',
   'cost',
   'material',
-] as const) {}
+] as const) { }
 
 export class UpsertActivityTemplateDTO extends CreateActivityTemplateDTO {
   @IsInt()

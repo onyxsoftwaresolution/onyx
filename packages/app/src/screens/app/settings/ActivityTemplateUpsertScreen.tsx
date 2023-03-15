@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation } from '@tanstack/react-query';
 import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
 import { isNotEmpty, isString } from 'class-validator';
-import { memo, useCallback, useEffect } from 'react';
+import { memo, useCallback, useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 import { HelperText } from 'react-native-paper';
@@ -32,6 +32,10 @@ export default memo<NativeStackScreenProps<any, string>>(
         onError() { snackbar.show('A aparut o eroare la salvarea activitatii!') },
       })
     );
+
+    const upserErrors = useMemo(() => Mutations.getMutationError(upsert.error), [upsert.error]);
+
+    console.log(upserErrors);
 
     const {
       control,
@@ -90,9 +94,9 @@ export default memo<NativeStackScreenProps<any, string>>(
                     {errors.description.message}
                   </HelperText>
                 ) : null}
-                {upsert?.isError ? (
+                {upserErrors?.['description']?.at(0) ? (
                   <HelperText type="error">
-                    Error: {upsert?.error?.data.code}
+                    Error: {upserErrors?.['description']?.at(0)}
                   </HelperText>
                 ) : null}
                 <MGTextInput
@@ -123,9 +127,9 @@ export default memo<NativeStackScreenProps<any, string>>(
                     {errors.material.message}
                   </HelperText>
                 ) : null}
-                {upsert?.isError ? (
+                {upserErrors?.['material']?.at(0) ? (
                   <HelperText type="error">
-                    Error: {upsert?.error?.data.code}
+                    Error: {upserErrors?.['material']?.at(0)}
                   </HelperText>
                 ) : null}
                 <MGTextInput
@@ -151,19 +155,20 @@ export default memo<NativeStackScreenProps<any, string>>(
             }}
             render={({ field: { onChange, value } }) => (
               <>
-                {errors.cost != null ? (
+                {errors.cost != null && (
                   <HelperText type="error">{errors.cost.message}</HelperText>
-                ) : null}
-                {upsert?.isError ? (
+                )}
+                {upserErrors?.['cost']?.at(0) && (
                   <HelperText type="error">
-                    Error: {upsert?.error?.data.code}
+                    Error: {upserErrors?.['cost']?.at(0)}
                   </HelperText>
-                ) : null}
+                )}
                 <MGTextInput
                   value={value?.toString()}
                   onChangeText={onChange}
                   style={{ marginBottom: 7 }}
                   label={'Cost'}
+                  keyboardType="numeric"
                 />
               </>
             )}
