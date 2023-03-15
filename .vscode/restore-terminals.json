@@ -7,11 +7,35 @@
       "splitTerminals": [
         {
           "name": "api",
-          "commands": ["npm run start:api:dev"]
+          "commands": [
+            "npm run start:api:dev"
+          ]
         },
         {
           "name": "app",
-          "commands": ["npm run start:app:dev"]
+          "commands": [
+            "npm run start:app:dev"
+          ]
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
+        {
+          "name": "api",
+          "commands": [
+            "cd packages/api"
+          ]
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
+        {
+          "name": "app",
+          "commands": [
+            "cd packages/app"
+          ]
         }
       ]
     }
