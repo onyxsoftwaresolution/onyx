@@ -55,7 +55,7 @@ export default memo(function AppTabNavigator() {
         name={Screens.APP_MONTHLY_REPORT_NAVIGATOR}
         component={MonthlyReportStackNavigator}
         options={{
-          title: 'Saptamanale',
+          title: 'Lunare',
           tabBarIcon: (props) => (
             <>
               <Icon

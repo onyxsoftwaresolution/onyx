@@ -8,6 +8,7 @@ import { ProjectReportOutDTO, ReportListItemOutDTO } from '@workspace/api/src/mo
 import { Report } from '../screens/app/reports/Report';
 import { JwtUserDTO } from '@workspace/api/src/modules/user/dtos/jwt.user.dto';
 import { API_URL } from '@env';
+import { InfoDTO } from "@workspace/api/src/modules/app/dtos/info.dto"
 
 type Options<T = unknown> = Partial<Pick<UseQueryOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -119,4 +120,15 @@ export class Queries {
     onSuccess,
     enabled,
   } as UseQueryOptions<FetchResponse<ProjectReportOutDTO>, FetchError>);
+
+  static getInfo = ({ enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<InfoDTO>> = {}) => ({
+    queryKey: [`/v1/info`],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/info`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<InfoDTO>>);
 }

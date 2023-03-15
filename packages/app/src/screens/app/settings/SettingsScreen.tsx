@@ -3,7 +3,9 @@ import React, { memo, useCallback } from 'react';
 import { ListRenderItemInfo, StyleSheet, View } from 'react-native';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import Info from '../../../components/Info';
 import ScreenContainer from '../../../components/ScreenContainer';
+import { RenderOptionsFunction, useDialog } from '../../../components/useDialog';
 import { useUser } from '../../../context/userContext';
 import { Store } from '../../../storage/Store';
 import { AppTheme } from '../../../theme/type';
@@ -13,6 +15,8 @@ export default memo<NativeStackScreenProps<any, string>>(
   function SettingsScreen({ navigation }) {
     const { colors } = useTheme<AppTheme>();
     const [user, setUser] = useUser();
+
+    const dialog = useDialog<void>();
 
     const logout = useCallback(async () => {
       await Store.delete('access_token');
@@ -50,6 +54,14 @@ export default memo<NativeStackScreenProps<any, string>>(
               chevron: 'chevron-right',
             };
 
+          case Links.ABOUT:
+            return {
+              color: colors.inverseSurface,
+              onPress: () => { dialog.show(); },
+              icon: 'mobile-alt',
+              chevron: '',
+            }
+
           default:
             return {
               color: colors.inverseSurface,
@@ -59,8 +71,13 @@ export default memo<NativeStackScreenProps<any, string>>(
             };
         }
       },
-      [colors.danger, colors.inverseSurface, logout, navigation],
+      [colors.danger, colors.inverseSurface, dialog, logout, navigation],
     );
+
+    const aboutDialogOptions: RenderOptionsFunction<unknown> = useCallback(() => ({
+      title: 'Despre aplicatie',
+      message: <Info />
+    }), []);
 
     const renderItem = useCallback(
       ({
@@ -83,7 +100,7 @@ export default memo<NativeStackScreenProps<any, string>>(
                 </Text>
                 <View style={[{ flex: 1 }]} />
                 <View style={[styles.iconContainer]}>
-                  <Icon style={[{ color: data.color }]} name={data.chevron} />
+                  <Icon style={[{ color: data.color, width: 20 }]} name={data.chevron} />
                 </View>
               </View>
               <Divider />
@@ -106,6 +123,7 @@ export default memo<NativeStackScreenProps<any, string>>(
           </View>
           {settings.map((s, i) => renderItem({ item: s, index: i }))}
         </View>
+        {dialog.renderDialog(aboutDialogOptions)}
       </ScreenContainer>
     );
   },
@@ -115,17 +133,20 @@ enum Links {
   EMPLOYEES,
   ACTIVITIES,
   LOGOUT,
+  ABOUT,
 }
 
 const settings = [
   { label: 'Angajati', value: Links.EMPLOYEES },
   { label: 'Activitati', value: Links.ACTIVITIES },
+  { label: 'Despre aplicatie', value: Links.ABOUT },
   { label: 'Logout', value: Links.LOGOUT },
 ];
 
 const styles = StyleSheet.create({
   scrollContainer: {
     alignItems: 'center',
+    minHeight: '100%',
   },
   list: {
     maxWidth: 500,
@@ -145,5 +166,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 10,
+    width: 20,
   },
 });

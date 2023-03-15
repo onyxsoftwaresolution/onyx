@@ -30,7 +30,7 @@ export default memo(function MonthlyReportStackNavigator() {
         name={Screens.APP_MONTHLY_REPORT__REPORT_LIST_SCREEN}
         component={MonthlyReportsScreen}
         options={(screenProps) => ({
-          ...options('Rapoarte saptamanale'),
+          ...options('Rapoarte lunare'),
           headerRight: (headerProps) => (
             <HeaderAddButton
               {...screenProps}
@@ -51,8 +51,8 @@ export default memo(function MonthlyReportStackNavigator() {
             title:
               // @ts-expect-error missing type
               screenProps.route.params?.projectReportId != null
-                ? 'Modifica report saptamanal'
-                : 'Adauga report saptamanal',
+                ? 'Modifica report lunar'
+                : 'Adauga report lunar',
           })
         }}
       />
