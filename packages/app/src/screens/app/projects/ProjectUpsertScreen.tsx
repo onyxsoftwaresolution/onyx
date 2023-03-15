@@ -12,8 +12,8 @@ import MGDatePicker from '../../../components/MGDatePicker';
 import MGTextInput from '../../../components/MGTextInput';
 import ScreenContainer from '../../../components/ScreenContainer';
 import MGSelect from '../../../components/MGSelect';
-import { Mutations } from '../../../requests/Mutations';
-import { Queries } from '../../../requests/Queries';
+import { Mutations } from '../../../requests/mutations';
+import { Queries } from '../../../requests/queries';
 import { EmployeeOutDTO } from "@workspace/api/src/modules/employee/dtos/employee.out.dto"
 import { useIsFocused } from '@react-navigation/native';
 import dayjs from 'dayjs';

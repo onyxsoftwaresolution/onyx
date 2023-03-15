@@ -10,7 +10,7 @@ import MGButton from '../../../components/MGButton';
 import MGTextInput from '../../../components/MGTextInput';
 import ScreenContainer from '../../../components/ScreenContainer';
 import { useSnackbar } from '../../../components/useSnackbar';
-import { Mutations } from '../../../requests/Mutations';
+import { Mutations } from '../../../requests/mutations';
 import { Screens } from '../../Screens';
 
 type Params = { name: string; position: string; id: number };

@@ -15,8 +15,8 @@ import MGTextInput from "../../../components/MGTextInput";
 import ScreenContainer from "../../../components/ScreenContainer";
 import { RenderOptionsFunction, useDialog } from "../../../components/useDialog";
 import { useSnackbar } from "../../../components/useSnackbar";
-import { Mutations } from "../../../requests/Mutations";
-import { Queries } from "../../../requests/Queries";
+import { Mutations } from "../../../requests/mutations";
+import { Queries } from "../../../requests/queries";
 import { AppTheme } from "../../../theme/type";
 import { Report } from "./Report";
 

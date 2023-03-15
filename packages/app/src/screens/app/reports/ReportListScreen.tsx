@@ -13,8 +13,8 @@ import {
   useDialog,
 } from '../../../components/useDialog';
 import ScreenContainer from '../../../components/ScreenContainer';
-import { Mutations } from '../../../requests/Mutations';
-import { Queries } from '../../../requests/Queries';
+import { Mutations } from '../../../requests/mutations';
+import { Queries } from '../../../requests/queries';
 import { AppTheme } from '../../../theme/type';
 import { Screens } from '../../Screens';
 import { Report } from './Report';

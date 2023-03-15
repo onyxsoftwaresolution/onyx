@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { JwtUserDTO } from '@workspace/api/src/modules/user/dtos/jwt.user.dto';
 import { createContext, memo, useContext, useEffect, useState } from 'react';
-import { Queries } from '../requests/Queries';
+import { Queries } from '../requests/queries';
 
 type Value = {
   error?: unknown,
