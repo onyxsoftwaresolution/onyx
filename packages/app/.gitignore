@@ -14,5 +14,6 @@ web-build/
 .DS_Store
 /.firebase
 /.env
+/.env.local
 /.env.development
 /.env.production
