@@ -94,7 +94,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           validate: (value) => isString(value) && isNotEmpty(value),
         }}
         render={({ field: { onChange, value } }) => (
-          <>
+          <View style={[{ flex: 1 }]}>
             {errors.description != null
               ? <HelperText type="error">{errors.description.message}</HelperText>
               : null}
@@ -105,10 +105,11 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               multiline
               value={value}
               onChangeText={onChange}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
               style={{ marginBottom: 7, height: 77 }}
               label={'Nume proiect'}
             />
-          </>
+          </View>
         )}
         name="description"
       />
@@ -124,7 +125,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           validate: (value) => isString(value) && isNotEmpty(value),
         }}
         render={({ field: { onChange, value } }) => (
-          <>
+          <View style={[{ flex: 1 }]}>
             {errors.area != null
               ? <HelperText type="error">{errors.area.message}</HelperText>
               : null}
@@ -135,10 +136,11 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               mode='outlined'
               value={value}
               onChangeText={onChange}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
               style={{ marginBottom: 7 }}
               label={'Aria'}
             />
-          </>
+          </View>
         )}
         name="area"
       />
@@ -154,7 +156,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           validate: (value) => isString(value) && isNotEmpty(value),
         }}
         render={({ field: { onChange, value } }) => (
-          <>
+          <View style={[{ flex: 1 }]}>
             {errors.code != null
               ? <HelperText type="error">{errors.code.message}</HelperText>
               : null}
@@ -162,12 +164,14 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
               : null}
             <MGTextInput
+              error={!!errors.code}
               value={value}
               onChangeText={onChange}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
               style={{ marginBottom: 7 }}
               label={'Cod'}
             />
-          </>
+          </View>
         )}
         name="code"
       />
@@ -183,7 +187,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           validate: (value) => (isDate(value) || isDateString(value)) && isNotEmpty(value),
         }}
         render={({ field: { onChange, value } }) => (
-          <>
+          <View style={[{ flex: 1 }]}>
             {errors.start != null
               ? <HelperText type="error">{errors.start.message}</HelperText>
               : null}
@@ -197,7 +201,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               containerStyle={{ marginBottom: 7 }}
               label={'Data inceput'}
             />
-          </>
+          </View>
         )}
         name="start"
       />
@@ -213,7 +217,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           validate: (value) => (isDate(value) || isDateString(value)) && isNotEmpty(value),
         }}
         render={({ field: { onChange, value } }) => (
-          <>
+          <View style={[{ flex: 1 }]}>
             {errors.end != null
               ? <HelperText type="error">{errors.end.message}</HelperText>
               : null}
@@ -227,7 +231,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               containerStyle={{ marginBottom: 7 }}
               label={'Data sfarsit'}
             />
-          </>
+          </View>
         )}
         name="end"
       />
@@ -243,7 +247,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           validate: (value) => isString(value) && isNotEmpty(value),
         }}
         render={({ field: { onChange, value } }) => (
-          <>
+          <View style={[{ flex: 1 }]}>
             {errors.projectActivities?.[index]?.description != null
               ? <HelperText type="error">{errors.projectActivities?.[index]?.description?.message}</HelperText>
               : null}
@@ -254,10 +258,11 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               multiline
               value={value}
               onChangeText={onChange}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
               style={{ marginBottom: 7, height: 77 }}
               label={'Nume activitate'}
             />
-          </>
+          </View>
         )}
         name={`projectActivities.${index}.description`}
       />
@@ -273,7 +278,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           validate: (value) => isNumber(parseFloat(value.toString())),
         }}
         render={({ field: { onChange, value } }) => (
-          <>
+          <View style={[{ flex: 1 }]}>
             {errors.projectActivities?.[index]?.quantity != null
               ? <HelperText type="error">{errors.projectActivities?.[index]?.quantity?.message}</HelperText>
               : null}
@@ -282,11 +287,12 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               : null}
             <MGTextInput
               value={value.toString()}
-              onChangeText={text => onChange(parseFloat(text))}
+              onChangeText={onChange}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
               style={{ marginBottom: 7 }}
               label={'Quantity'}
             />
-          </>
+          </View>
         )}
         name={`projectActivities.${index}.quantity`}
       />
@@ -302,7 +308,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           validate: (value) => isString(value) && isNotEmpty(value),
         }}
         render={({ field: { onChange, value } }) => (
-          <>
+          <View style={[{ flex: 1 }]}>
             {errors.projectActivities?.[index]?.material != null
               ? <HelperText type="error">{errors.projectActivities?.[index]?.material?.message}</HelperText>
               : null}
@@ -312,10 +318,11 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
             <MGTextInput
               value={value}
               onChangeText={onChange}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
               style={{ marginBottom: 7 }}
               label={'Material'}
             />
-          </>
+          </View>
         )}
         name={`projectActivities.${index}.material`}
       />
@@ -331,7 +338,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           validate: (value) => isNumber(parseFloat(value.toString())),
         }}
         render={({ field: { onChange, value } }) => (
-          <>
+          <View style={[{ flex: 1 }]}>
             {errors.projectActivities?.[index]?.cost != null
               ? <HelperText type="error">{errors.projectActivities?.[index]?.cost?.message}</HelperText>
               : null}
@@ -341,10 +348,11 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
             <MGTextInput
               value={value.toString()}
               onChangeText={text => onChange(parseFloat(text))}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
               style={{ marginBottom: 7 }}
               label={'Cost'}
             />
-          </>
+          </View>
         )}
         name={`projectActivities.${index}.cost`}
       />
@@ -373,7 +381,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           validate: (value) => isInt(value.id) && isNotEmpty(value.id),
         }}
         render={({ field: { onChange, value } }) => (
-          <>
+          <View style={[{ flex: 1 }]}>
             {errors.localAdmin != null
               ? <HelperText type="error">{errors.localAdmin.message?.toString()}</HelperText>
               : null}
@@ -390,7 +398,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               label="Sef santier"
               containerStyle={[{ marginBottom: 7 }]}
             />
-          </>
+          </View>
         )}
         name={`localAdmin`}
       />
@@ -406,7 +414,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           validate: (value) => isInt(value.id) && isNotEmpty(value.id),
         }}
         render={({ field: { onChange, value } }) => (
-          <>
+          <View style={[{ flex: 1 }]}>
             {errors.areaAdmin != null
               ? <HelperText type="error">{errors.areaAdmin.message?.toString()}</HelperText>
               : null}
@@ -423,7 +431,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               label="Sef punct de lucru"
               containerStyle={[{ marginBottom: 7 }]}
             />
-          </>
+          </View>
         )}
         name={`areaAdmin`}
       />

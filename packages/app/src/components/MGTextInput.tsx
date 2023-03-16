@@ -1,13 +1,13 @@
 import { memo } from 'react';
-import { View } from 'react-native';
+import { StyleProp, View, ViewStyle } from 'react-native';
 import { TextInputProps, TextInput, useTheme } from 'react-native-paper';
 
-export default memo<TextInputProps>(function MGTextInput(props) {
+export default memo<TextInputProps & { containerStyle?: StyleProp<ViewStyle> }>(function MGTextInput(props) {
   const theme = useTheme();
 
   const { style, onChange, ...rest } = props;
   return (
-    <View style={[{ flex: 1 }]}>
+    <View style={[{ flex: 1 }, props.containerStyle]}>
       <TextInput
         mode="outlined"
         style={[
