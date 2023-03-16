@@ -105,22 +105,6 @@ export class Queries {
     enabled,
   } as UseQueryOptions<FetchResponse<ReportListItemOutDTO[]>>);
 
-  static getReport = (
-    type: Report,
-    projectId: number,
-    projectReportId: number | undefined,
-    { enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<ProjectReportOutDTO>> = {}) =>
-  ({
-    queryKey: [`/v1/${type}-report/${projectId}`],
-    queryFn: async () => {
-      onLoading?.();
-      return await Queries.queryFn(`${API_URL}/v1/${type}-report/${projectId}/${projectReportId ?? ''}`);
-    },
-    onError,
-    onSuccess,
-    enabled,
-  } as UseQueryOptions<FetchResponse<ProjectReportOutDTO>, FetchError>);
-
   static getInfo = ({ enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<InfoDTO>> = {}) => ({
     queryKey: [`/v1/info`],
     queryFn: async () => {

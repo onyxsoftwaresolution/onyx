@@ -7,6 +7,10 @@ import { darkTheme } from './src/theme/darkTheme';
 import { Provider as UserProvider } from './src/context/userContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+import dayjs from 'dayjs';
+import 'dayjs/locale/ro';
+dayjs.locale('ro')
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

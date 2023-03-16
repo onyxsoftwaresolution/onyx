@@ -1,22 +1,22 @@
-import { useIsFocused } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ProjectActivityOutDTO } from "@workspace/api/src/modules/project/dtos/project.out.dto";
 import { ActivityReportOutDTO, ProjectReportOutDTO } from "@workspace/api/src/modules/report/dtos/report-out.dto";
-import { isNotEmpty } from "class-validator";
-import { memo, PropsWithChildren, useCallback, useMemo, useState } from "react";
+import dayjs from "dayjs";
+import { memo, PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import MGButton from "../../../../components/MGButton";
 import MGCard from "../../../../components/MGCard";
-import MGRow from "../../../../components/MGRow";
+import MGDatePicker from "../../../../components/MGDatePicker";
 import MGTextInput from "../../../../components/MGTextInput";
 import ScreenContainer from "../../../../components/ScreenContainer";
 import { RenderOptionsFunction, useDialog } from "../../../../components/useDialog";
 import { useSnackbar } from "../../../../components/useSnackbar";
+import { dayOrNull } from "../../../../dayOrNull";
 import { Mutations } from "../../../../requests/mutations";
-import { Queries } from "../../../../requests/queries";
 import { AppTheme } from "../../../../theme/type";
 import { Report } from "../Report";
 import DailyActivityReport from "./DailyActivityReport";
@@ -38,16 +38,23 @@ export default memo<Props>(function ReportUpsertScreen(props) {
   const dialog = useDialog();
   const snackbar = useSnackbar();
 
-  const enabled = useIsFocused();
-  const report = useQuery(
-    Queries.getReport(
-      props.type, projectId, projectReportId,
+  const [month, setMonth] = useState<string>(dayjs().format('YYYYMM'));
+
+  const report = useMutation(
+    Mutations.getReport(
+      props.type, projectId, projectReportId, month,
       {
-        enabled,
         onSuccess() { setTimeout(reset, 0); },
         onError() { snackbar.show('A aparut o eroare la incarcarea raportului!') },
       }
     ));
+
+  useEffect(() => {
+    report.mutate();
+    // to run only on month state change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [month]);
+
   const upsert = useMutation(
     Mutations.upsertReport(
       props.type, projectId, projectReportId,
@@ -66,16 +73,16 @@ export default memo<Props>(function ReportUpsertScreen(props) {
       }
     ));
 
-  // @ts-expect-error cdc
   const values: ProjectReportOutDTO = useMemo(() => {
-    return report.data?.data ?? {}
+    return ({
+      ...(report.data?.data ?? { monthlyActivityReports: [], dailyActivityReports: [] }) as ProjectReportOutDTO,
+    })
   }, [report.data?.data]);
 
   const {
     control,
     handleSubmit,
     formState: { errors, isValid, isDirty },
-    getValues,
     setValue,
     reset,
   } = useForm<typeof values>({
@@ -119,14 +126,48 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         <MGCard title={report.dailyProjectActivity?.description ?? report.monthlyProjectActivity?.description}>
           {props.type === Report.DAILY &&
             daily[index] != null &&
-            <DailyActivityReport control={control} index={index} report={monthly[index]} />}
+            <DailyActivityReport control={control} index={index} report={monthly[index]} setValue={setValue} />}
           {props.type === Report.MONTHLY &&
-            monthly[index] != null &&
-            <MonthlyActivityReport control={control} index={index} report={monthly[index]} />}
+            monthly[index] != null && <MonthlyActivityReport control={control} index={index} report={monthly[index]} setValue={setValue} />}
         </MGCard>
       </View>
     );
-  }, [control, daily, monthly, props.type])
+  }, [control, daily, monthly, props.type, setValue])
+
+  const renderSubmit = useCallback(() => {
+    return (
+      <>
+        <MGButton
+          icon="send"
+          label={'Salveaza'}
+          // @ts-expect-error cdc
+          onPress={handleSubmit(submit)}
+          style={[{ marginTop: 10, marginHorizontal: 10, flex: 1 }]}
+        />
+        {projectReportId != null
+          ? <MGButton
+            icon="mail"
+            label={'Trimite raportul prin e-mail'}
+            onPress={dialog.show}
+            style={[{ marginTop: 10, marginHorizontal: 10, flex: 1 }]}
+          />
+          : null}
+      </>
+    );
+  }, [dialog.show, handleSubmit, projectReportId, submit])
+
+  const renderSelectMonth = useCallback(() => {
+    return (
+      <MGCard title={'Selecteaza luna:'}>
+        <MGDatePicker
+          mode="single"
+          value={dayOrNull(dayjs(month, 'YYYYMM'))?.toDate() ?? dayjs().toDate()}
+          renderInputValue={date => dayjs(date).format('MMMM YYYY')}
+          onDateChange={date => setMonth(dayjs(date.date).format('YYYYMM'))}
+        />
+      </MGCard>
+    );
+  }, [month]);
 
   const render = useCallback(() => {
     return (
@@ -135,14 +176,15 @@ export default memo<Props>(function ReportUpsertScreen(props) {
           <Text style={[{ fontSize: 18 }]}>{'Proiect'}</Text>
         </View>
         {renderProjectInfo()}
-        <View style={[{ paddingLeft: 10, alignSelf: 'flex-start', paddingTop: 10 }]}>
+        {props.type === Report.MONTHLY && renderSelectMonth()}
+        {<View style={[{ paddingLeft: 10, alignSelf: 'flex-start', paddingTop: 10 }]}>
           <Text style={[{ fontSize: 18 }]}>{'Activitati'}</Text>
-        </View>
+        </View>}
         {report.data?.data.dailyActivityReports?.map((report, index) => renderActivity(report, index))}
         {report.data?.data.monthlyActivityReports?.map((report, index) => renderActivity(report, index))}
       </>
     );
-  }, [renderActivity, renderProjectInfo, report.data?.data.dailyActivityReports, report.data?.data.monthlyActivityReports]);
+  }, [props.type, renderActivity, renderProjectInfo, renderSelectMonth, report.data?.data.dailyActivityReports, report.data?.data.monthlyActivityReports]);
 
   const [email, setEmail] = useState('');
 
@@ -171,21 +213,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
     >
       <View style={[styles.view]}>
         {render()}
-        <MGButton
-          icon="send"
-          label={'Salveaza'}
-          // @ts-expect-error cdc
-          onPress={handleSubmit(submit)}
-          style={[{ marginTop: 10, marginHorizontal: 10, flex: 1 }]}
-        />
-        {projectReportId != null
-          ? <MGButton
-            icon="mail"
-            label={'Trimite raportul prin e-mail'}
-            onPress={dialog.show}
-            style={[{ marginTop: 10, marginHorizontal: 10, flex: 1 }]}
-          />
-          : null}
+        {renderSubmit()}
         <View style={[{ height: 20 }]} />
         {snackbar.renderSnackbar()}
         {dialog.renderDialog(dialogArg)}

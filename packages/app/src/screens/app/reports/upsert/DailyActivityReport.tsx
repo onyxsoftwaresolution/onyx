@@ -1,7 +1,7 @@
 import { ActivityReportOutDTO, ProjectReportOutDTO } from "@workspace/api/src/modules/report/dtos/report-out.dto";
 import { isNotEmpty } from "class-validator";
 import { memo, PropsWithChildren, useCallback } from "react";
-import { Control, Controller, useWatch } from "react-hook-form";
+import { Control, Controller, UseFormSetValue, useWatch } from "react-hook-form";
 import { View } from "react-native";
 import MGRow from "../../../../components/MGRow";
 import MGTextInput from "../../../../components/MGTextInput";
@@ -10,9 +10,10 @@ type Props = PropsWithChildren<{
   report: ActivityReportOutDTO;
   index: number;
   control: Control<ProjectReportOutDTO, any>;
+  setValue: UseFormSetValue<ProjectReportOutDTO>;
 }>
 
-export default memo<Props>(function DailyActivityReport({ index, report, control }) {
+export default memo<Props>(function DailyActivityReport({ index, report, control, setValue }) {
   const state = useWatch({ control, name: `dailyActivityReports.${index}` });
 
   const renderActivityReportTodayStock = useCallback((index: number) => {

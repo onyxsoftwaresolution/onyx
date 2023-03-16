@@ -45,7 +45,7 @@ export class ReportController {
     return await this.reportService.upsertMonthlyReport(projectId, projectReportId, body);
   }
 
-  @Get('daily-report/:projectId/:projectReportId?')
+  @Get(['new-daily-report/:projectId', 'daily-report/:projectId/:projectReportId'])
   @Roles(Role.ADMIN, Role.USER)
   async getDailyReport(
     @Param('projectId') projectId: number,
@@ -54,13 +54,14 @@ export class ReportController {
     return await this.reportService.getDailyReport(projectId, projectReportId);
   }
 
-  @Get('monthly-report/:projectId/:projectReportId?')
+  @Get(['new-monthly-report/:projectId/:month', 'monthly-report/:projectId/:projectReportId'])
   @Roles(Role.ADMIN, Role.USER)
   async getMonthlyReport(
+    @Param('month') month: string,
     @Param('projectId') projectId: number,
     @Param('projectReportId') projectReportId: number | undefined,
   ) {
-    return await this.reportService.getMonthlyReport(projectId, projectReportId);
+    return await this.reportService.getMonthlyReport(month, projectId, projectReportId);
   }
 
   @Post('daily-report/:projectId/:projectReportId/:to')

@@ -1,5 +1,5 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import { UpsertProjectReportDTO } from '../dtos/report-in.dto';
 import { Prisma } from '@prisma/client';
@@ -154,7 +154,11 @@ export class ReportProvider {
     });
   }
 
-  async getMonthlyReport(projectId: number, projectReportId: number | undefined) {
+  async getMonthlyReport(month: string, projectId: number, projectReportId: number | undefined) {
+    const day = dayjs(month ?? null, 'YYYYMM');
+    if (!day.isValid() && projectReportId == null) {
+      throw new BadRequestException({ message: 'Month is not valid!' })
+    }
     if (projectReportId != null && !isNaN(projectReportId)) {
       return await this.prismaService.client.projectReport.findFirst({
         where: { id: projectReportId, deleted: false },

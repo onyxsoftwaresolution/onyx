@@ -9,6 +9,7 @@ import { Report } from '../screens/app/reports/Report';
 import { EmployeeOutDTO } from '@workspace/api/src/modules/employee/dtos/employee.out.dto';
 import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
 import { API_URL } from '@env';
+import { ProjectReportOutDTO } from '@workspace/api/src/modules/report/dtos/report-out.dto';
 
 type Options<T = unknown> = Partial<Pick<UseMutationOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -120,7 +121,6 @@ export class Mutations {
     } as UseMutationOptions<FetchResponse<EmployeeOutDTO>, FetchError, number>;
   }
 
-
   static upsertActivityTemplate({ onError, onLoading, onSuccess }: Options<FetchResponse<ActivityTemplateOutDTO>> = {}) {
     return {
       mutationKey: ['activity-template'],
@@ -155,6 +155,29 @@ export class Mutations {
       onError,
     } as UseMutationOptions<FetchResponse<ProjectOutDTO>, unknown, number>;
   }
+
+  static getReport = (
+    type: Report, projectId: number, projectReportId: number | undefined, month: string,
+    { onError, onLoading, onSuccess }: Options<FetchResponse<ProjectReportOutDTO>> = {}
+  ) => {
+    let path = '';
+    if (type === Report.MONTHLY && projectReportId == null) {
+      path = `/v1/new-${type}-report/${projectId}/${month}`;
+    } else if (projectReportId != null) {
+      path = `/v1/${type}-report/${projectId}/${projectReportId}`;
+    } else {
+      path = `/v1/new-${type}-report/${projectId}`;
+    }
+    return ({
+      mutationKey: [`${path}`],
+      mutationFn: async () => {
+        onLoading?.();
+        return await Mutations.mutationFn(`${API_URL}${path}`);
+      },
+      onError,
+      onSuccess,
+    } as UseMutationOptions<FetchResponse<ProjectReportOutDTO>, FetchError>)
+  };
 
   static upsertProject({ onError, onLoading, onSuccess }: Options = {}) {
     return {

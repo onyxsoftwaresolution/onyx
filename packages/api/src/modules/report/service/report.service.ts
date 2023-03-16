@@ -35,8 +35,8 @@ export class ReportService {
     return new ProjectReportOutDTO(await this.reportProvider.getDailyReport(projectId, projectReportId));
   }
 
-  async getMonthlyReport(projectId: number, projectReportId: number) {
-    return new ProjectReportOutDTO(await this.reportProvider.getMonthlyReport(projectId, projectReportId));
+  async getMonthlyReport(month: string, projectId: number, projectReportId: number) {
+    return new ProjectReportOutDTO(await this.reportProvider.getMonthlyReport(month, projectId, projectReportId));
   }
 
   async sendDailyMail(to: string, projectId: number, projectReportId: number) {

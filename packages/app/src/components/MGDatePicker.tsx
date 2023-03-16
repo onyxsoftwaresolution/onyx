@@ -10,7 +10,7 @@ import MGTextInput from "./MGTextInput";
 registerTranslation('en-GB', enGB);
 
 interface MGDatePickerProps extends Pick<DatePickerModalSingleProps, "uppercase" | "startYear" | "endYear"> {
-  value?: Date | null;
+  value?: Date | null | undefined;
   defaultValue?: Date;
   onDateChange?: SingleChange;
   mode: 'range' | 'single' | 'multiple';
@@ -21,6 +21,7 @@ interface MGDatePickerProps extends Pick<DatePickerModalSingleProps, "uppercase"
   validRange?: ValidRangeType | undefined;
   inputStyle?: StyleProp<TextStyle>;
   containerStyle?: StyleProp<ViewStyle>;
+  renderInputValue?(value: Date | null | undefined): string;
 }
 
 export default memo<MGDatePickerProps>(function MGDatePicker(props) {
@@ -47,7 +48,7 @@ export default memo<MGDatePickerProps>(function MGDatePicker(props) {
       <TouchableRipple onPress={showDatePicker}>
         <View pointerEvents="none">
           <MGTextInput
-            value={dayOrNull(dayjs(props.value ?? ''))?.format('DD/MM/YYYY') ?? ""}
+            value={props.renderInputValue?.(props.value) ?? dayOrNull(dayjs(props.value ?? ''))?.format('DD/MM/YYYY') ?? ""}
             label={props.label}
           />
         </View>
