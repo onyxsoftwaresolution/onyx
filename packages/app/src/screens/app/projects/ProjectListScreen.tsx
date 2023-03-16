@@ -44,7 +44,7 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
 
   const onPress = useCallback(
     (project: ProjectOutDTO) => {
-      props.navigation.navigate(Screens.APP_PROJECT_UPSERT, project);
+      props.navigation.navigate(Screens.APP_PROJECT_UPSERT, { id: project.id });
     },
     [props.navigation],
   );

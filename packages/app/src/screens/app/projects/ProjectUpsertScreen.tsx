@@ -32,7 +32,8 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
   const enabled = useIsFocused();
   const project = useQuery(Queries.getProject(params.id, {
     enabled: enabled && params.id != null,
-    onSuccess: () => !isDirty && reset(),
+    // because ***MAGIC***
+    onSuccess: () => setTimeout(reset, 0),
   }));
   const upsert = useMutation(Mutations.upsertProject({
     onSuccess: () => props.navigation.pop(),

@@ -1,10 +1,7 @@
 import {
   createNativeStackNavigator,
-  NativeStackNavigationOptions,
 } from '@react-navigation/native-stack';
-import React, { memo, useCallback } from 'react';
-import { Platform } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import React, { memo } from 'react';
 import { HeaderAddButton } from '../../../components/HeaderAddButton';
 import { Screens } from '../../Screens';
 import { useScreenOptions } from '../../useScreenOptions';

@@ -61,14 +61,22 @@ export class ProjectProvider {
 
   async getProject(id: number) {
     return await this.prismaService.client.project.findFirst({
-      where: { id, deleted: false, available: true },
+      where: {
+        id,
+        deleted: false,
+        available: true,
+        areaAdmin: { deleted: false },
+        localAdmin: { deleted: false },
+        projectActivities: { every: { deleted: false } }
+      },
       select: {
         id: true,
         area: true,
         areaAdmin: {
           select: {
             id: true,
-            name: true
+            name: true,
+            position: true,
           }
         },
         areaAdminId: true,
@@ -80,7 +88,8 @@ export class ProjectProvider {
         localAdmin: {
           select: {
             id: true,
-            name: true
+            name: true,
+            position: true,
           }
         },
         localAdminId: true,

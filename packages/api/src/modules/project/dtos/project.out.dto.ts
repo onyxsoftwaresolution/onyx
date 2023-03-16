@@ -52,12 +52,14 @@ export class ProjectOutDTO extends EntityOutDTO implements Project {
   areaAdminId: number;
 
   @Expose()
+  @Type(() => EmployeeOutDTO)
   areaAdmin: EmployeeOutDTO;
 
   @Expose()
   localAdminId: number;
 
   @Expose()
+  @Type(() => EmployeeOutDTO)
   localAdmin: EmployeeOutDTO;
 
   @Expose()

@@ -26,11 +26,7 @@
           "commands": [
             "cd packages/api"
           ]
-        }
-      ]
-    },
-    {
-      "splitTerminals": [
+        },
         {
           "name": "app",
           "commands": [
