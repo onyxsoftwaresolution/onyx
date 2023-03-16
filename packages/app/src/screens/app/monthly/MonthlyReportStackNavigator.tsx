@@ -7,7 +7,7 @@ import { useScreenOptions } from '../../useScreenOptions';
 import ProjectListScreen from '../projects/ProjectListScreen';
 import ReportListScreen from '../reports/ReportListScreen';
 import { Report } from '../reports/Report';
-import ReportUpsertScreen from '../reports/ReportUpsertScreen';
+import ReportUpsertScreen from '../reports/upsert/ReportUpsertScreen';
 
 const Stack = createNativeStackNavigator();
 

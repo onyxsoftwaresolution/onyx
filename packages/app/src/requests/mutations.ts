@@ -49,10 +49,11 @@ export class Mutations {
     }, {} as Record<string, string[]>);
   }
 
-  static postLogin() {
+  static postLogin({ onError, onLoading, onSuccess }: Options<FetchResponse<EmployeeOutDTO>> = {}) {
     return {
       mutationKey: ['login'],
       mutationFn: async (body) => {
+        onLoading?.();
         return await Mutations.mutationFn(
           `${API_URL}/v1/auth/login`,
           { body: body as any, method: 'POST' },
@@ -61,7 +62,9 @@ export class Mutations {
           },
         );
       },
-    } as UseMutationOptions<FetchResponse<LoginTokenDTO>, unknown, LoginDTO>;
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<LoginTokenDTO>, FetchError, LoginDTO>;
   }
 
   static upsertEmployee({ onError, onLoading, onSuccess }: Options<FetchResponse<EmployeeOutDTO>> = {}) {

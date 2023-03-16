@@ -7,13 +7,23 @@ import { HelperText } from 'react-native-paper';
 import MGButton from '../../components/MGButton';
 import MGTextInput from '../../components/MGTextInput';
 import ScreenContainer from '../../components/ScreenContainer';
+import { useSnackbar } from '../../components/useSnackbar';
 import { useUser } from '../../context/userContext';
 import { Mutations } from '../../requests/mutations';
+
+type LoginDTO = {
+  username: string;
+  password: string;
+}
 
 export default memo(function LoginScreen() {
   const [, setUser] = useUser();
 
-  const login = useMutation(Mutations.postLogin());
+  const snackbar = useSnackbar();
+
+  const login = useMutation(Mutations.postLogin({
+    onError() { snackbar.show('A aparut o eroare la logare!') }
+  }));
 
   useEffect(() => {
     if (login.isSuccess) {
@@ -30,20 +40,20 @@ export default memo(function LoginScreen() {
     handleSubmit,
     formState: { errors, isValid },
     getValues,
-  } = useForm<unknown>({
+  } = useForm<LoginDTO>({
     mode: 'onChange',
     values: { username: '', password: '' },
   });
 
   const submit = useCallback(
-    ({ username, password }: unknown) => {
+    ({ username, password }: LoginDTO) => {
       login.mutate({ username, password });
     },
     [login],
   );
 
   return (
-    <ScreenContainer scrollContainerStyle={styles.scrollContainer}>
+    <ScreenContainer loading={login.isLoading} scrollContainerStyle={styles.scrollContainer}>
       <View style={styles.view}>
         <Controller
           control={control}
@@ -115,6 +125,7 @@ export default memo(function LoginScreen() {
         />
         <MGButton icon="lock" label={'Login'} onPress={handleSubmit(submit)} />
       </View>
+      {snackbar.renderSnackbar()}
     </ScreenContainer>
   );
 });
