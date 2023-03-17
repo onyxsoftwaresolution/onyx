@@ -26,7 +26,7 @@ type Params = {
   id: number;
 };
 
-export default memo<NativeStackScreenProps<never, string>>(function ProjectUpsertScreen(props) {
+export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertScreen(props) {
   const params = props.route.params as unknown as Params;
 
   const enabled = useIsFocused();

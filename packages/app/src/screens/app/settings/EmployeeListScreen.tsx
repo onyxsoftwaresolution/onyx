@@ -15,7 +15,7 @@ import { Mutations } from '../../../requests/mutations';
 import { RenderOptionsFunction, useDialog } from '../../../components/useDialog';
 import { AppTheme } from '../../../theme/type';
 
-export default memo<NativeStackScreenProps<never, string>>(
+export default memo<NativeStackScreenProps<any, string>>(
   function EmployeeListScreen(props) {
     const snackbar = useSnackbar()
 

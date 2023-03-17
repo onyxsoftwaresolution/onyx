@@ -21,7 +21,7 @@ import { Report } from "../Report";
 import DailyActivityReport from "./DailyActivityReport";
 import MonthlyActivityReport from "./MonthlyActivityReport";
 
-type Props = PropsWithChildren<NativeStackScreenProps<never, string>> & {
+type Props = PropsWithChildren<NativeStackScreenProps<any, string>> & {
   type: Report;
 }
 

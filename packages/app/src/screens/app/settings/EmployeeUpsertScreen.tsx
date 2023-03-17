@@ -15,7 +15,7 @@ import { Screens } from '../../Screens';
 
 type Params = { name: string; position: string; id: number };
 
-export default memo<NativeStackScreenProps<never, string>>(
+export default memo<NativeStackScreenProps<any, string>>(
   function EmployeeUpsertScreen(props) {
     const params = (props.route.params ?? {}) as Params;
 
