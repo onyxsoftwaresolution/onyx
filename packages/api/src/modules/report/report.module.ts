@@ -1,13 +1,16 @@
 import { Module } from '@nestjs/common';
-import { ReportService } from './service/report.service';
-import { ReportProvider } from './provider/report.provider';
+import { DailyReportService } from './service/daily-report.service';
+import { MonthlyReportService } from './service/monthly-report.service';
+import { DailyReportProvider } from './provider/daily-report.provider';
+import { MonthlyReportProvider } from './provider/monthly-report.provider';
 import { PrismaModule } from '@modules/prisma/prisma.module';
-import { ReportController } from './controller/report.controller';
+import { DailyReportController } from './controller/daily-report.controller';
+import { MonthlyReportController } from './controller/monthly-report.controller';
 
 @Module({
   imports: [PrismaModule],
-  providers: [ReportService, ReportProvider],
-  exports: [ReportService],
-  controllers: [ReportController]
+  providers: [DailyReportService, MonthlyReportService, DailyReportProvider, MonthlyReportProvider],
+  exports: [DailyReportService, MonthlyReportService],
+  controllers: [DailyReportController, MonthlyReportController]
 })
 export class ReportModule { }
