@@ -87,12 +87,12 @@ export class DailyReportProvider {
         dailyProjectActivity: pa,
         todayStock: map.get(pa.id)?.finalStockToday ?? 0,
         addedStock: 0,
-        totalStock: 0,
+        totalStock: map.get(pa.id)?.finalStockToday ?? 0,
         noImplToday: 0,
         finalStockToday: map.get(pa.id)?.finalStockToday ?? 0,
-        totalImplToday: 0,
+        totalImplToday: map.get(pa.id)?.finalStockToday ?? 0,
         totalProjectUnits: pa.quantity,
-        remainingUnits: 0,
+        remainingUnits: pa.quantity - (map.get(pa.id)?.finalStockToday ?? 0),
       })),
     });
   }

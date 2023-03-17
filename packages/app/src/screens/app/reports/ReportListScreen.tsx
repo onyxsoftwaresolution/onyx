@@ -41,13 +41,13 @@ export default memo<Props>(function ReportListScreen(props) {
 
   const dialog = useDialog<ReportListItemOutDTO>();
 
-  const onGoToUpsertScreen = useCallback((projectReportId: number) => {
+  const onGoToUpsertScreen = useCallback(({ id, date }: ReportListItemOutDTO) => {
     switch (props.type) {
       case Report.DAILY:
-        props.navigation.push(Screens.APP_DAILY_REPORT__UPSERT_SCREEN, { projectId, projectReportId });
+        props.navigation.push(Screens.APP_DAILY_REPORT__UPSERT_SCREEN, { projectId, projectReportId: id, date });
         break;
       case Report.MONTHLY:
-        props.navigation.push(Screens.APP_MONTHLY_REPORT__UPSERT_SCREEN, { projectId, projectReportId });
+        props.navigation.push(Screens.APP_MONTHLY_REPORT__UPSERT_SCREEN, { projectId, projectReportId: id, date });
         break;
       default:
         break;
@@ -58,7 +58,7 @@ export default memo<Props>(function ReportListScreen(props) {
     <TouchableRipple
       style={[styles.touchStyle]}
       key={report.id}
-      onPress={() => onGoToUpsertScreen(report.id)}
+      onPress={() => onGoToUpsertScreen(report)}
     >
       <View style={[styles.item]}>
         <View style={[styles.itemRow]}>

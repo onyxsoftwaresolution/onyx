@@ -7,6 +7,10 @@ import ProjectListScreen from '../projects/ProjectListScreen';
 import ReportListScreen from '../reports/ReportListScreen';
 import { Report } from '../reports/Report';
 import ReportUpsertScreen from '../reports/ReportUpsertScreen';
+import { Text } from 'react-native-paper';
+import dayjs from 'dayjs';
+import { dayOrNull } from '../../../dayOrNull';
+import { Platform } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,13 +48,17 @@ export default memo(function DailyReportStackNavigator() {
         name={Screens.APP_DAILY_REPORT__UPSERT_SCREEN}
         component={DailyReportUpsertScreen}
         options={screenProps => {
+          // @ts-expect-error missing type
+          const isNew = screenProps.route.params?.projectReportId == null
           return ({
             ...options(''),
-            title:
-              // @ts-expect-error missing type
-              screenProps.route.params?.projectReportId != null
-                ? 'Modifica report zilnic'
-                : 'Adauga report zilnic',
+            title: !isNew ? `Modifica raport zilnic` : 'Adauga raport zilnic',
+            headerRight: () => (
+              <Text variant='bodyLarge' style={[{ paddingRight: Platform.OS === 'ios' ? 0 : 10, }]}>
+                {/* @ts-expect-error missing type */}
+                {dayOrNull(dayjs(screenProps.route.params?.date))?.format('DD/MM/YYYY')}
+              </Text>
+            ),
           })
         }}
       />

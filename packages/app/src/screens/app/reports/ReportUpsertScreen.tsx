@@ -88,23 +88,38 @@ export default memo<Props>(function ReportUpsertScreen(props) {
     values,
   });
 
-  const applyComputeMonthlyNoImplUnits = useCallback((index: number) => {
+  const applyComputedDailyActivityReport = useCallback((index: number) => {
+    setValue(
+      `dailyActivityReports.${index}.totalStock`,
+      Number(getValues(`dailyActivityReports.${index}.todayStock`)) + Number(getValues(`dailyActivityReports.${index}.addedStock`))
+    );
+    setValue(
+      `dailyActivityReports.${index}.finalStockToday`,
+      Number(getValues(`dailyActivityReports.${index}.totalStock`)) - Number(getValues(`dailyActivityReports.${index}.noImplToday`))
+    );
+  }, [getValues, setValue])
+
+  const applyComputedMonthlyActivityReport = useCallback((index: number) => {
     setValue(
       `monthlyActivityReports.${index}.monthlyActivityCost`,
-      getValues(`monthlyActivityReports.${index}.monthlyNoImplUnits`) * getValues(`monthlyActivityReports.${index}.monthlyProjectActivity.cost`));
+      Number(getValues(`monthlyActivityReports.${index}.monthlyNoImplUnits`)) * Number(getValues(`monthlyActivityReports.${index}.monthlyProjectActivity.cost`))
+    );
   }, [getValues, setValue]);
 
-  const applyComputeFields = useCallback((projectReport: ProjectReportOutDTO) => {
-    for (const index in projectReport.monthlyActivityReports) {
-      applyComputeMonthlyNoImplUnits(index as unknown as number);
+  const applyComputedActivityReports = useCallback((projectReport: ProjectReportOutDTO) => {
+    for (const index in projectReport.dailyActivityReports) {
+      applyComputedDailyActivityReport(index as unknown as number);
     }
-  }, [applyComputeMonthlyNoImplUnits]);
+    for (const index in projectReport.monthlyActivityReports) {
+      applyComputedMonthlyActivityReport(index as unknown as number)
+    }
+  }, [applyComputedDailyActivityReport, applyComputedMonthlyActivityReport]);
 
   useEffect(() => {
     (async () => {
       const response = await report.mutateAsync();
       reset(response.data);
-      applyComputeFields(response.data)
+      applyComputedActivityReports(response.data)
     })();
     // to run only on month state change
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -153,7 +168,10 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             <MGTextInput
               disabled
               value={value.toString()}
-              onChangeText={onChange}
+              onChangeText={val => {
+                onChange(val);
+                applyComputedDailyActivityReport(index)
+              }}
               style={{ marginBottom: 7 }}
               label={'Stoc azi'}
             />
@@ -162,7 +180,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         name={`dailyActivityReports.${index}.todayStock`}
       />
     );
-  }, [control]);
+  }, [applyComputedDailyActivityReport, control]);
 
   const renderActivityReportAddedStock = useCallback((index: number) => {
     return (
@@ -176,7 +194,10 @@ export default memo<Props>(function ReportUpsertScreen(props) {
           <>
             <MGTextInput
               value={value.toString()}
-              onChangeText={onChange}
+              onChangeText={val => {
+                onChange(val);
+                applyComputedDailyActivityReport(index)
+              }}
               style={{ marginBottom: 7 }}
               label={'Cantitate intrare azi'}
             />
@@ -185,7 +206,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         name={`dailyActivityReports.${index}.addedStock`}
       />
     );
-  }, [control]);
+  }, [applyComputedDailyActivityReport, control]);
 
   const renderActivityReportTotalStock = useCallback((index: number) => {
     return (
@@ -200,7 +221,10 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             <MGTextInput
               disabled
               value={value.toString()}
-              onChangeText={onChange}
+              onChangeText={val => {
+                onChange(val);
+                applyComputedDailyActivityReport(index)
+              }}
               style={{ marginBottom: 7 }}
               label={'Stoc total'}
             />
@@ -209,7 +233,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         name={`dailyActivityReports.${index}.totalStock`}
       />
     );
-  }, [control]);
+  }, [applyComputedDailyActivityReport, control]);
 
   const renderActivityReportNoImplToday = useCallback((index: number) => {
     return (
@@ -223,7 +247,10 @@ export default memo<Props>(function ReportUpsertScreen(props) {
           <>
             <MGTextInput
               value={value.toString()}
-              onChangeText={onChange}
+              onChangeText={val => {
+                onChange(val);
+                applyComputedDailyActivityReport(index)
+              }}
               style={{ marginBottom: 7 }}
               label={'Realizat azi'}
             />
@@ -232,7 +259,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         name={`dailyActivityReports.${index}.noImplToday`}
       />
     );
-  }, [control]);
+  }, [applyComputedDailyActivityReport, control]);
 
   const renderActivityReportFinalStockToday = useCallback((index: number) => {
     return (
@@ -247,7 +274,10 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             <MGTextInput
               disabled
               value={value.toString()}
-              onChangeText={onChange}
+              onChangeText={val => {
+                onChange(val);
+                applyComputedDailyActivityReport(index)
+              }}
               style={{ marginBottom: 7 }}
               label={'Stoc ramas'}
             />
@@ -256,7 +286,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         name={`dailyActivityReports.${index}.finalStockToday`}
       />
     );
-  }, [control]);
+  }, [applyComputedDailyActivityReport, control]);
 
   const renderActivityReportTotalImplToday = useCallback((index: number) => {
     return (
@@ -271,7 +301,10 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             <MGTextInput
               disabled
               value={value.toString()}
-              onChangeText={onChange}
+              onChangeText={val => {
+                onChange(val);
+                applyComputedDailyActivityReport(index)
+              }}
               style={{ marginBottom: 7 }}
               label={'Total realizat la azi'}
             />
@@ -280,7 +313,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         name={`dailyActivityReports.${index}.totalImplToday`}
       />
     );
-  }, [control]);
+  }, [applyComputedDailyActivityReport, control]);
 
   const renderActivityReportTotalProjectUnits = useCallback((index: number) => {
     return (
@@ -295,7 +328,10 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             <MGTextInput
               disabled
               value={value.toString()}
-              onChangeText={onChange}
+              onChangeText={val => {
+                onChange(val);
+                applyComputedDailyActivityReport(index)
+              }}
               style={{ marginBottom: 7 }}
               label={'Totalul la nivel de proiect'}
             />
@@ -304,7 +340,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         name={`dailyActivityReports.${index}.totalProjectUnits`}
       />
     );
-  }, [control]);
+  }, [applyComputedDailyActivityReport, control]);
 
   const renderActivityReportRemainingUnits = useCallback((index: number) => {
     return (
@@ -319,7 +355,10 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             <MGTextInput
               disabled
               value={value.toString()}
-              onChangeText={onChange}
+              onChangeText={val => {
+                onChange(val);
+                applyComputedDailyActivityReport(index)
+              }}
               style={{ marginBottom: 7 }}
               label={'Rest de realizat'}
             />
@@ -328,7 +367,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         name={`dailyActivityReports.${index}.remainingUnits`}
       />
     );
-  }, [control]);
+  }, [applyComputedDailyActivityReport, control]);
 
   const renderDailyActivityReport = useCallback((index: number) => {
     return (
@@ -367,7 +406,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
               value={value.toString()}
               onChangeText={val => {
                 onChange(val);
-                applyComputeMonthlyNoImplUnits(index);
+                applyComputedMonthlyActivityReport(index);
               }}
               style={{ marginBottom: 7 }}
               label={'Unitati implementate'}
@@ -377,7 +416,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         name={`monthlyActivityReports.${index}.monthlyNoImplUnits`}
       />
     );
-  }, [applyComputeMonthlyNoImplUnits, control]);
+  }, [applyComputedMonthlyActivityReport, control]);
 
   const renderActivityReportMonthlyTotalProjectUnits = useCallback((index: number) => {
     return (
@@ -392,7 +431,10 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             <MGTextInput
               disabled
               value={value.toString()}
-              onChangeText={onChange}
+              onChangeText={val => {
+                onChange(val);
+                applyComputedMonthlyActivityReport(index);
+              }}
               style={{ marginBottom: 7 }}
               label={'Total la nivel de proiect'}
             />
@@ -401,7 +443,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         name={`monthlyActivityReports.${index}.monthlyProjectActivity.quantity`}
       />
     );
-  }, [control]);
+  }, [applyComputedMonthlyActivityReport, control]);
 
   const renderActivityReportActivityCost = useCallback((index: number) => {
     return (
@@ -416,7 +458,10 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             <MGTextInput
               disabled
               value={value.toString()}
-              onChangeText={onChange}
+              onChangeText={val => {
+                onChange(val);
+                applyComputedMonthlyActivityReport(index);
+              }}
               style={{ marginBottom: 7 }}
               label={'Cost per activitate'}
             />
@@ -425,7 +470,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         name={`monthlyActivityReports.${index}.monthlyProjectActivity.cost`}
       />
     );
-  }, [control]);
+  }, [applyComputedMonthlyActivityReport, control]);
 
   const renderActivityReportMonthlyActivityCost = useCallback((index: number) => {
     return (
@@ -439,7 +484,10 @@ export default memo<Props>(function ReportUpsertScreen(props) {
           <>
             <MGTextInput
               value={value.toString()}
-              onChangeText={onChange}
+              onChangeText={val => {
+                onChange(val);
+                applyComputedMonthlyActivityReport(index);
+              }}
               style={{ marginBottom: 7 }}
               label={'Cost total'}
             />
@@ -448,7 +496,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         name={`monthlyActivityReports.${index}.monthlyActivityCost`}
       />
     );
-  }, [control]);
+  }, [applyComputedMonthlyActivityReport, control]);
 
   const renderMonthlyActivityReport = useCallback((index: number) => {
     return (
