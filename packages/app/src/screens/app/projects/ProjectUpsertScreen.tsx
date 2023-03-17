@@ -26,14 +26,13 @@ type Params = {
   id: number;
 };
 
-export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertScreen(props) {
+export default memo<NativeStackScreenProps<never, string>>(function ProjectUpsertScreen(props) {
   const params = props.route.params as unknown as Params;
 
   const enabled = useIsFocused();
   const project = useQuery(Queries.getProject(params.id, {
     enabled: enabled && params.id != null,
-    // because ***MAGIC***
-    onSuccess: () => setTimeout(reset, 0),
+    onSuccess: data => reset(data.data),
   }));
   const upsert = useMutation(Mutations.upsertProject({
     onSuccess: () => props.navigation.pop(),

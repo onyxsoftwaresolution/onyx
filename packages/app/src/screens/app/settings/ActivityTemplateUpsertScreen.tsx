@@ -20,7 +20,7 @@ type Params = {
   id: number;
 }
 
-export default memo<NativeStackScreenProps<any, string>>(
+export default memo<NativeStackScreenProps<never, string>>(
   function ActivityTemplateUpsertScreen(props) {
     const params = (props.route.params ?? {}) as Params;
 

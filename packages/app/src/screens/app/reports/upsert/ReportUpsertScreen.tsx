@@ -1,11 +1,10 @@
-import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { ProjectActivityOutDTO } from "@workspace/api/src/modules/project/dtos/project.out.dto";
 import { ActivityReportOutDTO, ProjectReportOutDTO } from "@workspace/api/src/modules/report/dtos/report-out.dto";
 import dayjs from "dayjs";
 import { memo, PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
-import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import MGButton from "../../../../components/MGButton";
@@ -22,7 +21,7 @@ import { Report } from "../Report";
 import DailyActivityReport from "./DailyActivityReport";
 import MonthlyActivityReport from "./MonthlyActivityReport";
 
-type Props = PropsWithChildren<NativeStackScreenProps<any, string>> & {
+type Props = PropsWithChildren<NativeStackScreenProps<never, string>> & {
   type: Report;
 }
 
@@ -40,20 +39,15 @@ export default memo<Props>(function ReportUpsertScreen(props) {
 
   const [month, setMonth] = useState<string>(dayjs().format('YYYYMM'));
 
+  const isNew = projectReportId == null;
+
   const report = useMutation(
     Mutations.getReport(
-      props.type, projectId, projectReportId, month,
+      props.type, isNew, projectId, projectReportId, month,
       {
-        onSuccess() { setTimeout(reset, 0); },
         onError() { snackbar.show('A aparut o eroare la incarcarea raportului!') },
       }
     ));
-
-  useEffect(() => {
-    report.mutate();
-    // to run only on month state change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [month]);
 
   const upsert = useMutation(
     Mutations.upsertReport(
@@ -66,6 +60,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
 
   const sendEmail = useMutation(
     Mutations.emailReport(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       props.type, projectId, projectReportId!,
       {
         onSuccess() { props.navigation.pop() },
@@ -82,13 +77,23 @@ export default memo<Props>(function ReportUpsertScreen(props) {
   const {
     control,
     handleSubmit,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     formState: { errors, isValid, isDirty },
     setValue,
     reset,
-  } = useForm<typeof values>({
+  } = useForm<ProjectReportOutDTO>({
     mode: 'onChange',
     values,
   });
+
+  useEffect(() => {
+    (async () => {
+      const response = await report.mutateAsync();
+      reset(response.data);
+    })();
+    // to run only on month state change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [month]);
 
   const { fields: daily } = useFieldArray({
     control,
@@ -144,7 +149,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
           onPress={handleSubmit(submit)}
           style={[{ marginTop: 10, marginHorizontal: 10, flex: 1 }]}
         />
-        {projectReportId != null
+        {!isNew
           ? <MGButton
             icon="mail"
             label={'Trimite raportul prin e-mail'}
@@ -154,7 +159,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
           : null}
       </>
     );
-  }, [dialog.show, handleSubmit, projectReportId, submit])
+  }, [dialog.show, handleSubmit, isNew, submit])
 
   const renderSelectMonth = useCallback(() => {
     return (
@@ -176,7 +181,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
           <Text style={[{ fontSize: 18 }]}>{'Proiect'}</Text>
         </View>
         {renderProjectInfo()}
-        {props.type === Report.MONTHLY && renderSelectMonth()}
+        {props.type === Report.MONTHLY && isNew && renderSelectMonth()}
         {<View style={[{ paddingLeft: 10, alignSelf: 'flex-start', paddingTop: 10 }]}>
           <Text style={[{ fontSize: 18 }]}>{'Activitati'}</Text>
         </View>}
@@ -184,11 +189,11 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         {report.data?.data.monthlyActivityReports?.map((report, index) => renderActivity(report, index))}
       </>
     );
-  }, [props.type, renderActivity, renderProjectInfo, renderSelectMonth, report.data?.data.dailyActivityReports, report.data?.data.monthlyActivityReports]);
+  }, [isNew, props.type, renderActivity, renderProjectInfo, renderSelectMonth, report.data?.data.dailyActivityReports, report.data?.data.monthlyActivityReports]);
 
   const [email, setEmail] = useState('');
 
-  const dialogArg: RenderOptionsFunction<unknown> = useCallback((data) => ({
+  const dialogArg: RenderOptionsFunction<unknown> = useCallback(() => ({
     title: `Trimite mail`,
     message: (
       <View style={[{ flex: 1, width: '100%' }]}>

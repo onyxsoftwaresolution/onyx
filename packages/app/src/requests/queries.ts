@@ -4,13 +4,13 @@ import { FetchError, FetchResponse, request } from './request';
 import { ProjectOutDTO } from '@workspace/api/src/modules/project/dtos/project.out.dto';
 import { ActivityTemplateOutDTO } from "@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto"
 import { EmployeeOutDTO } from "@workspace/api/src/modules/employee/dtos/employee.out.dto"
-import { ProjectReportOutDTO, ReportListItemOutDTO } from '@workspace/api/src/modules/report/dtos/report-out.dto';
+import { ReportListItemOutDTO } from '@workspace/api/src/modules/report/dtos/report-out.dto';
 import { Report } from '../screens/app/reports/Report';
 import { JwtUserDTO } from '@workspace/api/src/modules/user/dtos/jwt.user.dto';
 import { API_URL } from '@env';
 import { InfoDTO } from "@workspace/api/src/modules/app/dtos/info.dto"
 
-type Options<T = unknown> = Partial<Pick<UseQueryOptions<T>, 'onError' | 'onSuccess'>> & {
+type Options<T = never> = Partial<Pick<UseQueryOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
   enabled?: boolean;
 };
@@ -83,7 +83,7 @@ export class Queries {
     } as UseQueryOptions<FetchResponse<ProjectOutDTO[]>>);
   }
 
-  static getProject = (id: number, { enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
+  static getProject = (id: number, { enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<ProjectOutDTO>> = {}) => ({
     queryKey: [`project-${id}`],
     queryFn: async () => {
       onLoading?.();

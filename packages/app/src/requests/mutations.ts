@@ -11,7 +11,7 @@ import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-temp
 import { API_URL } from '@env';
 import { ProjectReportOutDTO } from '@workspace/api/src/modules/report/dtos/report-out.dto';
 
-type Options<T = unknown> = Partial<Pick<UseMutationOptions<T>, 'onError' | 'onSuccess'>> & {
+type Options<T = never> = Partial<Pick<UseMutationOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
 };
 
@@ -157,16 +157,16 @@ export class Mutations {
   }
 
   static getReport = (
-    type: Report, projectId: number, projectReportId: number | undefined, month: string,
+    type: Report, isNew: boolean, projectId: number, projectReportId: number | undefined, month: string,
     { onError, onLoading, onSuccess }: Options<FetchResponse<ProjectReportOutDTO>> = {}
   ) => {
     let path = '';
-    if (type === Report.MONTHLY && projectReportId == null) {
+    if (isNew && type === Report.MONTHLY) {
       path = `/v1/new-${type}-report/${projectId}/${month}`;
+    } else if (isNew && type === Report.DAILY) {
+      path = `/v1/new-${type}-report/${projectId}`;
     } else if (projectReportId != null) {
       path = `/v1/${type}-report/${projectId}/${projectReportId}`;
-    } else {
-      path = `/v1/new-${type}-report/${projectId}`;
     }
     return ({
       mutationKey: [`${path}`],

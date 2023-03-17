@@ -11,7 +11,7 @@ import { Store } from '../../../storage/Store';
 import { AppTheme } from '../../../theme/type';
 import { Screens } from '../../Screens';
 
-export default memo<NativeStackScreenProps<any, string>>(
+export default memo<NativeStackScreenProps<never, string>>(
   function SettingsScreen({ navigation }) {
     const { colors } = useTheme<AppTheme>();
     const [user, setUser] = useUser();

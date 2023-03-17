@@ -15,7 +15,7 @@ import { RenderOptionsFunction, useDialog } from '../../../components/useDialog'
 import { AppTheme } from '../../../theme/type';
 import { Mutations } from '../../../requests/mutations';
 
-export default memo<NativeStackScreenProps<any, string>>(
+export default memo<NativeStackScreenProps<never, string>>(
   function ActivityTemplateListScreen(props) {
     const snackbar = useSnackbar();
 
