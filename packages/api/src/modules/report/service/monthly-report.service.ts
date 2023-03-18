@@ -6,7 +6,7 @@ import { Response } from 'express';
 import { UpsertProjectReportDTO } from '../dtos/report-in.dto';
 import { ProjectReportOutDTO, ReportListItemOutDTO } from '../dtos/report-out.dto';
 import { MonthlyReportProvider } from '../provider/monthly-report.provider';
-import { getMonthlyPDF } from './report.pdf';
+import { getMonthlyPDF } from './pdf/monthly.pdf';
 
 @Injectable()
 export class MonthlyReportService {

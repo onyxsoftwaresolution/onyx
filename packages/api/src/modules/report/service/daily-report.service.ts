@@ -5,7 +5,7 @@ import { Response } from 'express';
 import { UpsertProjectReportDTO } from '../dtos/report-in.dto';
 import { ProjectReportOutDTO, ReportListItemOutDTO } from '../dtos/report-out.dto';
 import { DailyReportProvider } from '../provider/daily-report.provider';
-import { getDailyPDF } from './report.pdf';
+import { getDailyPDF } from './pdf/daily.pdf';
 
 @Injectable()
 export class DailyReportService {
