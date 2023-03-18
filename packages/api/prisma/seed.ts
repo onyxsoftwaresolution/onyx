@@ -6,8 +6,6 @@ import { bootstrap } from '../src/main';
 import { UserService } from '@modules/user/service/user.service';
 import { ActivityTemplateService } from '@modules/activity-template/service/activity-template.service';
 import { EmployeeService } from '@modules/employee/service/employee.service';
-import { ProjectService } from '@modules/project/service/project.service';
-import * as dayjs from 'dayjs';
 
 (async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

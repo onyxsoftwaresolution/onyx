@@ -1,6 +1,8 @@
+import { AllowAnonymous } from '@modules/auth/rbac/anonymous.decorator';
 import { Roles } from '@modules/auth/rbac/role.decorator';
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Res } from '@nestjs/common';
 import { Role } from '@prisma/client';
+import { Response } from 'express';
 import { UpsertProjectReportDTO } from '../dtos/report-in.dto';
 import { MonthlyReportService } from '../service/monthly-report.service';
 
@@ -43,5 +45,26 @@ export class MonthlyReportController {
     @Param('projectReportId') projectReportId: number,
   ) {
     return await this.reportService.getMonthlyReport(projectId, projectReportId);
+  }
+
+  @Post('daily-report/:projectId/:projectReportId/:to')
+  @Roles(Role.ADMIN, Role.USER)
+  async sendMonthlyReportMail(
+    @Param('projectId') projectId: number,
+    @Param('projectReportId') projectReportId: number | undefined,
+    @Param('to') to: string,
+  ) {
+    await this.reportService.sendMonthlyReportMail(to, projectId, projectReportId);
+    return ({ success: true });
+  }
+
+  @Get('view-daily-report/:projectId/:projectReportId')
+  @AllowAnonymous()
+  async viewDailyReport(
+    @Param('projectId') projectId: number,
+    @Param('projectReportId') projectReportId: number | undefined,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return await this.reportService.viewMonthlyReport(res, projectId, projectReportId)
   }
 }

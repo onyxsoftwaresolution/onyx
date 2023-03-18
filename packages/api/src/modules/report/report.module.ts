@@ -6,9 +6,10 @@ import { MonthlyReportProvider } from './provider/monthly-report.provider';
 import { PrismaModule } from '@modules/prisma/prisma.module';
 import { DailyReportController } from './controller/daily-report.controller';
 import { MonthlyReportController } from './controller/monthly-report.controller';
+import { GoogleApiModule } from '@common/googleapi/googleapi.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, GoogleApiModule],
   providers: [DailyReportService, MonthlyReportService, DailyReportProvider, MonthlyReportProvider],
   exports: [DailyReportService, MonthlyReportService],
   controllers: [DailyReportController, MonthlyReportController]

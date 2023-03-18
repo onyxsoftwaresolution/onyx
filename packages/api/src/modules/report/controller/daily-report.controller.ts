@@ -1,6 +1,8 @@
+import { AllowAnonymous } from '@modules/auth/rbac/anonymous.decorator';
 import { Roles } from '@modules/auth/rbac/role.decorator';
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Res, SerializeOptions } from '@nestjs/common';
 import { Role } from '@prisma/client';
+import { Response } from 'express';
 import { UpsertProjectReportDTO } from '../dtos/report-in.dto';
 import { DailyReportService } from '../service/daily-report.service';
 
@@ -44,14 +46,26 @@ export class DailyReportController {
     return await this.reportService.getDailyReport(projectId, projectReportId);
   }
 
-  // @Post('daily-report/:projectId/:projectReportId/:to')
-  // @Roles(Role.ADMIN, Role.USER)
-  // async sendDailyMail(
-  //   @Param('projectId') projectId: number,
-  //   @Param('projectReportId') projectReportId: number | undefined,
-  //   @Param('to') to: string,
-  // ) {
-  //   await this.reportService.sendDailyMail(to, projectId, projectReportId);
-  //   return ({ success: true });
-  // }
+  @Post('daily-report/:projectId/:projectReportId/:to')
+  @SerializeOptions({
+    strategy: 'exposeAll'
+  })
+  @Roles(Role.ADMIN, Role.USER)
+  async sendDailyMail(
+    @Param('projectId') projectId: number,
+    @Param('projectReportId') projectReportId: number | undefined,
+    @Param('to') to: string,
+  ) {
+    return await this.reportService.sendDailyReportMail(to, projectId, projectReportId);
+  }
+
+  @Get('view-daily-report/:projectId/:projectReportId')
+  @AllowAnonymous()
+  async viewDailyReport(
+    @Param('projectId') projectId: number,
+    @Param('projectReportId') projectReportId: number | undefined,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return await this.reportService.viewDailyReport(res, projectId, projectReportId)
+  }
 }

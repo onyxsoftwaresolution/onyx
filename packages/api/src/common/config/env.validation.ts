@@ -27,6 +27,24 @@ export class EnvironmentVariables {
 
   @IsNumber()
   SALT_OR_ROUNDS: number;
+
+  @IsString()
+  CLIENT_ID: string;
+
+  @IsString()
+  CLIENT_SECRET: string;
+
+  @IsString()
+  REDIRECT_URI: string;
+
+  @IsString()
+  ACCESS_TOKEN: string;
+
+  @IsString()
+  REFRESH_TOKEN: string;
+
+  @IsNumber()
+  CACHE_TTL: number;
 }
 
 export function validate(config: Record<string, unknown>) {

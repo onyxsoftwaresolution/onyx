@@ -8,12 +8,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from '@modules/auth/passport/jwt.strategy';
 import { ConfigService } from '@common/config/config.service';
 import { PrismaModule } from '@modules/prisma/prisma.module';
+import { GoogleApiModule } from '@common/googleapi/googleapi.module';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
     PrismaModule,
+    GoogleApiModule,
     JwtModule.registerAsync({
       useFactory(config: ConfigService) {
         return {
@@ -27,4 +29,4 @@ import { PrismaModule } from '@modules/prisma/prisma.module';
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
 })
-export class AuthModule {}
+export class AuthModule { }

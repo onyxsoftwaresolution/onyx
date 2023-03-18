@@ -1,6 +1,6 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { UpsertProjectReportDTO } from '../dtos/report-in.dto';
 import { Prisma } from '@prisma/client';
 
