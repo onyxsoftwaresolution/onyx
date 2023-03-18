@@ -31,17 +31,25 @@ export class DailyReportService {
     return new ProjectReportOutDTO(await this.reportProvider.getDailyReport(projectId, projectReportId));
   }
 
+  getReportDate(report: ProjectReportOutDTO) {
+    return dayjs(report.date).format('YYYYMMDD_HHmm');
+  }
+
+  getFileName(report: ProjectReportOutDTO) {
+    return `raport_zilnic_${this.getReportDate(report)}.pdf`;
+  }
+
   async sendDailyReportMail(to: string, projectId: number, projectReportId: number) {
     const report = await this.getDailyReport(projectId, projectReportId);
     const pdf = await getDailyPDF(report);
     const message = await this.gapi.createMessage(
       to,
       'me',
-      'Test email with attachment',
-      'Hello, this is a test email with a PDF attachment.',
+      `Raport zilnic ${this.getReportDate(report).replace("_", " ")}`,
+      '',
       [
         {
-          filename: 'attachment.pdf',
+          filename: this.getFileName(report),
           content: pdf.toString('base64'),
           encoding: 'base64',
         }
@@ -57,9 +65,9 @@ export class DailyReportService {
     const pdf = await getDailyPDF(report);
     res.set({
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `filename=raport_zilnic_${dayjs(report.date).format('YYYYMMDD_HHmm')}.pdf`,
+      'Content-Disposition': `filename=${this.getFileName(report)}`,
       // 'Content-Type': 'application/pdf',
-      // 'Content-Disposition': `attachment;filename=raport_zilnic_${dayjs(report.date).format('YYYYMMDD_HHmm')}.pdf`,
+      // 'Content-Disposition': `attachment;filename=${this.getFileName(report)}`,
     });
     return new StreamableFile(pdf);
   }

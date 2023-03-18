@@ -33,17 +33,25 @@ export class MonthlyReportService {
     return new ProjectReportOutDTO(await this.reportProvider.getMonthlyReport(projectId, projectReportId));
   }
 
+  getReportDate(report: ProjectReportOutDTO) {
+    return dayjs(report.date).format('YYYYMM');
+  }
+
+  getFileName(report: ProjectReportOutDTO) {
+    return `raport_lunar_${this.getReportDate(report)}.pdf`;
+  }
+
   async sendMonthlyReportMail(to: string, projectId: number, projectReportId: number) {
     const report = await this.getMonthlyReport(projectId, projectReportId);
     const pdf = await getMonthlyPDF(report);
     const message = await this.gapi.createMessage(
       to,
       'me',
-      'Test email with attachment',
-      'Hello, this is a test email with a PDF attachment.',
+      `Raport lunar ${this.getReportDate(report).replace("_", " ")}`,
+      '',
       [
         {
-          filename: 'attachment.pdf',
+          filename: this.getFileName(report),
           content: pdf.toString('base64'),
           encoding: 'base64',
         }
@@ -59,9 +67,9 @@ export class MonthlyReportService {
     const pdf = await getMonthlyPDF(report);
     res.set({
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `filename=raport_lunar_${dayjs(report.date).format('YYYYMMDD_HHmm')}.pdf`,
+      'Content-Disposition': `filename=raport_lunar_${this.getFileName(report)}.pdf`,
       // 'Content-Type': 'application/pdf',
-      // 'Content-Disposition': `attachment;filename=raport_lunar_${dayjs(report.date).format('YYYYMMDD_HHmm')}.pdf`,
+      // 'Content-Disposition': `attachment;filename=raport_lunar_${this.getFileName(report)}.pdf`,
     });
     return new StreamableFile(pdf);
   }

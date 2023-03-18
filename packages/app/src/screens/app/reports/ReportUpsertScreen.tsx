@@ -582,7 +582,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
     title: `Trimite mail`,
     message: (
       <View style={[{ flex: 1, width: '100%' }]}>
-        <MGTextInput value={email} onChangeText={setEmail} style={[{ flex: 1, width: '100%' }]} />
+        <MGTextInput autoComplete="email" value={email} onChangeText={setEmail} style={[{ flex: 1, width: '100%' }]} />
       </View>
     ),
     buttons: [
