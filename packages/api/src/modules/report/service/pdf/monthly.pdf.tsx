@@ -62,7 +62,7 @@ type Props = React.PropsWithChildren<{
 const MonthlyPDF = React.memo<Props>((props) => {
   return (
     <Document>
-      <Page orientation='landscape' size="A4" style={styles.page}>
+      <Page orientation='portrait' size="A4" style={styles.page}>
         <View style={styles.table}>
           <View style={[styles.row, styles.tableHeader]}>
             <View style={[styles.cell, styles.cell1]}>
