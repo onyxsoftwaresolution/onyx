@@ -6,7 +6,7 @@ import { isNotEmpty } from "class-validator";
 import dayjs from "dayjs";
 import { memo, PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { StyleSheet, View } from "react-native";
+import { Linking, StyleSheet, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import MGButton from "../../../components/MGButton";
 import MGCard from "../../../components/MGCard";
@@ -20,6 +20,8 @@ import { dayOrNull } from "../../../dayOrNull";
 import { Mutations } from "../../../requests/mutations";
 import { AppTheme } from "../../../theme/type";
 import { Report } from "./Report";
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { API_URL } from '@env';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Props = PropsWithChildren<NativeStackScreenProps<any, string>> & {
@@ -219,7 +221,6 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         render={({ field: { onChange, value } }) => (
           <>
             <MGTextInput
-              disabled
               value={value.toString()}
               onChangeText={val => {
                 onChange(val);
@@ -534,17 +535,27 @@ export default memo<Props>(function ReportUpsertScreen(props) {
           onPress={handleSubmit(submit)}
           style={[{ marginTop: 10, marginHorizontal: 10, flex: 1 }]}
         />
-        {!isNew
-          ? <MGButton
-            icon="mail"
-            label={'Trimite raportul prin e-mail'}
-            onPress={dialog.show}
-            style={[{ marginTop: 10, marginHorizontal: 10, flex: 1 }]}
-          />
-          : null}
+        <MGRow style={[{ marginTop: 10, marginHorizontal: 10 }]}>
+          {!isNew
+            ? <MGButton
+              icon={props => <Icon name="file-pdf" {...props} />}
+              label={'Vezi raportul'}
+              onPress={() => Linking.openURL(`${API_URL}/v1/view-${props.type}-report/${projectId}/${projectReportId}`)}
+              style={[{ flex: 1 }]}
+            />
+            : null}
+          {!isNew
+            ? <MGButton
+              icon={props => <Icon name="envelope" {...props} />}
+              label={'Trimite raportul'}
+              onPress={dialog.show}
+              style={[{ flex: 1 }]}
+            />
+            : null}
+        </MGRow>
       </>
     );
-  }, [dialog.show, handleSubmit, isNew, submit])
+  }, [dialog.show, handleSubmit, isNew, projectId, projectReportId, props.type, submit])
 
   const renderSelectMonth = useCallback(() => {
     return (

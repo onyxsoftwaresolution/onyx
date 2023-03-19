@@ -1,11 +1,15 @@
 import React, { Fragment, memo, PropsWithChildren, useCallback, useMemo } from "react";
-import { useWindowDimensions, View } from "react-native";
+import { StyleProp, useWindowDimensions, View, ViewStyle } from "react-native";
 import { useTheme } from "react-native-paper";
 import { AppTheme } from "../theme/type";
 
 type Child = string | number | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal;
 
-export default memo<PropsWithChildren>(function MGRow(props) {
+type Props = PropsWithChildren<{
+  style?: StyleProp<ViewStyle>;
+}>;
+
+export default memo<Props>(function MGRow(props) {
   const theme = useTheme<AppTheme>();
   const dimensions = useWindowDimensions();
 
@@ -27,7 +31,7 @@ export default memo<PropsWithChildren>(function MGRow(props) {
   }, [props.children, spacer]);
 
   return (
-    <View style={[{ flexDirection: dimensions.width >= theme.iphoneWidth ? 'row' : 'column' }]}>
+    <View style={[{ flexDirection: dimensions.width >= theme.iphoneWidth ? 'row' : 'column' }, props.style]}>
       {children}
     </View>
   )
