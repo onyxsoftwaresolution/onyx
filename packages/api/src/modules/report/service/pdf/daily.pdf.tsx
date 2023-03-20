@@ -169,7 +169,7 @@ const DailyPDF = React.memo<Props>((props) => {
                 </View>
                 <View style={[styles.cell, styles.cell11]}>
                   <Text style={styles.test}>
-                    {(dar.remainingUnits / dar.totalProjectUnits) * 100}%
+                    {Number((1 - (dar.remainingUnits / dar.totalProjectUnits)).toFixed(2)) * 100}%
                   </Text>
                 </View>
               </View>

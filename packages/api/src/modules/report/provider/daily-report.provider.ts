@@ -77,6 +77,27 @@ export class DailyReportProvider {
     previousReport?.dailyActivityReports?.forEach(dar => {
       map.set(dar.dailyProjectActivityId, dar);
     });
+    const dailys = await this.prismaService.client.projectReport.findMany({
+      where: {
+        projectId,
+        dailyActivityReports: { some: {} },
+      },
+      select: {
+        dailyActivityReports: {
+          select: {
+            noImplToday: true,
+            dailyProjectActivityId: true,
+          }
+        }
+      }
+    });
+    const dailyActivityReportMap = {} as { [activityId: number]: any };
+    for (const projectReport of dailys) {
+      for (const activityReport of projectReport.dailyActivityReports) {
+        dailyActivityReportMap[activityReport.dailyProjectActivityId] =
+          (dailyActivityReportMap[activityReport.dailyProjectActivityId] ?? 0) + activityReport.noImplToday;
+      }
+    }
     return ({
       id: -1,
       date: dayjs().toDate(),
@@ -90,7 +111,7 @@ export class DailyReportProvider {
         totalStock: map.get(pa.id)?.finalStockToday ?? 0,
         noImplToday: 0,
         finalStockToday: map.get(pa.id)?.finalStockToday ?? 0,
-        totalImplToday: map.get(pa.id)?.finalStockToday ?? 0,
+        totalImplToday: dailyActivityReportMap[pa.id] ?? 0,
         totalProjectUnits: pa.quantity,
         remainingUnits: pa.quantity - (map.get(pa.id)?.finalStockToday ?? 0),
       })),
