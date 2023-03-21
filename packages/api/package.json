@@ -25,6 +25,8 @@
     "seed": "npx ts-node ./prisma/seed.ts",
     "seed:dev": "npx cross-env NODE_ENV=development npx ts-node ./prisma/seed.ts",
     "seed:prod": "npx cross-env NODE_ENV=production npx ts-node ./prisma/seed.ts",
+    "reset:local": "npx dotenv -e .env.local -- npx prisma db push --schema ./prisma/reset.prisma",
+    "push:local": "npx dotenv -e .env.local -- npx prisma db push",
     "push:dev": "npx dotenv -e .env.development -- npx prisma db push",
     "push:prod": "npx dotenv -e .env.production -- npx prisma db push",
     "studio:dev": "npx dotenv -e .env.development -- npx prisma studio",

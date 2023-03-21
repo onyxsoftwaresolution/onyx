@@ -6,15 +6,18 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import Info from '../../../components/Info';
 import ScreenContainer from '../../../components/ScreenContainer';
 import { RenderOptionsFunction, useDialog } from '../../../components/useDialog';
+import { useIsAdmin } from '../../../components/useIsAdmin';
 import { useUser } from '../../../context/userContext';
 import { Store } from '../../../storage/Store';
 import { AppTheme } from '../../../theme/type';
 import { Screens } from '../../Screens';
+import { Role } from "@workspace/api/node_modules/@prisma/client";
 
 export default memo<NativeStackScreenProps<any, string>>(
   function SettingsScreen({ navigation }) {
     const { colors } = useTheme<AppTheme>();
     const [user, setUser] = useUser();
+    const isAdmin = useIsAdmin();
 
     const dialog = useDialog<void>();
 
@@ -121,7 +124,7 @@ export default memo<NativeStackScreenProps<any, string>>(
               Buna {user?.data?.username}!
             </Text>
           </View>
-          {settings.map((s, i) => renderItem({ item: s, index: i }))}
+          {settings.filter(s => s.roles.length === 0 || isAdmin && s.roles?.includes(Role.ADMIN)).map((s, i) => renderItem({ item: s, index: i }))}
         </View>
         {dialog.renderDialog(aboutDialogOptions)}
       </ScreenContainer>
@@ -137,10 +140,10 @@ enum Links {
 }
 
 const settings = [
-  { label: 'Angajati', value: Links.EMPLOYEES },
-  { label: 'Activitati', value: Links.ACTIVITIES },
-  { label: 'Despre aplicatie', value: Links.ABOUT },
-  { label: 'Logout', value: Links.LOGOUT },
+  { label: 'Angajati', value: Links.EMPLOYEES, roles: [Role.ADMIN] },
+  { label: 'Activitati', value: Links.ACTIVITIES, roles: [Role.ADMIN] },
+  { label: 'Despre aplicatie', value: Links.ABOUT, roles: [] },
+  { label: 'Logout', value: Links.LOGOUT, roles: [] },
 ];
 
 const styles = StyleSheet.create({
