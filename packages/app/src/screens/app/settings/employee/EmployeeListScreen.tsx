@@ -2,18 +2,18 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { memo, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
-import ScreenContainer from '../../../components/ScreenContainer';
-import { Queries } from '../../../requests/queries';
+import ScreenContainer from '../../../../components/ScreenContainer';
+import { Queries } from '../../../../requests/queries';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { Screens } from '../../Screens';
+import { Screens } from '../../../Screens';
 import { useIsFocused } from '@react-navigation/native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { EmployeeOutDTO } from '@workspace/api/src/modules/employee/dtos/employee.out.dto';
-import { useSnackbar } from '../../../components/hooks/useSnackbar';
-import { Mutations } from '../../../requests/mutations';
-import { RenderOptionsFunction, useDialog } from '../../../components/hooks/useDialog';
-import { AppTheme } from '../../../theme/type';
+import { useSnackbar } from '../../../../components/hooks/useSnackbar';
+import { Mutations } from '../../../../requests/mutations';
+import { RenderOptionsFunction, useDialog } from '../../../../components/hooks/useDialog';
+import { AppTheme } from '../../../../theme/type';
 
 export default memo<NativeStackScreenProps<any, string>>(
   function EmployeeListScreen(props) {

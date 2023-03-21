@@ -7,10 +7,10 @@ import { useTheme } from 'react-native-paper';
 import { Screens } from '../../Screens';
 import SettingsScreen from './SettingsScreen';
 import { Platform } from 'react-native';
-import EmployeeListScreen from './EmployeeListScreen';
-import EmployeeAddScreen from './EmployeeUpsertScreen';
-import ActivityTemplateListScreen from './ActivityTemplateListScreen';
-import ActivityTemplateUpsertScreen from './ActivityTemplateUpsertScreen';
+import EmployeeListScreen from './employee/EmployeeListScreen';
+import EmployeeAddScreen from './employee/EmployeeUpsertScreen';
+import ActivityTemplateListScreen from './activity/ActivityTemplateListScreen';
+import ActivityTemplateUpsertScreen from './activity/ActivityTemplateUpsertScreen';
 import { HeaderAddButton } from '../../../components/HeaderAddButton';
 
 const Stack = createNativeStackNavigator();

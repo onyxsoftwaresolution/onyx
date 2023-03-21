@@ -3,8 +3,8 @@ import { RouteProp } from "@react-navigation/native";
 import { HeaderAddButton } from "../../../components/HeaderAddButton";
 import { Screens } from "../../Screens";
 import { useScreenOptions } from "../../useScreenOptions";
-import ActivityTemplateListScreen from "./ActivityTemplateListScreen";
-import EmployeeListScreen from "./EmployeeListScreen";
+import ActivityTemplateListScreen from "./activity/ActivityTemplateListScreen";
+import EmployeeListScreen from "./employee/EmployeeListScreen";
 import React from 'react';
 
 export const useActivityTemplateListScreenProps = (): RouteConfig<any, any, any, any, any> => {

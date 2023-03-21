@@ -1,44 +1,54 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation } from '@tanstack/react-query';
-import { EmployeeOutDTO } from '@workspace/api/src/modules/employee/dtos/employee.out.dto';
+import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
 import { isNotEmpty, isString } from 'class-validator';
-import { memo, useCallback, useEffect } from 'react';
+import { memo, useCallback, useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 import { HelperText } from 'react-native-paper';
-import MGButton from '../../../components/MGButton';
-import MGTextInput from '../../../components/MGTextInput';
-import ScreenContainer from '../../../components/ScreenContainer';
-import { useSnackbar } from '../../../components/hooks/useSnackbar';
-import { Mutations } from '../../../requests/mutations';
-import { Screens } from '../../Screens';
+import MGButton from '../../../../components/MGButton';
+import MGTextInput from '../../../../components/MGTextInput';
+import ScreenContainer from '../../../../components/ScreenContainer';
+import { useSnackbar } from '../../../../components/hooks/useSnackbar';
+import { Mutations } from '../../../../requests/mutations';
+import { Screens } from '../../../Screens';
 
-type Params = { name: string; position: string; id: number };
+type Params = {
+  description: string;
+  material: string;
+  cost: number;
+  id: number;
+}
 
 export default memo<NativeStackScreenProps<any, string>>(
-  function EmployeeUpsertScreen(props) {
+  function ActivityTemplateUpsertScreen(props) {
     const params = (props.route.params ?? {}) as Params;
 
     const snackbar = useSnackbar();
 
     const upsert = useMutation(
-      Mutations.upsertEmployee({
+      Mutations.upsertActivityTemplate({
         onSuccess: () => props.navigation.pop(),
-        onError() { snackbar.show('A aparut o eroare la salvarea angajatului!') }
+        onError() { snackbar.show('A aparut o eroare la salvarea activitatii!') },
       })
     );
+
+    const upserErrors = useMemo(() => Mutations.getMutationError(upsert.error), [upsert.error]);
+
+    console.log(upserErrors);
 
     const {
       control,
       handleSubmit,
       formState: { errors, isValid },
       getValues,
-    } = useForm<Partial<EmployeeOutDTO>>({
+    } = useForm<Partial<ActivityTemplateOutDTO>>({
       mode: 'onChange',
       values: {
         id: params.id ?? '',
-        name: params.name ?? '',
-        position: params.position ?? '',
+        description: params.description ?? '',
+        material: params.material ?? '',
+        cost: params.cost ?? '',
       },
     });
 
@@ -47,17 +57,17 @@ export default memo<NativeStackScreenProps<any, string>>(
         if (props.navigation.canGoBack()) {
           props.navigation.goBack();
         } else {
-          props.navigation.navigate(Screens.APP_EMPLOYEE_LIST);
+          props.navigation.navigate(Screens.APP_ACTIVITY_TEMPLATE_LIST);
         }
       }
     }, [upsert.isSuccess, props.navigation]);
 
     const submit = useCallback(
-      ({ id, name, position }: Partial<EmployeeOutDTO>) => {
+      ({ id, description, material, cost }: Partial<ActivityTemplateOutDTO>) => {
         if (params.id != null) {
-          upsert.mutate({ id, name, position });
+          upsert.mutate({ id, description, material, cost });
         } else {
-          upsert.mutate({ name, position });
+          upsert.mutate({ description, material, cost });
         }
       },
       [upsert, params.id],
@@ -79,23 +89,25 @@ export default memo<NativeStackScreenProps<any, string>>(
             }}
             render={({ field: { onChange, value } }) => (
               <>
-                {errors.name != null ? (
-                  <HelperText type="error">{errors.name.message}</HelperText>
-                ) : null}
-                {upsert?.isError ? (
+                {errors.description != null ? (
                   <HelperText type="error">
-                    Error: {upsert?.error?.data.code}
+                    {errors.description.message}
+                  </HelperText>
+                ) : null}
+                {upserErrors?.['description']?.at(0) ? (
+                  <HelperText type="error">
+                    Error: {upserErrors?.['description']?.at(0)}
                   </HelperText>
                 ) : null}
                 <MGTextInput
                   value={value}
                   onChangeText={onChange}
                   style={{ marginBottom: 7 }}
-                  label={'Nume'}
+                  label={'Descriere'}
                 />
               </>
             )}
-            name="name"
+            name="description"
           />
           <Controller
             control={control}
@@ -110,25 +122,57 @@ export default memo<NativeStackScreenProps<any, string>>(
             }}
             render={({ field: { onChange, value } }) => (
               <>
-                {errors.position != null ? (
+                {errors.material != null ? (
                   <HelperText type="error">
-                    {errors.position.message}
+                    {errors.material.message}
                   </HelperText>
                 ) : null}
-                {upsert?.isError ? (
+                {upserErrors?.['material']?.at(0) ? (
                   <HelperText type="error">
-                    Error: {upsert?.error?.data.code}
+                    Error: {upserErrors?.['material']?.at(0)}
                   </HelperText>
                 ) : null}
                 <MGTextInput
                   value={value}
                   onChangeText={onChange}
                   style={{ marginBottom: 7 }}
-                  label={'Rol'}
+                  label={'Material'}
                 />
               </>
             )}
-            name="position"
+            name="material"
+          />
+          <Controller
+            control={control}
+            rules={{
+              required: {
+                value: true,
+                message: 'required message',
+              },
+              validate: (value) => {
+                return isString(value) && isNotEmpty(value);
+              },
+            }}
+            render={({ field: { onChange, value } }) => (
+              <>
+                {errors.cost != null && (
+                  <HelperText type="error">{errors.cost.message}</HelperText>
+                )}
+                {upserErrors?.['cost']?.at(0) && (
+                  <HelperText type="error">
+                    Error: {upserErrors?.['cost']?.at(0)}
+                  </HelperText>
+                )}
+                <MGTextInput
+                  value={value?.toString()}
+                  onChangeText={onChange}
+                  style={{ marginBottom: 7 }}
+                  label={'Cost'}
+                  keyboardType="numeric"
+                />
+              </>
+            )}
+            name="cost"
           />
           <MGButton
             icon="send"
@@ -136,6 +180,7 @@ export default memo<NativeStackScreenProps<any, string>>(
             onPress={handleSubmit(submit)}
           />
         </View>
+        {snackbar.renderSnackbar()}
       </ScreenContainer>
     );
   },
