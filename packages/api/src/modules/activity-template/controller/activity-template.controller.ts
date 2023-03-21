@@ -19,7 +19,7 @@ export class ActivityTemplateController {
   }
 
   @Put('activity-template')
-  @Roles(Role.ADMIN, Role.USER)
+  @Roles(Role.ADMIN)
   async upsertActivity(
     @Body() activity: UpsertActivityTemplateDTO,
   ): Promise<ActivityTemplateOutDTO> {
@@ -27,7 +27,7 @@ export class ActivityTemplateController {
   }
 
   @Delete('activity-template/:id')
-  @Roles(Role.ADMIN, Role.USER)
+  @Roles(Role.ADMIN)
   async deleteActivity(
     @Param('id') id: number,
   ): Promise<ActivityTemplateOutDTO> {

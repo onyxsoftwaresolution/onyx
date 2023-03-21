@@ -18,13 +18,13 @@ export class EmployeeController {
   }
 
   @Put('employee')
-  @Roles(Role.ADMIN, Role.USER)
+  @Roles(Role.ADMIN)
   async upsertEmployee(@Body() data: UpsertEmployeeDTO) {
     return await this.employeeService.upsertEmployee(data);
   }
 
   @Delete('employee/:id')
-  @Roles(Role.ADMIN, Role.USER)
+  @Roles(Role.ADMIN)
   async deleteEmployee(@Param('id') id: number) {
     return await this.employeeService.deleteEmployee(id);
   }

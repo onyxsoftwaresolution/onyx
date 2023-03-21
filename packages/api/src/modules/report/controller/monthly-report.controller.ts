@@ -14,13 +14,13 @@ export class MonthlyReportController {
   constructor(public reportService: MonthlyReportService) { }
 
   @Get('monthly-reports/:projectId')
-  @Roles(Role.ADMIN, Role.USER)
+  @Roles(Role.ADMIN)
   async listMonthlyReports(@Param('projectId') projectId: number) {
     return await this.reportService.listMonthlyReports(projectId);
   }
 
   @Put('monthly-report/:projectId/:projectReportId?')
-  @Roles(Role.ADMIN, Role.USER)
+  @Roles(Role.ADMIN)
   async upsertMonthlyReport(
     @Param('projectId') projectId: number,
     @Param('projectReportId') projectReportId: number | undefined,
@@ -30,7 +30,7 @@ export class MonthlyReportController {
   }
 
   @Get('new-monthly-report/:projectId/:month')
-  @Roles(Role.ADMIN, Role.USER)
+  @Roles(Role.ADMIN)
   async getNewMonthlyReport(
     @Param('month') month: string,
     @Param('projectId') projectId: number,
@@ -39,7 +39,7 @@ export class MonthlyReportController {
   }
 
   @Get('monthly-report/:projectId/:projectReportId')
-  @Roles(Role.ADMIN, Role.USER)
+  @Roles(Role.ADMIN)
   async getMonthlyReport(
     @Param('projectId') projectId: number,
     @Param('projectReportId') projectReportId: number,
@@ -51,7 +51,7 @@ export class MonthlyReportController {
   @SerializeOptions({
     strategy: 'exposeAll'
   })
-  @Roles(Role.ADMIN, Role.USER)
+  @Roles(Role.ADMIN)
   async sendMonthlyReportMail(
     @Param('projectId') projectId: number,
     @Param('projectReportId') projectReportId: number | undefined,
