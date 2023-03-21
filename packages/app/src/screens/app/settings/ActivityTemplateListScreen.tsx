@@ -10,8 +10,8 @@ import { Screens } from '../../Screens';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
 import { useIsFocused } from '@react-navigation/native';
-import { useSnackbar } from '../../../components/useSnackbar';
-import { RenderOptionsFunction, useDialog } from '../../../components/useDialog';
+import { useSnackbar } from '../../../components/hooks/useSnackbar';
+import { RenderOptionsFunction, useDialog } from '../../../components/hooks/useDialog';
 import { AppTheme } from '../../../theme/type';
 import { Mutations } from '../../../requests/mutations';
 

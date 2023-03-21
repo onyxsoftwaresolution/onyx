@@ -7,7 +7,7 @@ import { HelperText } from 'react-native-paper';
 import MGButton from '../../components/MGButton';
 import MGTextInput from '../../components/MGTextInput';
 import ScreenContainer from '../../components/ScreenContainer';
-import { useSnackbar } from '../../components/useSnackbar';
+import { useSnackbar } from '../../components/hooks/useSnackbar';
 import { useUser } from '../../context/userContext';
 import { Mutations } from '../../requests/mutations';
 

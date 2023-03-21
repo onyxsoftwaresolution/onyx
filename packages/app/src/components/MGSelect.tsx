@@ -1,6 +1,6 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { Fragment, memo, PropsWithChildren, useCallback, useState } from "react";
-import { RenderOptionsFunction, useDialog } from "./useDialog";
+import { RenderOptionsFunction, useDialog } from "./hooks/useDialog";
 import { TouchableRipple, useTheme, Text, RadioButton, Divider } from "react-native-paper";
 import { AppTheme } from "../theme/type";
 import { StyleProp, View, ViewStyle } from "react-native";

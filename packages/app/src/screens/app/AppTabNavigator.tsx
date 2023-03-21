@@ -8,8 +8,8 @@ import { useTheme } from 'react-native-paper';
 import { AppTheme } from '../../theme/type';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { createCustomBottomTabNavigator } from '../../components/CustomBottomTabNavigator';
-import { useIsMobile } from '../../components/useIsMobile';
-import { useIsAdmin } from '../../components/useIsAdmin';
+import { useIsMobile } from '../../components/hooks/useIsMobile';
+import { useIsAdmin } from '../../components/hooks/useIsAdmin';
 
 const Tab = createCustomBottomTabNavigator();
 

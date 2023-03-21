@@ -1,4 +1,4 @@
-import { useUser } from "../context/userContext"
+import { useUser } from "../../context/userContext"
 import { Role } from "@workspace/api/node_modules/@prisma/client";
 
 export const useIsAdmin = () => {

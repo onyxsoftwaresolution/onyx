@@ -19,7 +19,7 @@ import { useIsFocused } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { dayOrNull } from '../../../dayOrNull';
 import MGCard from '../../../components/MGCard';
-import { useSnackbar } from '../../../components/useSnackbar';
+import { useSnackbar } from '../../../components/hooks/useSnackbar';
 import MGRow from '../../../components/MGRow';
 
 type Params = {

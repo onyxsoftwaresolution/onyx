@@ -1,6 +1,6 @@
 import { useWindowDimensions } from "react-native";
 import { useTheme } from "react-native-paper";
-import { AppTheme } from "../theme/type";
+import { AppTheme } from "../../theme/type";
 
 export const useIsMobile = () => {
   const dimensions = useWindowDimensions();

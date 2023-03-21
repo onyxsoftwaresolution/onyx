@@ -10,9 +10,9 @@ import { Screens } from '../../Screens';
 import { useIsFocused } from '@react-navigation/native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { EmployeeOutDTO } from '@workspace/api/src/modules/employee/dtos/employee.out.dto';
-import { useSnackbar } from '../../../components/useSnackbar';
+import { useSnackbar } from '../../../components/hooks/useSnackbar';
 import { Mutations } from '../../../requests/mutations';
-import { RenderOptionsFunction, useDialog } from '../../../components/useDialog';
+import { RenderOptionsFunction, useDialog } from '../../../components/hooks/useDialog';
 import { AppTheme } from '../../../theme/type';
 
 export default memo<NativeStackScreenProps<any, string>>(

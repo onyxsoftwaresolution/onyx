@@ -11,9 +11,9 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {
   RenderOptionsFunction,
   useDialog,
-} from '../../../components/useDialog';
+} from '../../../components/hooks/useDialog';
 import ScreenContainer from '../../../components/ScreenContainer';
-import { useSnackbar } from '../../../components/useSnackbar';
+import { useSnackbar } from '../../../components/hooks/useSnackbar';
 import { Mutations } from '../../../requests/mutations';
 import { Queries } from '../../../requests/queries';
 import { AppTheme } from '../../../theme/type';
