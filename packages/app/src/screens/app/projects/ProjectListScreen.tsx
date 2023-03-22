@@ -1,4 +1,4 @@
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ProjectOutDTO } from '@workspace/api/src/modules/project/dtos/project.out.dto';
@@ -98,7 +98,7 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
     <TouchableRipple
       style={[styles.touchStyle]}
       key={project.id}
-      onPress={() => { props.navigation.navigate(Screens.APP_DAILY_REPORT__REPORT_LIST_SCREEN, { projectId: project.id }) }}
+      onPress={() => { props.navigation.navigate(Screens.APP_DAILY_REPORT__REPORT_LIST_SCREEN, { projectId: project.id, description: project.description }) }}
     >
       <View style={[styles.item]}>
         <View style={[styles.itemRow]}>
@@ -119,7 +119,7 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
     <TouchableRipple
       style={[styles.touchStyle]}
       key={project.id}
-      onPress={() => { props.navigation.navigate(Screens.APP_MONTHLY_REPORT__REPORT_LIST_SCREEN, { projectId: project.id }) }}
+      onPress={() => { props.navigation.navigate(Screens.APP_MONTHLY_REPORT__REPORT_LIST_SCREEN, { projectId: project.id, description: project.description }) }}
     >
       <View style={[styles.item]}>
         <View style={[styles.itemRow]}>

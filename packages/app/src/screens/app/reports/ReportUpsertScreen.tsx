@@ -307,7 +307,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
                 applyComputedDailyActivityReport(index)
               }}
               style={{ marginBottom: 7 }}
-              label={'Total realizat la azi'}
+              label={'Total realizat'}
             />
           </>
         )}

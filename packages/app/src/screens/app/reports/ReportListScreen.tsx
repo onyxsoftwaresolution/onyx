@@ -24,13 +24,13 @@ type Props = NativeStackScreenProps<any, string> & {
 }
 
 export default memo<Props>(function ReportListScreen(props) {
-  const { projectId } = props.route.params as { projectId: number };
+  const { projectId, description } = props.route.params as { projectId: number, description: string };
 
   const enabled = useIsFocused();
   const reports = useQuery(Queries.getReports(props.type, projectId, { enabled }));
 
-  // const deleteProject = useMutation(
-  //   Mutations.deleteProject({
+  // const deleteReport = useMutation(
+  //   Mutations.deleteReport({
   //     onSuccess() {
   //       reports.refetch();
   //     },
@@ -127,6 +127,10 @@ export default memo<Props>(function ReportListScreen(props) {
         </View>
         : null}
       <View style={[styles.list]}>
+        <View style={[{ flexDirection: 'row', paddingBottom: 10 }]}>
+          <Text variant='bodyLarge' style={[{ fontWeight: 'bold' }]}>Proiect: </Text>
+          <Text variant='bodyLarge'>{description}</Text>
+        </View>
         {reports.data?.data?.map(renderListItem)}
       </View>
       {/* {dialog.renderDialog(dialogRenderOptions)} */}

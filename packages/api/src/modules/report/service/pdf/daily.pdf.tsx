@@ -102,7 +102,7 @@ const DailyPDF = React.memo<Props>((props) => {
               <Text style={styles.test}>{'Stoc ramas'}</Text>
             </View>
             <View style={[styles.cell, styles.cell8]}>
-              <Text style={styles.test}>{'Total realizat la zi'}</Text>
+              <Text style={styles.test}>{'Total realizat'}</Text>
             </View>
             <View style={[styles.cell, styles.cell9]}>
               <Text style={styles.test}>{'Total la nivel de proiect'}</Text>
