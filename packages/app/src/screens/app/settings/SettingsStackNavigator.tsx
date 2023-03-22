@@ -12,6 +12,8 @@ import EmployeeAddScreen from './employee/EmployeeUpsertScreen';
 import ActivityTemplateListScreen from './activity/ActivityTemplateListScreen';
 import ActivityTemplateUpsertScreen from './activity/ActivityTemplateUpsertScreen';
 import { HeaderAddButton } from '../../../components/HeaderAddButton';
+import UserListScreen from './user/UserListScreen';
+import UserUpsertScreen from './user/UserUpsertScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -89,6 +91,33 @@ export default memo(function SettingsStackNavigator() {
             screenProps.route.params?.description != null
               ? 'Modifica sablon activitate'
               : 'Adauga sablon activitate',
+        })}
+      />
+      <Stack.Screen
+        name={Screens.APP_USER_LIST}
+        component={UserListScreen}
+        options={(screenProps) => ({
+          ...options('Utilizatori'),
+          headerRight: (headerProps) => (
+            <HeaderAddButton
+              {...screenProps}
+              {...headerProps}
+              screenName={Screens.APP_USER_UPSERT}
+            />
+          ),
+        })}
+      />
+      <Stack.Screen
+        name={Screens.APP_USER_UPSERT}
+        component={UserUpsertScreen}
+        options={(screenProps) => ({
+          ...options(''),
+          title:
+            // @ts-expect-error missing type
+            screenProps.route.params?.username != null
+              // @ts-expect-error missing type
+              ? `Modifica utilizator ${screenProps.route.params?.username}`
+              : 'Adauga utilizator',
         })}
       />
     </Stack.Navigator>

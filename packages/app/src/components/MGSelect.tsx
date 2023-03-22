@@ -8,8 +8,9 @@ import MGButton from "./MGButton";
 import { ScrollView } from "react-native-gesture-handler";
 import { FetchError, FetchResponse } from "../requests/request";
 import MGTextInput from "./MGTextInput";
+import { isObject } from "class-validator";
 
-type SelectProps<T extends { id: number }> = PropsWithChildren & {
+type SelectProps<T extends { id?: number }> = PropsWithChildren & {
   data: T | undefined;
   onSelect(data: T | undefined): void;
   getter(): UseQueryOptions<FetchResponse<T[]>, FetchError>;
@@ -18,9 +19,10 @@ type SelectProps<T extends { id: number }> = PropsWithChildren & {
   type?: "button" | "input";
   containerStyle?: StyleProp<ViewStyle>;
   title?: string;
+  error?: boolean;
 }
 
-export default memo(function MGSelect<T extends { id: number }>(props: SelectProps<T>) {
+export default memo(function MGSelect<T extends { id?: number }>(props: SelectProps<T>) {
   const type = props.type ?? "button";
 
   const dialog = useDialog<void>();
@@ -46,12 +48,12 @@ export default memo(function MGSelect<T extends { id: number }>(props: SelectPro
     scrollMessage: (
       <ScrollView style={[{ width: "100%" }]}>
         {datas?.data?.data?.map((a, i) => (
-          <Fragment key={a.id}>
+          <Fragment key={`${a.id ?? a}`}>
             {i > 0 && <Divider />}
             <TouchableRipple style={[{ width: "100%", padding: 10 }]} onPress={() => onSelect(a)}>
               <View style={[{ flexDirection: "row", width: "100%" }]}>
                 <View pointerEvents="none">
-                  <RadioButton status={a.id === data?.id ? "checked" : "unchecked"} value="first" />
+                  <RadioButton status={a == data || (isObject(a) && a.id === data?.id) ? "checked" : "unchecked"} value="first" />
                 </View>
                 <View style={[{ justifyContent: "center", flex: 1 }]}><Text>{props.text(a)}</Text></View>
               </View>
@@ -91,6 +93,7 @@ export default memo(function MGSelect<T extends { id: number }>(props: SelectPro
           ? <TouchableRipple style={[{ flex: 1 }]} onPress={() => dialog.show(undefined)}>
             <View pointerEvents="none" style={[{ flex: 1 }]}>
               <MGTextInput
+                error={props.error}
                 style={[{ flex: 1 }]}
                 value={props.text(props.data)}
                 onChangeText={() => {/**/ }}

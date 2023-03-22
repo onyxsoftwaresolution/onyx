@@ -9,6 +9,8 @@ import { Report } from '../screens/app/reports/Report';
 import { JwtUserDTO } from '@workspace/api/src/modules/user/dtos/jwt.user.dto';
 import { API_URL } from '@env';
 import { InfoDTO } from "@workspace/api/src/modules/app/dtos/info.dto"
+import { UserOutDTO } from '@workspace/api/src/modules/user/dtos/user-out.dto';
+import { Role } from '@workspace/api/node_modules/@prisma/client';
 
 type Options<T = never> = Partial<Pick<UseQueryOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -47,6 +49,31 @@ export class Queries {
     onSuccess,
     enabled,
   } as UseQueryOptions<FetchResponse<JwtUserDTO>, FetchError>);
+
+  static getRoles = ({ enabled = true, onError, onLoading, onSuccess }: Options<FetchResponse<any[]>> = {}) => ({
+    queryKey: ['roles'],
+    queryFn: async () => {
+      onLoading?.();
+      return {
+        data: Object.values(Role),
+        ok: true, status: 200, statusText: '', url: '',
+      };
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<any[]>, FetchError>);
+
+  static getUsers = ({ enabled = true, onError, onLoading, onSuccess }: Options<FetchResponse<UserOutDTO>> = {}) => ({
+    queryKey: ['users'],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/users`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<UserOutDTO[]>, FetchError>);
 
   static getEmployees = ({ enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
     queryKey: ['employees'],

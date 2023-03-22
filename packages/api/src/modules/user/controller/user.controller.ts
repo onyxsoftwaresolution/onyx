@@ -2,7 +2,7 @@ import { Roles } from '@modules/auth/rbac/role.decorator';
 import { JwtUserDTO } from '@modules/user/dtos/jwt.user.dto';
 import { JwtUser } from '@modules/user/user.decorator';
 import { UserService } from '@modules/user/service/user.service';
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
 import { Role, User } from '@prisma/client';
 import { CreateUserDTO } from '../dtos/user.create.dto';
 import { UserOutDTO } from '../dtos/user-out.dto';
@@ -20,18 +20,25 @@ export class UserController {
     return new JwtUserDTO(user);
   }
 
-  @Post('user')
+  @Put('user')
   @Roles(Role.ADMIN)
-  async postUser(
-    @Body()
-    body: CreateUserDTO,
+  async upsertUser(
+    @Body() body: CreateUserDTO,
   ): Promise<UserOutDTO> {
-    return await this.userService.createUser(body);
+    return await this.userService.upsertUser(body);
   }
 
-  @Get('user')
+  @Get('users')
   @Roles(Role.ADMIN)
   async listUsers(): Promise<Partial<User>[]> {
     return await this.userService.listUsers();
+  }
+
+  @Delete('user/:username')
+  @Roles(Role.ADMIN)
+  async deleteUser(
+    @Param('username') username: string,
+  ): Promise<UserOutDTO> {
+    return await this.userService.deleteUser(username);
   }
 }

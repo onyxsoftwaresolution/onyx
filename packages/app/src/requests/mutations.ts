@@ -10,6 +10,8 @@ import { EmployeeOutDTO } from '@workspace/api/src/modules/employee/dtos/employe
 import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
 import { API_URL } from '@env';
 import { ProjectReportOutDTO } from '@workspace/api/src/modules/report/dtos/report-out.dto';
+import { UserOutDTO } from '@workspace/api/src/modules/user/dtos/user-out.dto';
+import { CreateUserDTO } from '@workspace/api/src/modules/user/dtos/user.create.dto';
 
 type Options<T = never> = Partial<Pick<UseMutationOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -66,6 +68,40 @@ export class Mutations {
       onSuccess,
       onError,
     } as UseMutationOptions<FetchResponse<LoginTokenDTO>, FetchError, LoginDTO>;
+  }
+
+  static upsertUser({ onError, onLoading, onSuccess }: Options<FetchResponse<UserOutDTO>> = {}) {
+    return {
+      mutationKey: ['user'],
+      mutationFn: async (body) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/user`,
+          {
+            // @ts-expect-error a simple typescript mistake
+            body,
+            method: 'PUT',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<UserOutDTO>, FetchError, CreateUserDTO>;
+  }
+
+  static deleteUser({ onError, onLoading, onSuccess }: Options<FetchResponse<UserOutDTO>> = {}) {
+    return {
+      mutationKey: [`/v1/user/username`],
+      mutationFn: async (username) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/user/${username}`,
+          { method: 'DELETE' },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<UserOutDTO>, FetchError, string>;
   }
 
   static upsertEmployee({ onError, onLoading, onSuccess }: Options<FetchResponse<EmployeeOutDTO>> = {}) {

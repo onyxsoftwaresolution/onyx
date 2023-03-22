@@ -19,7 +19,7 @@ export default memo<NativeStackScreenProps<any, string>>(
     const [user, setUser] = useUser();
     const isAdmin = useIsAdmin();
 
-    const dialog = useDialog<void>();
+    const aboutDialog = useDialog<void>();
 
     const logout = useCallback(async () => {
       await Store.delete('access_token');
@@ -60,9 +60,19 @@ export default memo<NativeStackScreenProps<any, string>>(
           case Links.ABOUT:
             return {
               color: colors.inverseSurface,
-              onPress: () => { dialog.show(); },
+              onPress: () => { aboutDialog.show(); },
               icon: 'mobile-alt',
               chevron: '',
+            }
+
+          case Links.USERS:
+            return {
+              color: colors.inverseSurface,
+              onPress: () => {
+                navigation.navigate(Screens.APP_USER_LIST);
+              },
+              icon: 'user-lock',
+              chevron: 'chevron-right',
             }
 
           default:
@@ -74,7 +84,7 @@ export default memo<NativeStackScreenProps<any, string>>(
             };
         }
       },
-      [colors.danger, colors.inverseSurface, dialog, logout, navigation],
+      [colors.danger, colors.inverseSurface, aboutDialog, logout, navigation],
     );
 
     const aboutDialogOptions: RenderOptionsFunction<unknown> = useCallback(() => ({
@@ -126,7 +136,7 @@ export default memo<NativeStackScreenProps<any, string>>(
           </View>
           {settings.filter(s => s.roles.length === 0 || isAdmin && s.roles?.includes(Role.ADMIN)).map((s, i) => renderItem({ item: s, index: i }))}
         </View>
-        {dialog.renderDialog(aboutDialogOptions)}
+        {aboutDialog.renderDialog(aboutDialogOptions)}
       </ScreenContainer>
     );
   },
@@ -135,6 +145,7 @@ export default memo<NativeStackScreenProps<any, string>>(
 enum Links {
   EMPLOYEES,
   ACTIVITIES,
+  USERS,
   LOGOUT,
   ABOUT,
 }
@@ -142,6 +153,7 @@ enum Links {
 const settings = [
   { label: 'Angajati', value: Links.EMPLOYEES, roles: [Role.ADMIN] },
   { label: 'Activitati', value: Links.ACTIVITIES, roles: [Role.ADMIN] },
+  { label: 'Utilizatori', value: Links.USERS, roles: [Role.ADMIN] },
   { label: 'Despre aplicatie', value: Links.ABOUT, roles: [] },
   { label: 'Logout', value: Links.LOGOUT, roles: [] },
 ];

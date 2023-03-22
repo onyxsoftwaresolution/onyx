@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService {
-  constructor() {}
+  constructor() { }
 
   #client: PrismaClient;
 

@@ -25,83 +25,83 @@ import { EmployeeService } from '@modules/employee/service/employee.service';
   process.exit(0);
 })();
 
-const seedUsers = async (app: NestExpressApplication) => {
-  const userService = app.get<UserService>(UserService);
+// const seedUsers = async (app: NestExpressApplication) => {
+//   const userService = app.get<UserService>(UserService);
 
-  const cristina = await userService.upsertInitialUser({
-    username: 'cristina',
-    password: 'admin',
-    role: Role.ADMIN,
-  });
-  const tase = await userService.upsertInitialUser({
-    username: 'tase',
-    password: 'admin',
-    role: Role.USER,
-  });
-  console.log('seeded users:', { cristina, tase });
-};
+//   const cristina = await userService.upsertInitialUser({
+//     username: 'cristina',
+//     password: 'admin',
+//     role: Role.ADMIN,
+//   });
+//   const tase = await userService.upsertInitialUser({
+//     username: 'tase',
+//     password: 'admin',
+//     role: Role.USER,
+//   });
+//   console.log('seeded users:', { cristina, tase });
+// };
 
-const seedActivityTemplates = async (app: NestExpressApplication) => {
-  const activityTemplateService = app.get<ActivityTemplateService>(
-    ActivityTemplateService,
-  );
+// const seedActivityTemplates = async (app: NestExpressApplication) => {
+//   const activityTemplateService = app.get<ActivityTemplateService>(
+//     ActivityTemplateService,
+//   );
 
-  const result = [
-    await activityTemplateService.createActivityTemplate({
-      description:
-        'Forare piloti cu diametru si adancime conf. proiect, in terasament',
-      material: 'piloti',
-      cost: 100,
-    }),
-    await activityTemplateService.createActivityTemplate({
-      description: 'Montare armatura',
-      material: 'armatura',
-      cost: 100,
-    }),
-    await activityTemplateService.createActivityTemplate({
-      description: 'Fixare stalpi pe pozitie',
-      material: 'stalpi',
-      cost: 100,
-    }),
-    await activityTemplateService.createActivityTemplate({
-      description: 'Turnare beton (Etapa I)',
-      material: 'beton (mc)',
-      cost: 100,
-    }),
-    await activityTemplateService.createActivityTemplate({
-      description: 'Asistenta turnare beton (mc)',
-      material: 'beton (mc)',
-      cost: 100,
-    }),
-  ];
+//   const result = [
+//     await activityTemplateService.createActivityTemplate({
+//       description:
+//         'Forare piloti cu diametru si adancime conf. proiect, in terasament',
+//       material: 'piloti',
+//       cost: 100,
+//     }),
+//     await activityTemplateService.createActivityTemplate({
+//       description: 'Montare armatura',
+//       material: 'armatura',
+//       cost: 100,
+//     }),
+//     await activityTemplateService.createActivityTemplate({
+//       description: 'Fixare stalpi pe pozitie',
+//       material: 'stalpi',
+//       cost: 100,
+//     }),
+//     await activityTemplateService.createActivityTemplate({
+//       description: 'Turnare beton (Etapa I)',
+//       material: 'beton (mc)',
+//       cost: 100,
+//     }),
+//     await activityTemplateService.createActivityTemplate({
+//       description: 'Asistenta turnare beton (mc)',
+//       material: 'beton (mc)',
+//       cost: 100,
+//     }),
+//   ];
 
-  console.log('seeded activity templates', result);
-};
+//   console.log('seeded activity templates', result);
+// };
 
-const seedEmployees = async (app: NestExpressApplication) => {
-  const employeeService = app.get<EmployeeService>(EmployeeService);
+// const seedEmployees = async (app: NestExpressApplication) => {
+//   const employeeService = app.get<EmployeeService>(EmployeeService);
 
-  const result = [
-    await employeeService.createEmployee({
-      name: 'Alex Frimitura',
-      position: 'muritor de foame',
-    }),
-    await employeeService.createEmployee({
-      name: 'Iulian Strengaru',
-      position: 'insufletitor',
-    }),
-    await employeeService.createEmployee({
-      name: 'Marius Militaru',
-      position: 'manager',
-    }),
-    await employeeService.createEmployee({
-      name: 'George Pasiute',
-      position: 'antreprenor',
-    }),
-  ];
+//   const result = [
+//     await employeeService.createEmployee({
+//       name: 'Alex Frimitura',
+//       position: 'muritor de foame',
+//     }),
+//     await employeeService.createEmployee({
+//       name: 'Iulian Strengaru',
+//       position: 'insufletitor',
+//     }),
+//     await employeeService.createEmployee({
+//       name: 'Marius Militaru',
+//       position: 'manager',
+//     }),
+//     await employeeService.createEmployee({
+//       name: 'George Pasiute',
+//       position: 'antreprenor',
+//     }),
+//   ];
 
-  console.log('seeded employees', result);
-};
+//   console.log('seeded employees', result);
+// };
 
 // const seedProjects = async (app: NestExpressApplication) => {
 //   const projectService = app.get<ProjectService>(ProjectService);
