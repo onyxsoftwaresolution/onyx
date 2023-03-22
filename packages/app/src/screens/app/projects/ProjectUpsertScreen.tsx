@@ -394,7 +394,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               text={(data: EmployeeOutDTO) => data?.name ?? value?.name ?? ""}
               data={value}
               onSelect={({ id, name }: EmployeeOutDTO) => { onChange({ id, name }) }}
-              label="Sef santier"
+              label="Sef de santier"
               containerStyle={[{ marginBottom: 7 }]}
             />
           </View>

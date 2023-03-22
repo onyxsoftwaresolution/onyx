@@ -110,7 +110,12 @@ export class MonthlyReportProvider {
     return await this.prismaService.client.projectReport.findFirst({
       where: { id: projectReportId, projectId, deleted: false },
       include: {
-        project: true,
+        project: {
+          include: {
+            areaAdmin: true,
+            localAdmin: true,
+          }
+        },
         monthlyActivityReports: {
           include: {
             monthlyProjectActivity: true,

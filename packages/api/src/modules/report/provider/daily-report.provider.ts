@@ -126,7 +126,12 @@ export class DailyReportProvider {
     return await this.prismaService.client.projectReport.findFirst({
       where: { id: projectReportId, projectId, deleted: false },
       include: {
-        project: true,
+        project: {
+          include: {
+            localAdmin: true,
+            areaAdmin: true,
+          }
+        },
         dailyActivityReports: {
           include: {
             dailyProjectActivity: true,
