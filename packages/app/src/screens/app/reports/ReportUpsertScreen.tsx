@@ -169,6 +169,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
           <>
             <MGTextInput
               disabled
+              selectTextOnFocus
               value={value.toString()}
               onChangeText={val => {
                 onChange(val);
@@ -196,6 +197,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
           <>
             <MGTextInput
               value={value.toString()}
+              selectTextOnFocus
               onChangeText={val => {
                 onChange(val);
                 applyComputedDailyActivityReport(index)
@@ -222,6 +224,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
           <>
             <MGTextInput
               value={value.toString()}
+              selectTextOnFocus
               onChangeText={val => {
                 onChange(val);
                 applyComputedDailyActivityReport(index)
@@ -248,6 +251,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
           <>
             <MGTextInput
               value={value.toString()}
+              selectTextOnFocus
               onChangeText={val => {
                 onChange(val);
                 applyComputedDailyActivityReport(index)
@@ -275,6 +279,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             <MGTextInput
               disabled
               value={value.toString()}
+              selectTextOnFocus
               onChangeText={val => {
                 onChange(val);
                 applyComputedDailyActivityReport(index)
@@ -302,6 +307,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             <MGTextInput
               disabled
               value={value.toString()}
+              selectTextOnFocus
               onChangeText={val => {
                 onChange(val);
                 applyComputedDailyActivityReport(index)
@@ -329,6 +335,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             <MGTextInput
               disabled
               value={value.toString()}
+              selectTextOnFocus
               onChangeText={val => {
                 onChange(val);
                 applyComputedDailyActivityReport(index)
@@ -356,6 +363,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             <MGTextInput
               disabled
               value={value.toString()}
+              selectTextOnFocus
               onChangeText={val => {
                 onChange(val);
                 applyComputedDailyActivityReport(index)
@@ -405,6 +413,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
           <>
             <MGTextInput
               value={value.toString()}
+              selectTextOnFocus
               onChangeText={val => {
                 onChange(val);
                 applyComputedMonthlyActivityReport(index);
@@ -432,6 +441,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             <MGTextInput
               disabled
               value={value.toString()}
+              selectTextOnFocus
               onChangeText={val => {
                 onChange(val);
                 applyComputedMonthlyActivityReport(index);
@@ -459,6 +469,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             <MGTextInput
               disabled
               value={value.toString()}
+              selectTextOnFocus
               onChangeText={val => {
                 onChange(val);
                 applyComputedMonthlyActivityReport(index);
@@ -485,6 +496,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
           <>
             <MGTextInput
               value={value.toString()}
+              selectTextOnFocus
               onChangeText={val => {
                 onChange(val);
                 applyComputedMonthlyActivityReport(index);
