@@ -55,6 +55,13 @@ export class MonthlyReportProvider {
     return await this.prismaService.client.projectReport.upsert(args);
   }
 
+  async deleteMonthlyReport(projectReportId: number) {
+    return await this.prismaService.client.projectReport.update({
+      where: { id: projectReportId },
+      data: { deleted: true },
+    });
+  }
+
   async getNewMonthlyReport(projectId: number, month: string) {
     const moment = dayjs(month ?? null, 'YYYYMM');
     if (!moment.isValid()) {
@@ -66,7 +73,8 @@ export class MonthlyReportProvider {
       where: {
         projectId,
         dailyActivityReports: { some: {} },
-        date: { gte: start, lte: end }
+        date: { gte: start, lte: end },
+        deleted: false,
       },
       select: {
         dailyActivityReports: {

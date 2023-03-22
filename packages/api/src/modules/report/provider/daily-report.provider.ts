@@ -55,6 +55,13 @@ export class DailyReportProvider {
     return await this.prismaService.client.projectReport.upsert(args);
   }
 
+  async deleteDailyReport(projectReportId: number) {
+    return await this.prismaService.client.projectReport.update({
+      where: { id: projectReportId },
+      data: { deleted: true },
+    });
+  }
+
   async getNewDailyReport(projectId: number) {
     const project = await this.prismaService.client.project.findFirst({
       where: { id: projectId, deleted: false },
@@ -65,7 +72,7 @@ export class DailyReportProvider {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { projectActivities, ...restProject } = project;
     const previousReport = await this.prismaService.client.projectReport.findFirst({
-      where: { projectId },
+      where: { projectId, deleted: false },
       orderBy: {
         date: 'desc',
       },
@@ -81,6 +88,7 @@ export class DailyReportProvider {
       where: {
         projectId,
         dailyActivityReports: { some: {} },
+        deleted: false,
       },
       select: {
         dailyActivityReports: {

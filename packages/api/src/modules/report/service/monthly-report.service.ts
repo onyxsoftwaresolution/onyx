@@ -25,6 +25,10 @@ export class MonthlyReportService {
     return new ProjectReportOutDTO(await this.reportProvider.upsertMonthlyReport(projectId, projectReportId, body));
   }
 
+  async deleteMonthlyReport(projectReportId: number) {
+    return new ProjectReportOutDTO(await this.reportProvider.deleteMonthlyReport(projectReportId));
+  }
+
   async getNewMonthlyReport(projectId: number, month: string) {
     return new ProjectReportOutDTO(await this.reportProvider.getNewMonthlyReport(projectId, month));
   }

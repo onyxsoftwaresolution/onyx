@@ -29,13 +29,15 @@ export default memo<Props>(function ReportListScreen(props) {
   const enabled = useIsFocused();
   const reports = useQuery(Queries.getReports(props.type, projectId, { enabled }));
 
-  // const deleteReport = useMutation(
-  //   Mutations.deleteReport({
-  //     onSuccess() {
-  //       reports.refetch();
-  //     },
-  //   }),
-  // );
+  const deleteReport = useMutation(
+    Mutations.deleteReport(
+      props.type,
+      {
+        onSuccess() {
+          reports.refetch();
+        },
+      }),
+  );
 
   const { colors } = useTheme<AppTheme>();
 
@@ -58,36 +60,37 @@ export default memo<Props>(function ReportListScreen(props) {
     <TouchableRipple
       style={[styles.touchStyle]}
       key={report.id}
-      onPress={() => onGoToUpsertScreen(report)}
+      onPress={() => { }}
     >
       <View style={[styles.item]}>
         <View style={[styles.itemRow]}>
           <View style={[{ flex: 1 }]}>
             <Text style={[styles.itemText]}>{dayjs(report.date).format('YYYY-MM-DD HH:mm')}</Text>
           </View>
-          {/* <TouchableWithoutFeedback
-            onPress={() => dialog.show(report)}
-            containerStyle={[styles.iconContainer]}
-          >
-            <Icon
-              name={'trash-alt'}
-              style={[{ color: colors.danger, fontSize: 18 }]}
-            />
-          </TouchableWithoutFeedback> */}
-          {/* <TouchableWithoutFeedback
-            onPress={() => onPress(report)}
+          {index == 0
+            ? <TouchableWithoutFeedback
+              onPress={() => dialog.show(report)}
+              containerStyle={[styles.iconContainer]}
+            >
+              <Icon
+                name={'trash-alt'}
+                style={[{ color: colors.danger, fontSize: 18 }]}
+              />
+            </TouchableWithoutFeedback> : null}
+          <TouchableWithoutFeedback
+            onPress={() => onGoToUpsertScreen(report)}
             containerStyle={[styles.iconContainer]}
           >
             <Icon
               name={'pen'}
               style={[{ color: colors.inverseSurface, fontSize: 18 }]}
             />
-          </TouchableWithoutFeedback> */}
+          </TouchableWithoutFeedback>
         </View>
         <Divider />
       </View>
     </TouchableRipple>
-  ), [onGoToUpsertScreen]);
+  ), [colors.danger, colors.inverseSurface, dialog, onGoToUpsertScreen]);
 
   const renderListItem = useCallback((project: ReportListItemOutDTO, index: number) => {
     switch (props.type) {
@@ -102,19 +105,19 @@ export default memo<Props>(function ReportListScreen(props) {
     }
   }, [props.type, renderReport]);
 
-  // const dialogRenderOptions: RenderOptionsFunction<ReportListItemOutDTO> = useCallback((project) => ({
-  //   title: `Delete project '${project?.description}'`,
-  //   message: 'Are you sure?',
-  //   buttons: [
-  //     {
-  //       label: 'Delete',
-  //       textColor: colors.danger,
-  //       onPress: () => deleteProject.mutate(project.id),
-  //     },
-  //     () => <View style={{ flex: 1 }} />,
-  //     { label: 'Cancel' },
-  //   ],
-  // }), [colors.danger, deleteProject]);
+  const dialogRenderOptions: RenderOptionsFunction<ReportListItemOutDTO> = useCallback((report) => ({
+    title: `Sterge report '${dayjs(report?.date).format('YYYY-MM-DD HH:mm')}'`,
+    message: 'Esti sigur?',
+    buttons: [
+      {
+        label: 'Sterge',
+        textColor: colors.danger,
+        onPress: () => deleteReport.mutate(report.id),
+      },
+      () => <View style={{ flex: 1 }} />,
+      { label: 'Renunta' },
+    ],
+  }), [colors.danger, deleteReport]);
 
   return (
     <ScreenContainer
@@ -133,7 +136,7 @@ export default memo<Props>(function ReportListScreen(props) {
         </View>
         {reports.data?.data?.map(renderListItem)}
       </View>
-      {/* {dialog.renderDialog(dialogRenderOptions)} */}
+      {dialog.renderDialog(dialogRenderOptions)}
     </ScreenContainer>
   );
 });

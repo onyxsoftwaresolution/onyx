@@ -23,6 +23,10 @@ export class DailyReportService {
     return new ProjectReportOutDTO(await this.reportProvider.upsertDailyReport(projectId, projectReportId, body));
   }
 
+  async deleteDailyReport(projectReportId: number) {
+    return new ProjectReportOutDTO(await this.reportProvider.deleteDailyReport(projectReportId));
+  }
+
   async getNewDailyReport(projectId: number) {
     return new ProjectReportOutDTO(await this.reportProvider.getNewDailyReport(projectId));
   }

@@ -215,6 +215,21 @@ export class Mutations {
     } as UseMutationOptions<FetchResponse<ProjectReportOutDTO>, FetchError>)
   };
 
+  static deleteReport = (type: Report, { onError, onLoading, onSuccess }: Options<FetchResponse<ProjectReportOutDTO>> = {}) => {
+    return ({
+      mutationKey: [`delete-report}`],
+      mutationFn: async (projectReportId) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/${type}-report/${projectReportId}`,
+          { method: 'DELETE' }
+        );
+      },
+      onError,
+      onSuccess,
+    } as UseMutationOptions<FetchResponse<ProjectReportOutDTO>, FetchError, number>)
+  };
+
   static upsertProject({ onError, onLoading, onSuccess }: Options = {}) {
     return {
       mutationKey: ['project'],

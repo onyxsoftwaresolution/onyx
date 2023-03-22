@@ -1,6 +1,6 @@
 import { AllowAnonymous } from '@modules/auth/rbac/anonymous.decorator';
 import { Roles } from '@modules/auth/rbac/role.decorator';
-import { Body, Controller, Get, Param, Post, Put, Res, SerializeOptions } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Res, SerializeOptions } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { Response } from 'express';
 import { UpsertProjectReportDTO } from '../dtos/report-in.dto';
@@ -27,6 +27,14 @@ export class DailyReportController {
     @Body() body: UpsertProjectReportDTO,
   ) {
     return await this.reportService.upsertDailyReport(projectId, projectReportId, body);
+  }
+
+  @Delete('daily-report/:projectReportId')
+  @Roles(Role.ADMIN, Role.USER)
+  async deleteDailyReport(
+    @Param('projectReportId') projectReportId: number
+  ) {
+    return await this.reportService.deleteDailyReport(projectReportId);
   }
 
   @Get('new-daily-report/:projectId')
