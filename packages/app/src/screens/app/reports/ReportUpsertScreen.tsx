@@ -28,6 +28,12 @@ type Props = PropsWithChildren<NativeStackScreenProps<any, string>> & {
   type: Report;
 }
 
+type FormState = ProjectReportOutDTO & {
+  dailyActivityReports: (ActivityReportOutDTO & {
+    _totalImplToday: number;
+  })[],
+}
+
 type Params = {
   projectId: number;
   projectReportId?: number;
@@ -71,12 +77,6 @@ export default memo<Props>(function ReportUpsertScreen(props) {
       }
     ));
 
-  const values: ProjectReportOutDTO = useMemo(() => {
-    return ({
-      ...(report.data?.data ?? { monthlyActivityReports: [], dailyActivityReports: [] }) as ProjectReportOutDTO,
-    })
-  }, [report.data?.data]);
-
   const {
     control,
     handleSubmit,
@@ -85,20 +85,26 @@ export default memo<Props>(function ReportUpsertScreen(props) {
     getValues,
     setValue,
     reset,
-  } = useForm<ProjectReportOutDTO>({
+  } = useForm<FormState>({
     mode: 'onChange',
-    values,
   });
 
-  const applyComputedDailyActivityReport = useCallback((index: number) => {
-    setValue(
-      `dailyActivityReports.${index}.totalStock`,
-      Number(getValues(`dailyActivityReports.${index}.todayStock`)) + Number(getValues(`dailyActivityReports.${index}.addedStock`))
-    );
-    setValue(
-      `dailyActivityReports.${index}.finalStockToday`,
-      Number(getValues(`dailyActivityReports.${index}.totalStock`)) - Number(getValues(`dailyActivityReports.${index}.noImplToday`))
-    );
+  const applyComputedDailyActivityReport = useCallback((index: number, exclude?: string) => {
+    exclude !== `dailyActivityReports.${index}.totalStock` &&
+      setValue(
+        `dailyActivityReports.${index}.totalStock`,
+        Number(getValues(`dailyActivityReports.${index}.todayStock`)) + Number(getValues(`dailyActivityReports.${index}.addedStock`))
+      );
+    exclude !== `dailyActivityReports.${index}.finalStockToday` &&
+      setValue(
+        `dailyActivityReports.${index}.finalStockToday`,
+        Number(getValues(`dailyActivityReports.${index}.totalStock`)) - Number(getValues(`dailyActivityReports.${index}.noImplToday`))
+      );
+    exclude !== `dailyActivityReports.${index}.totalImplToday` &&
+      setValue(
+        `dailyActivityReports.${index}.totalImplToday`,
+        Number(getValues(`dailyActivityReports.${index}.noImplToday`)) + Number(getValues(`dailyActivityReports.${index}._totalImplToday`))
+      );
   }, [getValues, setValue])
 
   const applyComputedMonthlyActivityReport = useCallback((index: number) => {
@@ -117,9 +123,16 @@ export default memo<Props>(function ReportUpsertScreen(props) {
     }
   }, [applyComputedDailyActivityReport, applyComputedMonthlyActivityReport]);
 
+  const mutateFormState = useCallback((report: FormState): void => {
+    for (const daily of report.dailyActivityReports) {
+      daily._totalImplToday = daily.totalImplToday;
+    }
+  }, [])
+
   useEffect(() => {
     (async () => {
       const response = await report.mutateAsync();
+      mutateFormState(response.data as FormState);
       reset(response.data);
       applyComputedActivityReports(response.data)
     })();
@@ -227,7 +240,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
               selectTextOnFocus
               onChangeText={val => {
                 onChange(val);
-                applyComputedDailyActivityReport(index)
+                applyComputedDailyActivityReport(index, `dailyActivityReports.${index}.totalStock`)
               }}
               style={{ marginBottom: 7 }}
               label={'Stoc total'}
