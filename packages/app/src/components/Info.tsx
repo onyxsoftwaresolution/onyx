@@ -10,7 +10,8 @@ export default memo(function Info() {
 
   return (
     <View style={[{ paddingVertical: 10 }]}>
-      <Text variant="bodySmall">app: {NODE_ENV}/{APP_ENV}</Text>
+      <Text variant="bodySmall">app build: {NODE_ENV}</Text>
+      <Text variant="bodySmall">app env: {APP_ENV}</Text>
       <Text variant="bodySmall">api: {info?.data?.data?.NODE_ENV}</Text>
     </View>
   );
