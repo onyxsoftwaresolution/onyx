@@ -124,8 +124,10 @@ export default memo<Props>(function ReportUpsertScreen(props) {
   }, [applyComputedDailyActivityReport, applyComputedMonthlyActivityReport]);
 
   const mutateFormState = useCallback((report: FormState): void => {
-    for (const daily of report.dailyActivityReports) {
-      daily._totalImplToday = daily.totalImplToday;
+    if (Array.isArray(report.dailyActivityReports)) {
+      for (const daily of report.dailyActivityReports) {
+        daily._totalImplToday = daily.totalImplToday;
+      }
     }
   }, [])
 
