@@ -7,12 +7,12 @@ type Props = React.PropsWithChildren<
 
 export default memo<Props>(function MGButton(props) {
   const theme = useTheme();
-  const { style, ...rest } = props;
+  const { style, labelStyle, ...rest } = props;
   return (
     <Button
       mode="contained-tonal"
-      style={[{ backgroundColor: theme.colors.primary }, style]}
-      labelStyle={[{ color: theme.colors.surface }]}
+      style={[props.mode == null ? { backgroundColor: theme.colors.primary } : {}, style]}
+      labelStyle={[{ color: theme.colors.surface }, labelStyle]}
       {...rest}
     >
       {props.children ?? props.label}

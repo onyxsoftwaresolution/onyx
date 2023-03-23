@@ -31,6 +31,7 @@ type Props = PropsWithChildren<NativeStackScreenProps<any, string>> & {
 type FormState = ProjectReportOutDTO & {
   dailyActivityReports: (ActivityReportOutDTO & {
     _totalImplToday: number;
+    _remainingUnits: number;
   })[],
 }
 
@@ -105,6 +106,11 @@ export default memo<Props>(function ReportUpsertScreen(props) {
         `dailyActivityReports.${index}.totalImplToday`,
         Number(getValues(`dailyActivityReports.${index}.noImplToday`)) + Number(getValues(`dailyActivityReports.${index}._totalImplToday`))
       );
+    exclude !== `dailyActivityReports.${index}.remainingUnits` &&
+      setValue(
+        `dailyActivityReports.${index}.remainingUnits`,
+        Number(getValues(`dailyActivityReports.${index}._remainingUnits`)) - Number(getValues(`dailyActivityReports.${index}.noImplToday`))
+      );
   }, [getValues, setValue])
 
   const applyComputedMonthlyActivityReport = useCallback((index: number) => {
@@ -127,6 +133,7 @@ export default memo<Props>(function ReportUpsertScreen(props) {
     if (Array.isArray(report.dailyActivityReports)) {
       for (const daily of report.dailyActivityReports) {
         daily._totalImplToday = daily.totalImplToday;
+        daily._remainingUnits = daily.remainingUnits;
       }
     }
   }, [])
@@ -580,9 +587,17 @@ export default memo<Props>(function ReportUpsertScreen(props) {
             />
             : null}
         </MGRow>
+        <MGButton
+          mode="text"
+          icon={props => <Icon name="times" {...props} />}
+          label={'Renunta'}
+          onPress={() => props.navigation.pop()}
+          style={[{ marginTop: 10, marginHorizontal: 10, flex: 1 }]}
+          labelStyle={[{ color: colors.inverseSurface }]}
+        />
       </>
     );
-  }, [dialog.show, handleSubmit, isNew, projectId, projectReportId, props.type, submit])
+  }, [colors.inverseSurface, dialog.show, handleSubmit, isNew, projectId, projectReportId, props.navigation, props.type, submit])
 
   const renderSelectMonth = useCallback(() => {
     return (

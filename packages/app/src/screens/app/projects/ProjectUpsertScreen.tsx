@@ -6,7 +6,7 @@ import { isDate, isDateString, isInt, isNotEmpty, isNumber, isString } from 'cla
 import { memo, useCallback, useMemo } from 'react';
 import { Controller, useForm, useFieldArray } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
-import { HelperText } from 'react-native-paper';
+import { HelperText, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import MGButton from '../../../components/MGButton';
 import MGDatePicker from '../../../components/MGDatePicker';
 import MGTextInput from '../../../components/MGTextInput';
@@ -21,6 +21,8 @@ import { dayOrNull } from '../../../dayOrNull';
 import MGCard from '../../../components/MGCard';
 import { useSnackbar } from '../../../components/hooks/useSnackbar';
 import MGRow from '../../../components/MGRow';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { AppTheme } from '../../../theme/type';
 
 type Params = {
   id: number;
@@ -28,6 +30,8 @@ type Params = {
 
 export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertScreen(props) {
   const params = props.route.params as unknown as Params;
+
+  const { colors } = useTheme<AppTheme>();
 
   const enabled = useIsFocused();
   const project = useQuery(Queries.getProject(params.id, {
@@ -68,7 +72,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
     values,
   });
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "projectActivities",
   });
@@ -358,9 +362,22 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
     );
   }, [control, errors.projectActivities, upsert?.error?.data.code, upsert?.isError]);
 
+  const renderActivityCardTitle = useCallback((index: number) => {
+    return (
+      <View style={[{ flexDirection: 'row', width: '100%' }]}>
+        <Text style={[{ flex: 1, alignItems: 'center', display: 'flex' }]}>{`Activitate ${index + 1}`}</Text>
+        {params.id == null
+          ? <TouchableRipple onPress={() => { remove(index) }}>
+            <Icon style={[{ padding: 10, color: colors.danger }]} name='trash-alt' />
+          </TouchableRipple>
+          : null}
+      </View>
+    );
+  }, [colors.danger, params.id, remove]);
+
   const renderProjectActivity = useCallback((index: number) => {
     return (
-      <MGCard key={index} title={`Activitate ${index + 1}`}>
+      <MGCard key={`${index}-${fields[index].id}`} title={renderActivityCardTitle(index)}>
         {renderProjectActivityDescription(index)}
         <MGRow>
           {renderProjectActivityMaterial(index)}
@@ -369,7 +386,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
         </MGRow>
       </MGCard>
     );
-  }, [renderProjectActivityCost, renderProjectActivityDescription, renderProjectActivityMaterial, renderProjectActivityQuantity]);
+  }, [fields, renderActivityCardTitle, renderProjectActivityCost, renderProjectActivityDescription, renderProjectActivityMaterial, renderProjectActivityQuantity]);
 
   const renderLocalAdmin = useCallback(() => {
     return (
@@ -479,6 +496,14 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           label={'Salveaza'}
           onPress={handleSubmit(submit)}
           style={[{ marginTop: 10, marginHorizontal: 10 }]}
+        />
+        <MGButton
+          mode="text"
+          icon={props => <Icon name="times" {...props} />}
+          label={'Renunta'}
+          onPress={() => props.navigation.pop()}
+          style={[{ marginTop: 10, marginHorizontal: 10, flex: 1 }]}
+          labelStyle={[{ color: colors.inverseSurface }]}
         />
         <View style={[{ height: 20 }]} />
       </View>
