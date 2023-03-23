@@ -593,11 +593,11 @@ export default memo<Props>(function ReportUpsertScreen(props) {
           label={'Renunta'}
           onPress={() => props.navigation.pop()}
           style={[{ marginTop: 10, marginHorizontal: 10, flex: 1 }]}
-          labelStyle={[{ color: colors.inverseSurface }]}
+          labelStyle={[{ color: colors.danger }]}
         />
       </>
     );
-  }, [colors.inverseSurface, dialog.show, handleSubmit, isNew, projectId, projectReportId, props.navigation, props.type, submit])
+  }, [colors.danger, dialog.show, handleSubmit, isNew, projectId, projectReportId, props.navigation, props.type, submit])
 
   const renderSelectMonth = useCallback(() => {
     return (

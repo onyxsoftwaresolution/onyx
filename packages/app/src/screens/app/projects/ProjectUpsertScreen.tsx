@@ -503,7 +503,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           label={'Renunta'}
           onPress={() => props.navigation.pop()}
           style={[{ marginTop: 10, marginHorizontal: 10, flex: 1 }]}
-          labelStyle={[{ color: colors.inverseSurface }]}
+          labelStyle={[{ color: colors.danger }]}
         />
         <View style={[{ height: 20 }]} />
       </View>
