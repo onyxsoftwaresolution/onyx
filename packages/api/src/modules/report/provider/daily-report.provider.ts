@@ -72,7 +72,11 @@ export class DailyReportProvider {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { projectActivities, ...restProject } = project;
     const previousReport = await this.prismaService.client.projectReport.findFirst({
-      where: { projectId, deleted: false },
+      where: {
+        projectId,
+        dailyActivityReports: { some: {} },
+        deleted: false,
+      },
       orderBy: {
         date: 'desc',
       },

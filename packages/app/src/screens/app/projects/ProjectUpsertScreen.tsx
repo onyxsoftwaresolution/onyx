@@ -368,7 +368,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
         <Text style={[{ flex: 1, alignItems: 'center', display: 'flex' }]}>{`Activitate ${index + 1}`}</Text>
         {params.id == null
           ? <TouchableRipple onPress={() => { remove(index) }}>
-            <Icon style={[{ padding: 10, color: colors.danger }]} name='trash-alt' />
+            <Icon style={[{ padding: 10, color: colors.danger }]} name='times' />
           </TouchableRipple>
           : null}
       </View>

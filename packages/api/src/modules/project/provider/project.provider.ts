@@ -56,6 +56,7 @@ export class ProjectProvider {
   async listProjects() {
     return await this.prismaService.client.project.findMany({
       where: { deleted: false, available: true },
+      orderBy: { modified: 'desc' },
     });
   }
 
