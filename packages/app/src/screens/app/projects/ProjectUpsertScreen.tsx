@@ -453,6 +453,44 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
     );
   }, [control, enabled, errors.areaAdmin, upsert?.error?.data.code, upsert?.isError]);
 
+  const renderActivityMultiselect = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: '!' },
+          validate: (value) => true,
+        }}
+        render={({ field: { onChange, value } }) => {
+          console.log(value);
+          return (
+            <View style={[{ flex: 1 }]}>
+              {errors.areaAdmin != null
+                ? <HelperText type="error">{errors.areaAdmin.message?.toString()}</HelperText>
+                : null}
+              {upsert?.isError
+                ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+                : null}
+              <MGMultipleSelect
+                data={value ?? []}
+                title='Alege activitate'
+                getter={() => Queries.getActivityTemplates({ enabled }) as any}
+                getText={(data: ActivityTemplateOutDTO) => data?.description ?? ''}
+                getId={(data: ActivityTemplateOutDTO) => data?.description ?? ''}
+                onSelect={(datas: ActivityTemplateOutDTO[]) => {
+                  append(datas.map(data => ({ cost: data.cost, description: data.description, material: data.material, quantity: 0 })));
+                }}
+                label="Adauga activitate"
+                containerStyle={[{ marginTop: 10, marginHorizontal: 10 }]}
+              />
+            </View>
+          );
+        }}
+        name={`projectActivities`}
+      />
+    );
+  }, [append, control, enabled, errors.areaAdmin, upsert?.error?.data.code, upsert?.isError]);
+
   return (
     <ScreenContainer
       loading={(project.isLoading && params.id != null) || upsert.isLoading}
@@ -483,16 +521,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
             label="Adauga activitate"
             containerStyle={[{ marginTop: 10, marginHorizontal: 10 }]}
           /> */}
-          <MGMultipleSelect
-            title='Alege activitate'
-            getter={() => Queries.getActivityTemplates({ enabled }) as any}
-            text={(data: ActivityTemplateOutDTO) => data?.description ?? ''}
-            onSelect={(datas: ActivityTemplateOutDTO[]) => {
-              append(datas.map(data => ({ cost: data.cost, description: data.description, material: data.material, quantity: 0 })));
-            }}
-            label="Adauga activitate"
-            containerStyle={[{ marginTop: 10, marginHorizontal: 10 }]}
-          />
+          {renderActivityMultiselect()}
         </View>
         <MGCard title={`Angajati`}>
           <MGRow>

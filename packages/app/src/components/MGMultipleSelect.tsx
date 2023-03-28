@@ -1,5 +1,5 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { Fragment, memo, PropsWithChildren, useCallback, useState } from "react";
+import { Fragment, memo, PropsWithChildren, useCallback, useEffect, useState } from "react";
 import { RenderOptionsFunction, useDialog } from "./hooks/useDialog";
 import { TouchableRipple, useTheme, Text, Checkbox, Divider } from "react-native-paper";
 import { AppTheme } from "../theme/type";
@@ -7,12 +7,13 @@ import { StyleProp, View, ViewStyle } from "react-native";
 import MGButton from "./MGButton";
 import { ScrollView } from "react-native-gesture-handler";
 import { FetchError, FetchResponse } from "../requests/request";
-import { isObject } from "class-validator";
 
 type MultipleSelectProps<T extends { id?: number }> = PropsWithChildren & {
+  data: T[];
   onSelect(data: T[] | undefined): void;
   getter(): UseQueryOptions<FetchResponse<T[]>, FetchError>;
-  text(data: T | undefined): string;
+  getText(data: T | undefined): string;
+  getId(data: T | undefined): any;
   label?: string;
   type?: "button";
   containerStyle?: StyleProp<ViewStyle>;
@@ -26,18 +27,23 @@ export default memo(function MGMultipleSelect<T extends { id?: number }>(props: 
   const dialog = useDialog<void>();
   const { colors } = useTheme<AppTheme>()
   const [selected, setSelected] = useState<{ [id: number]: boolean }>({});
+  const [disabled, setDisabled] = useState<{ [id: number]: boolean }>({});
+
+  useEffect(() => {
+    setDisabled(disabled => props.data.reduce((p, n) => { p[props.getId(n)] = true; return p; }, {} as { [id: number]: boolean }))
+  }, [props.getId, props.data, props]);
 
   const datas = useQuery(props.getter());
 
   const onSelect = useCallback((a: T) => {
     setSelected(selected => ({
       ...selected,
-      [a.id!]: !!!selected[a.id!],
+      [props.getId(a)]: !!!selected[props.getId(a)],
     }));
-  }, []);
+  }, [props]);
 
   const onSubmit = useCallback(() => {
-    props.onSelect(datas.data?.data.filter(item => selected[item.id!] === true));
+    props.onSelect(datas.data?.data.filter(item => selected[props.getId(item)] === true));
     setSelected({});
   }, [datas.data?.data, props, selected]);
 
@@ -49,15 +55,15 @@ export default memo(function MGMultipleSelect<T extends { id?: number }>(props: 
     title: props.title,
     scrollMessage: (
       <ScrollView style={[{ width: "100%" }]}>
-        {datas?.data?.data?.map((a, i) => (
-          <Fragment key={`${a.id ?? a}`}>
+        {datas?.data?.data?.filter(a => disabled[props.getId(a)] !== true).map((a, i) => (
+          <Fragment key={`${props.getId(a) ?? JSON.stringify(a)}`}>
             {i > 0 && <Divider />}
             <TouchableRipple style={[{ width: "100%", padding: 10 }]} onPress={() => onSelect(a)}>
               <View style={[{ flexDirection: "row", width: "100%" }]}>
                 <View pointerEvents="none">
-                  <Checkbox status={selected[a.id!] === true ? "checked" : "unchecked"} />
+                  <Checkbox status={selected[props.getId(a)] === true ? "checked" : "unchecked"} />
                 </View>
-                <View style={[{ justifyContent: "center", flex: 1 }]}><Text>{props.text(a)}</Text></View>
+                <View style={[{ justifyContent: "center", flex: 1 }]}><Text>{props.getText(a)}</Text></View>
               </View>
             </TouchableRipple>
             {i < datas?.data?.data?.length - 1 && <Divider />}
@@ -79,7 +85,7 @@ export default memo(function MGMultipleSelect<T extends { id?: number }>(props: 
       },
     ],
     onDismiss,
-  }), [props.title, datas?.data?.data, colors.danger, onSubmit, onDismiss, selected, onSelect]);
+  }), [props, datas?.data?.data, colors.danger, onSubmit, selected, onDismiss, disabled, onSelect]);
 
   return (
     <>
