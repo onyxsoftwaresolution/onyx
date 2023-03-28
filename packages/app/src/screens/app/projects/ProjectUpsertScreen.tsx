@@ -23,6 +23,7 @@ import { useSnackbar } from '../../../components/hooks/useSnackbar';
 import MGRow from '../../../components/MGRow';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { AppTheme } from '../../../theme/type';
+import MGMultipleSelect from '../../../components/MGMultipleSelect';
 
 type Params = {
   id: number;
@@ -471,13 +472,23 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
         </MGCard>
         <View>
           {fields.map((_, index) => renderProjectActivity(index))}
-          <MGSelect
+          {/* <MGSelect
             title='Alege activitate'
             getter={() => Queries.getActivityTemplates({ enabled }) as any}
             text={(data: ActivityTemplateOutDTO) => data?.description ?? ''}
             data={undefined}
             onSelect={(data: ActivityTemplateOutDTO) => {
               append({ cost: data.cost, description: data.description, material: data.material, quantity: 0 })
+            }}
+            label="Adauga activitate"
+            containerStyle={[{ marginTop: 10, marginHorizontal: 10 }]}
+          /> */}
+          <MGMultipleSelect
+            title='Alege activitate'
+            getter={() => Queries.getActivityTemplates({ enabled }) as any}
+            text={(data: ActivityTemplateOutDTO) => data?.description ?? ''}
+            onSelect={(datas: ActivityTemplateOutDTO[]) => {
+              append(datas.map(data => ({ cost: data.cost, description: data.description, material: data.material, quantity: 0 })));
             }}
             label="Adauga activitate"
             containerStyle={[{ marginTop: 10, marginHorizontal: 10 }]}
