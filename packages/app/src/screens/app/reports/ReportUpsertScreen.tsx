@@ -4,10 +4,10 @@ import { ProjectActivityOutDTO } from "@workspace/api/src/modules/project/dtos/p
 import { ActivityReportOutDTO, ProjectReportOutDTO } from "@workspace/api/src/modules/report/dtos/report-out.dto";
 import { isNotEmpty } from "class-validator";
 import dayjs from "dayjs";
-import { memo, PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { memo, PropsWithChildren, useCallback, useEffect, useState } from "react";
+import { Controller, useFieldArray, useForm, get } from "react-hook-form";
 import { Linking, StyleSheet, View } from "react-native";
-import { Text, useTheme } from "react-native-paper";
+import { HelperText, Text, useTheme } from "react-native-paper";
 import MGButton from "../../../components/MGButton";
 import MGCard from "../../../components/MGCard";
 import MGDatePicker from "../../../components/MGDatePicker";
@@ -210,16 +210,18 @@ export default memo<Props>(function ReportUpsertScreen(props) {
   }, [applyComputedDailyActivityReport, control]);
 
   const renderActivityReportAddedStock = useCallback((index: number) => {
+    const error = get(errors, `dailyActivityReports.${index}.addedStock`);
     return (
       <Controller
         control={control}
         rules={{
-          required: { value: true, message: 'Field is required!' },
+          required: { value: true, message: 'Campul este obligatoriu!' },
           validate: (value) => isNotEmpty(value),
         }}
         render={({ field: { onChange, value } }) => (
-          <>
+          <View style={[{ flex: 1 }]}>
             <MGTextInput
+              error={!!error}
               value={value.toString()}
               selectTextOnFocus
               onChangeText={val => {
@@ -229,24 +231,29 @@ export default memo<Props>(function ReportUpsertScreen(props) {
               style={{ marginBottom: 7 }}
               label={'Cantitate intrare azi'}
             />
-          </>
+            {error != null
+              ? <HelperText type="error">{error.message}</HelperText>
+              : null}
+          </View>
         )}
         name={`dailyActivityReports.${index}.addedStock`}
       />
     );
-  }, [applyComputedDailyActivityReport, control]);
+  }, [applyComputedDailyActivityReport, control, errors]);
 
   const renderActivityReportTotalStock = useCallback((index: number) => {
+    const error = get(errors, `dailyActivityReports.${index}.totalStock`);
     return (
       <Controller
         control={control}
         rules={{
-          required: { value: true, message: 'Field is required!' },
+          required: { value: true, message: 'Campul este obligatoriu!' },
           validate: (value) => isNotEmpty(value),
         }}
         render={({ field: { onChange, value } }) => (
-          <>
+          <View style={[{ flex: 1 }]}>
             <MGTextInput
+              error={!!error}
               value={value.toString()}
               selectTextOnFocus
               onChangeText={val => {
@@ -256,24 +263,29 @@ export default memo<Props>(function ReportUpsertScreen(props) {
               style={{ marginBottom: 7 }}
               label={'Stoc total'}
             />
-          </>
+            {error != null
+              ? <HelperText type="error">{error.message}</HelperText>
+              : null}
+          </View>
         )}
         name={`dailyActivityReports.${index}.totalStock`}
       />
     );
-  }, [applyComputedDailyActivityReport, control]);
+  }, [applyComputedDailyActivityReport, control, errors]);
 
   const renderActivityReportNoImplToday = useCallback((index: number) => {
+    const error = get(errors, `dailyActivityReports.${index}.noImplToday`);
     return (
       <Controller
         control={control}
         rules={{
-          required: { value: true, message: 'Field is required!' },
+          required: { value: true, message: 'Campul este obligatoriu!' },
           validate: (value) => isNotEmpty(value),
         }}
         render={({ field: { onChange, value } }) => (
-          <>
+          <View style={[{ flex: 1 }]}>
             <MGTextInput
+              error={!!error}
               value={value.toString()}
               selectTextOnFocus
               onChangeText={val => {
@@ -283,24 +295,29 @@ export default memo<Props>(function ReportUpsertScreen(props) {
               style={{ marginBottom: 7 }}
               label={'Realizat azi'}
             />
-          </>
+            {error != null
+              ? <HelperText type="error">{error.message}</HelperText>
+              : null}
+          </View>
         )}
         name={`dailyActivityReports.${index}.noImplToday`}
       />
     );
-  }, [applyComputedDailyActivityReport, control]);
+  }, [applyComputedDailyActivityReport, control, errors]);
 
   const renderActivityReportFinalStockToday = useCallback((index: number) => {
+    const error = get(errors, `dailyActivityReports.${index}.finalStockToday`);
     return (
       <Controller
         control={control}
         rules={{
-          required: { value: true, message: 'Field is required!' },
+          required: { value: true, message: 'Campul este obligatoriu!' },
           validate: (value) => isNotEmpty(value),
         }}
         render={({ field: { onChange, value } }) => (
-          <>
+          <View style={[{ flex: 1 }]}>
             <MGTextInput
+              error={!!error}
               disabled
               value={value.toString()}
               selectTextOnFocus
@@ -311,12 +328,15 @@ export default memo<Props>(function ReportUpsertScreen(props) {
               style={{ marginBottom: 7 }}
               label={'Stoc ramas'}
             />
-          </>
+            {error != null
+              ? <HelperText type="error">{error.message}</HelperText>
+              : null}
+          </View>
         )}
         name={`dailyActivityReports.${index}.finalStockToday`}
       />
     );
-  }, [applyComputedDailyActivityReport, control]);
+  }, [applyComputedDailyActivityReport, control, errors]);
 
   const renderActivityReportTotalImplToday = useCallback((index: number) => {
     return (
