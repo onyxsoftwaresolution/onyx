@@ -84,9 +84,9 @@ export class DailyReportProvider {
         dailyActivityReports: true
       }
     });
-    const lastAailyActivityReportMap = new Map<number, typeof previousReport['dailyActivityReports'][0]>();
+    const lastDailyActivityReportMap = new Map<number, typeof previousReport['dailyActivityReports'][0]>();
     previousReport?.dailyActivityReports?.forEach(dar => {
-      lastAailyActivityReportMap.set(dar.dailyProjectActivityId, dar);
+      lastDailyActivityReportMap.set(dar.dailyProjectActivityId, dar);
     });
     const dailys = await this.prismaService.client.projectReport.findMany({
       where: {
@@ -116,19 +116,18 @@ export class DailyReportProvider {
       projectId: projectId,
       project: restProject,
       dailyActivityReports: project.projectActivities.map(pa => {
-        const totalImplToday = dailyActivityReportMap[pa.id] ?? 0;
-        const finalStockToday = lastAailyActivityReportMap.get(pa.id)?.finalStockToday ?? 0;
+        const totalImplToday = dailyActivityReportMap[pa.id];
         return ({
           dailyProjectActivityId: pa.id,
           dailyProjectActivity: pa,
-          todayStock: finalStockToday,
+          todayStock: lastDailyActivityReportMap.get(pa.id)?.finalStockToday ?? 0,
           addedStock: 0,
-          totalStock: finalStockToday,
+          totalStock: lastDailyActivityReportMap.get(pa.id)?.totalStock ?? 0,
           noImplToday: 0,
-          finalStockToday,
-          totalImplToday,
-          totalProjectUnits: pa.quantity,
-          remainingUnits: pa.quantity - totalImplToday,
+          finalStockToday: lastDailyActivityReportMap.get(pa.id)?.finalStockToday ?? 0,
+          totalImplToday: totalImplToday ?? 0,
+          totalProjectUnits: lastDailyActivityReportMap.get(pa.id)?.totalProjectUnits ?? pa.quantity ?? 0,
+          remainingUnits: lastDailyActivityReportMap.get(pa.id)?.remainingUnits ?? pa.quantity ?? 0,
         })
       }),
     });

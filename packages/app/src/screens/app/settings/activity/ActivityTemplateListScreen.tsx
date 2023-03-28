@@ -46,47 +46,42 @@ export default memo<NativeStackScreenProps<any, string>>(
 
     const renderActivity = useCallback(
       (activity: ActivityTemplateOutDTO, index: number) => (
-        <TouchableRipple
+        <View
           key={activity.id}
           style={[styles.touchStyle]}
-          onPress={() => { }}
         >
           <View style={[styles.item]}>
             <View style={[styles.itemRow]}>
-              <View style={[{ flex: 1 }]}>
-                <Text style={[styles.itemText]}>{activity.description}</Text>
-                <Text style={[styles.itemSubText, { color: colors.error }]}>
-                  {activity.material}
-                </Text>
-                <Text style={[styles.itemSubText, { color: colors.error }]}>
-                  {activity.cost}
-                </Text>
-                <View style={[{ marginBottom: 10 }]} />
-              </View>
-              <TouchableWithoutFeedback
+              <TouchableRipple
+                onPress={() => onPress(activity)}
+                style={[{ flex: 1 }]}
+              >
+                <View>
+                  <Text style={[styles.itemText]}>{activity.description}</Text>
+                  <Text style={[styles.itemSubText, { color: colors.error }]}>
+                    {activity.material}
+                  </Text>
+                  <Text style={[styles.itemSubText, { color: colors.error }]}>
+                    {activity.cost}
+                  </Text>
+                  <View style={[{ marginBottom: 10 }]} />
+                </View>
+              </TouchableRipple>
+              <TouchableRipple
                 onPress={() => dialog.show(activity)}
-                containerStyle={[styles.iconContainer]}
+                style={[styles.iconContainer]}
               >
                 <Icon
                   name={'trash-alt'}
                   style={[{ color: colors.danger, fontSize: 18 }]}
                 />
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback
-                onPress={() => onPress(activity)}
-                containerStyle={[styles.iconContainer]}
-              >
-                <Icon
-                  name={'pen'}
-                  style={[{ color: colors.inverseSurface, fontSize: 18 }]}
-                />
-              </TouchableWithoutFeedback>
+              </TouchableRipple>
             </View>
             <Divider />
           </View>
-        </TouchableRipple>
+        </View>
       ),
-      [colors.danger, colors.error, colors.inverseSurface, dialog, onPress],
+      [colors.danger, colors.error, dialog, onPress],
     );
 
     const dialogRenderOptions: RenderOptionsFunction<ActivityTemplateOutDTO> = useCallback((activity) => ({
@@ -156,6 +151,6 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 10,
+    paddingHorizontal: 10,
   },
 });

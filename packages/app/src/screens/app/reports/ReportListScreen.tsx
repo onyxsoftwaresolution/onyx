@@ -1,11 +1,10 @@
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ReportListItemOutDTO } from '@workspace/api/src/modules/report/dtos/report-out.dto';
 import dayjs from 'dayjs';
 import { memo, useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {
@@ -57,40 +56,33 @@ export default memo<Props>(function ReportListScreen(props) {
   }, [projectId, props.navigation, props.type]);
 
   const renderReport = useCallback((report: ReportListItemOutDTO, index: number) => (
-    <TouchableRipple
+    <View
       style={[styles.touchStyle]}
       key={report.id}
-      onPress={() => { }}
     >
       <View style={[styles.item]}>
         <View style={[styles.itemRow]}>
-          <View style={[{ flex: 1 }]}>
+          <TouchableRipple
+            style={[{ flex: 1 }]}
+            onPress={() => onGoToUpsertScreen(report)}
+          >
             <Text style={[styles.itemText]}>{dayjs(report.date).format('YYYY-MM-DD HH:mm')}</Text>
-          </View>
+          </TouchableRipple>
           {index == 0
-            ? <TouchableWithoutFeedback
+            ? <TouchableRipple
               onPress={() => dialog.show(report)}
-              containerStyle={[styles.iconContainer]}
+              style={[styles.iconContainer]}
             >
               <Icon
                 name={'trash-alt'}
                 style={[{ color: colors.danger, fontSize: 18 }]}
               />
-            </TouchableWithoutFeedback> : null}
-          <TouchableWithoutFeedback
-            onPress={() => onGoToUpsertScreen(report)}
-            containerStyle={[styles.iconContainer]}
-          >
-            <Icon
-              name={'pen'}
-              style={[{ color: colors.inverseSurface, fontSize: 18 }]}
-            />
-          </TouchableWithoutFeedback>
+            </TouchableRipple> : null}
         </View>
         <Divider />
       </View>
-    </TouchableRipple>
-  ), [colors.danger, colors.inverseSurface, dialog, onGoToUpsertScreen]);
+    </View>
+  ), [colors.danger, dialog, onGoToUpsertScreen]);
 
   const renderListItem = useCallback((project: ReportListItemOutDTO, index: number) => {
     switch (props.type) {
@@ -175,6 +167,6 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 10,
+    paddingHorizontal: 10,
   },
 });

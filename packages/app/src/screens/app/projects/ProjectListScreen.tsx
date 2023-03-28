@@ -5,7 +5,6 @@ import { ProjectOutDTO } from '@workspace/api/src/modules/project/dtos/project.o
 import dayjs from 'dayjs';
 import { memo, useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {
@@ -50,49 +49,44 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
   );
 
   const renderProject = useCallback((project: ProjectOutDTO, index: number) => (
-    <TouchableRipple
+    <View
       style={[styles.touchStyle]}
       key={project.id}
-      onPress={() => { }}
     >
       <View style={[styles.item]}>
         <View style={[styles.itemRow]}>
-          <View style={[{ flex: 1 }]}>
-            <Text style={[styles.itemText]}>{project.description}</Text>
-            <Text style={[styles.itemSubText, { color: colors.error }]}>
-              {dayjs(project.start).format('DD/MM/YYYY')} - {dayjs(project.end).format('DD/MM/YYYY')}
-            </Text>
-            <Text style={[styles.itemSubText, { color: colors.error }]}>
-              {project.area}
-            </Text>
-            <Text style={[styles.itemSubText, { color: colors.error }]}>
-              {project.code}
-            </Text>
-            <View style={[{ marginBottom: 10 }]} />
-          </View>
-          <TouchableWithoutFeedback
+          <TouchableRipple
+            onPress={() => onPress(project)}
+            style={[{ flex: 1 }]}
+          >
+            <View style={[{ flex: 1 }]}>
+              <Text style={[styles.itemText]}>{project.description}</Text>
+              <Text style={[styles.itemSubText, { color: colors.error }]}>
+                {dayjs(project.start).format('DD/MM/YYYY')} - {dayjs(project.end).format('DD/MM/YYYY')}
+              </Text>
+              <Text style={[styles.itemSubText, { color: colors.error }]}>
+                {project.area}
+              </Text>
+              <Text style={[styles.itemSubText, { color: colors.error }]}>
+                {project.code}
+              </Text>
+              <View style={[{ marginBottom: 10 }]} />
+            </View>
+          </TouchableRipple>
+          <TouchableRipple
             onPress={() => dialog.show(project)}
-            containerStyle={[styles.iconContainer]}
+            style={[styles.iconContainer]}
           >
             <Icon
               name={'trash-alt'}
               style={[{ color: colors.danger, fontSize: 18 }]}
             />
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback
-            onPress={() => onPress(project)}
-            containerStyle={[styles.iconContainer]}
-          >
-            <Icon
-              name={'pen'}
-              style={[{ color: colors.inverseSurface, fontSize: 18 }]}
-            />
-          </TouchableWithoutFeedback>
+          </TouchableRipple>
         </View>
         <Divider />
       </View>
-    </TouchableRipple>
-  ), [colors.danger, colors.error, colors.inverseSurface, dialog, onPress]);
+    </View>
+  ), [colors.danger, colors.error, dialog, onPress]);
 
   const renderProjectForDaily = useCallback((project: ProjectOutDTO, index: number) => (
     <TouchableRipple
@@ -221,6 +215,6 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 10,
+    paddingHorizontal: 10,
   },
 });

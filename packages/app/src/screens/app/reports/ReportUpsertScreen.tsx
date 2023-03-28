@@ -131,10 +131,12 @@ export default memo<Props>(function ReportUpsertScreen(props) {
 
   const mutateFormState = useCallback((report: FormState): void => {
     if (Array.isArray(report.dailyActivityReports)) {
-      for (const daily of report.dailyActivityReports) {
-        daily._totalImplToday = daily.totalImplToday;
-        daily._remainingUnits = daily.remainingUnits;
-      }
+      report.dailyActivityReports.forEach(daily => {
+        // @ts-expect-error 123
+        daily._totalImplToday = daily.totalImplToday - daily.noImplToday;
+        // @ts-expect-error 123
+        daily._remainingUnits = daily.remainingUnits + daily.noImplToday;
+      });
     }
   }, [])
 

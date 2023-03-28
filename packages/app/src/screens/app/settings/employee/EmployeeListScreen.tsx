@@ -43,44 +43,39 @@ export default memo<NativeStackScreenProps<any, string>>(
 
     const renderEmployee = useCallback(
       (employee: EmployeeOutDTO, index: number) => (
-        <TouchableRipple
+        <View
           style={[styles.touchStyle]}
           key={employee.id}
-          onPress={() => { }}
         >
           <View style={[styles.item]}>
             <View style={[styles.itemRow]}>
-              <View style={[{ flex: 1 }]}>
-                <Text style={[styles.itemText]}>{employee.name}</Text>
-                <Text style={[styles.itemSubText, { color: colors.error }]}>
-                  {employee.position}
-                </Text>
-                <View style={[{ marginBottom: 10 }]} />
-              </View>
-              <TouchableWithoutFeedback
+              <TouchableRipple
+                onPress={() => onPress(employee)}
+                style={[{ flex: 1 }]}
+              >
+                <View>
+                  <Text style={[styles.itemText]}>{employee.name}</Text>
+                  <Text style={[styles.itemSubText, { color: colors.error }]}>
+                    {employee.position}
+                  </Text>
+                  <View style={[{ marginBottom: 10 }]} />
+                </View>
+              </TouchableRipple>
+              <TouchableRipple
                 onPress={() => dialog.show(employee)}
-                containerStyle={[styles.iconContainer]}
+                style={[styles.iconContainer]}
               >
                 <Icon
                   name={'trash-alt'}
                   style={[{ color: colors.danger, fontSize: 18 }]}
                 />
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback
-                onPress={() => onPress(employee)}
-                containerStyle={[styles.iconContainer]}
-              >
-                <Icon
-                  name={'pen'}
-                  style={[{ color: colors.inverseSurface, fontSize: 18 }]}
-                />
-              </TouchableWithoutFeedback>
+              </TouchableRipple>
             </View>
             <Divider />
           </View>
-        </TouchableRipple>
+        </View>
       ),
-      [colors.danger, colors.error, colors.inverseSurface, dialog, onPress],
+      [colors.danger, colors.error, dialog, onPress],
     );
 
     const dialogRenderOptions: RenderOptionsFunction<EmployeeOutDTO> = useCallback((employee) => ({
@@ -146,6 +141,6 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 10,
+    paddingHorizontal: 10,
   },
 });
