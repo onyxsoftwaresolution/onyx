@@ -66,7 +66,9 @@ export class DailyReportProvider {
     const project = await this.prismaService.client.project.findFirst({
       where: { id: projectId, deleted: false },
       include: {
-        projectActivities: true,
+        projectActivities: {
+          where: { deleted: false },
+        },
       }
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -81,7 +83,9 @@ export class DailyReportProvider {
         date: 'desc',
       },
       include: {
-        dailyActivityReports: true
+        dailyActivityReports: {
+          where: { deleted: false }
+        }
       }
     });
     const lastDailyActivityReportMap = new Map<number, typeof previousReport['dailyActivityReports'][0]>();
@@ -96,6 +100,7 @@ export class DailyReportProvider {
       },
       select: {
         dailyActivityReports: {
+          where: { deleted: false },
           select: {
             noImplToday: true,
             dailyProjectActivityId: true,

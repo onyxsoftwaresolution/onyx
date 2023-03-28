@@ -366,14 +366,12 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
     return (
       <View style={[{ flexDirection: 'row', width: '100%' }]}>
         <Text style={[{ flex: 1, alignItems: 'center', display: 'flex' }]}>{`Activitate ${index + 1}`}</Text>
-        {params.id == null
-          ? <TouchableRipple onPress={() => { remove(index) }}>
-            <Icon style={[{ padding: 10, color: colors.danger }]} name='times' />
-          </TouchableRipple>
-          : null}
+        <TouchableRipple onPress={() => { remove(index) }}>
+          <Icon style={[{ padding: 10, color: colors.danger }]} name='times' />
+        </TouchableRipple>
       </View>
     );
-  }, [colors.danger, params.id, remove]);
+  }, [colors.danger, remove]);
 
   const renderProjectActivity = useCallback((index: number) => {
     return (

@@ -66,9 +66,6 @@ export class ProjectProvider {
         id,
         deleted: false,
         available: true,
-        areaAdmin: { deleted: false },
-        localAdmin: { deleted: false },
-        projectActivities: { every: { deleted: false } }
       },
       select: {
         id: true,
@@ -78,7 +75,7 @@ export class ProjectProvider {
             id: true,
             name: true,
             position: true,
-          }
+          },
         },
         areaAdminId: true,
         available: true,
@@ -95,6 +92,7 @@ export class ProjectProvider {
         },
         localAdminId: true,
         projectActivities: {
+          where: { deleted: false },
           select: {
             id: true,
             cost: true,
