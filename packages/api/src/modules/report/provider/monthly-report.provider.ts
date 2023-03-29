@@ -12,7 +12,11 @@ export class MonthlyReportProvider {
 
   async listMonthlyReports(projectId: number) {
     return await this.prismaService.client.projectReport.findMany({
-      where: { projectId, deleted: false, monthlyActivityReports: { some: {} } },
+      where: {
+        projectId,
+        deleted: false,
+        monthlyActivityReports: { some: {} },
+      },
       orderBy: {
         date: 'desc',
       },
@@ -78,6 +82,10 @@ export class MonthlyReportProvider {
       },
       select: {
         dailyActivityReports: {
+          where: {
+            deleted: false,
+            dailyProjectActivity: { deleted: false },
+          },
           select: {
             noImplToday: true,
             dailyProjectActivityId: true,
@@ -95,7 +103,9 @@ export class MonthlyReportProvider {
     const project = await this.prismaService.client.project.findFirst({
       where: { id: projectId, deleted: false },
       include: {
-        projectActivities: true,
+        projectActivities: {
+          where: { deleted: false },
+        },
       }
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

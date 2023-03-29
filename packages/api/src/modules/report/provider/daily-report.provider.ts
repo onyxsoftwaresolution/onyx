@@ -100,7 +100,10 @@ export class DailyReportProvider {
       },
       select: {
         dailyActivityReports: {
-          where: { deleted: false },
+          where: {
+            deleted: false,
+            dailyProjectActivity: { deleted: false },
+          },
           select: {
             noImplToday: true,
             dailyProjectActivityId: true,
