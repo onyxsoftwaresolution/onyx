@@ -19,4 +19,12 @@ export class AppController {
   info() {
     return this.appService.info();
   }
+
+  @Get('keep-alive')
+  async keepAlive() {
+    await this.appService.keepAlive();
+    return ({
+      ok: true,
+    });
+  }
 }

@@ -29,6 +29,43 @@ model User {
   @@map("Users")
 }
 
+model Client {
+  id       Int      @id @unique @default(autoincrement())
+  created  DateTime @default(now())
+  modified DateTime @default(now())
+  deleted  Boolean  @default(false)
+
+  name        String
+  address     String
+  cif         String
+  rc          String
+  bankName    String
+  bankIban    String
+  phoneNumber String
+  email       String
+
+  @@map("Clients")
+}
+
+model Supplier {
+  id       Int      @id @unique @default(autoincrement())
+  created  DateTime @default(now())
+  modified DateTime @default(now())
+  deleted  Boolean  @default(false)
+
+  name        String
+  address     String
+  cif         String
+  rc          String
+  bankName    String
+  bankIban    String
+  phoneNumber String
+  email       String
+  products    String
+
+  @@map("Suppliers")
+}
+
 model ActivityTemplate {
   id       Int      @id @unique @default(autoincrement())
   created  DateTime @default(now())

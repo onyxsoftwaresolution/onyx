@@ -1,5 +1,5 @@
 import { Roles } from '@modules/auth/rbac/role.decorator';
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { UpsertEmployeeDTO } from '../dtos/employee.in.dto';
 import { EmployeeService } from '../service/employee.service';
