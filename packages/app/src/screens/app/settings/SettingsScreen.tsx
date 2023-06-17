@@ -75,6 +75,36 @@ export default memo<NativeStackScreenProps<any, string>>(
               chevron: 'chevron-right',
             }
 
+          case Links.CLIENTS:
+            return {
+              color: colors.inverseSurface,
+              onPress: () => {
+                navigation.navigate(Screens.APP_USER_LIST);
+              },
+              icon: 'fire',
+              chevron: 'chevron-right',
+            }
+
+          case Links.SUPPLIERS:
+            return {
+              color: colors.inverseSurface,
+              onPress: () => {
+                navigation.navigate(Screens.APP_USER_LIST);
+              },
+              icon: 'parachute-box',
+              chevron: 'chevron-right',
+            }
+
+          case Links.CONTRACTS:
+            return {
+              color: colors.inverseSurface,
+              onPress: () => {
+                navigation.navigate(Screens.APP_USER_LIST);
+              },
+              icon: 'file-contract',
+              chevron: 'chevron-right',
+            }
+
           default:
             return {
               color: colors.inverseSurface,
@@ -146,6 +176,9 @@ enum Links {
   EMPLOYEES,
   ACTIVITIES,
   USERS,
+  CLIENTS,
+  SUPPLIERS,
+  CONTRACTS,
   LOGOUT,
   ABOUT,
 }
@@ -154,6 +187,9 @@ const settings = [
   { label: 'Angajati', value: Links.EMPLOYEES, roles: [Role.ADMIN] },
   { label: 'Activitati', value: Links.ACTIVITIES, roles: [Role.ADMIN] },
   { label: 'Utilizatori', value: Links.USERS, roles: [Role.ADMIN] },
+  { label: 'Clienti', value: Links.CLIENTS, roles: [Role.ADMIN] },
+  { label: 'Furnizori', value: Links.SUPPLIERS, roles: [Role.ADMIN] },
+  { label: 'Contracte', value: Links.CONTRACTS, roles: [Role.ADMIN] },
   { label: 'Despre aplicatie', value: Links.ABOUT, roles: [] },
   { label: 'Logout', value: Links.LOGOUT, roles: [] },
 ];

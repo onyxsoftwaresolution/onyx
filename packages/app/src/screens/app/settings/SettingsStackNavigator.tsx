@@ -120,6 +120,87 @@ export default memo(function SettingsStackNavigator() {
               : 'Adauga utilizator',
         })}
       />
+      <Stack.Screen
+        name={Screens.APP_CLIENT_LIST}
+        component={UserUpsertScreen}
+        options={(screenProps) => ({
+          ...options('Clienti'),
+          headerRight: (headerProps) => (
+            <HeaderAddButton
+              {...screenProps}
+              {...headerProps}
+              screenName={Screens.APP_CLIENT_UPSERT}
+            />
+          ),
+        })}
+      />
+      <Stack.Screen
+        name={Screens.APP_CLIENT_UPSERT}
+        component={UserUpsertScreen}
+        options={(screenProps) => ({
+          ...options(''),
+          title:
+            // @ts-expect-error missing type
+            screenProps.route.params?.username != null
+              // @ts-expect-error missing type
+              ? `Modifica client ${screenProps.route.params?.username}`
+              : 'Adauga client',
+        })}
+      />
+      <Stack.Screen
+        name={Screens.APP_SUPPLIER_LIST}
+        component={UserUpsertScreen}
+        options={(screenProps) => ({
+          ...options('Furnizori'),
+          headerRight: (headerProps) => (
+            <HeaderAddButton
+              {...screenProps}
+              {...headerProps}
+              screenName={Screens.APP_SUPPLIER_UPSERT}
+            />
+          ),
+        })}
+      />
+      <Stack.Screen
+        name={Screens.APP_SUPPLIER_UPSERT}
+        component={UserUpsertScreen}
+        options={(screenProps) => ({
+          ...options(''),
+          title:
+            // @ts-expect-error missing type
+            screenProps.route.params?.username != null
+              // @ts-expect-error missing type
+              ? `Modifica furnizor ${screenProps.route.params?.username}`
+              : 'Adauga furnizor',
+        })}
+      />
+      <Stack.Screen
+        name={Screens.APP_CONTRACTS_LIST}
+        component={UserUpsertScreen}
+        options={(screenProps) => ({
+          ...options('Contracte'),
+          headerRight: (headerProps) => (
+            <HeaderAddButton
+              {...screenProps}
+              {...headerProps}
+              screenName={Screens.APP_CONTRACTS_UPSERT}
+            />
+          ),
+        })}
+      />
+      <Stack.Screen
+        name={Screens.APP_CONTRACTS_UPSERT}
+        component={UserUpsertScreen}
+        options={(screenProps) => ({
+          ...options(''),
+          title:
+            // @ts-expect-error missing type
+            screenProps.route.params?.username != null
+              // @ts-expect-error missing type
+              ? `Modifica contract ${screenProps.route.params?.username}`
+              : 'Adauga contract',
+        })}
+      />
     </Stack.Navigator>
   );
 });

@@ -87,6 +87,22 @@ export default memo(function AppTabNavigator() {
           }}
         /> : null}
       <Tab.Screen
+        name={Screens.APP_FINANCIAL_NAVIGATOR}
+        component={SettingsStackNavigator}
+        options={{
+          title: 'Financiar',
+          tabBarIcon: (props) => (
+            <>
+              <Icon
+                name="euro-sign"
+                size={props.size}
+                style={[{ color: props.color }]}
+              />
+            </>
+          ),
+        }}
+      />
+      <Tab.Screen
         name={Screens.APP_SETTINGS_NAVIGATOR}
         component={SettingsStackNavigator}
         options={{
