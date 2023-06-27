@@ -13,6 +13,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppProvider } from './app.provider';
+import { ClientModule } from '@modules/client/client.module';
+import { SupplierModule } from '@modules/supplier/supplier.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { AppProvider } from './app.provider';
     PrismaModule,
     ActivityTemplateModule,
     EmployeeModule,
+    ClientModule,
+    SupplierModule,
     ProjectModule,
     ReportModule,
   ],
