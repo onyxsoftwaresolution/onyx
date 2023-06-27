@@ -2,66 +2,66 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { memo, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
-import ScreenContainer from '../../../../components/ScreenContainer';
-import { Queries } from '../../../../requests/queries';
+import ScreenContainer from '../../../components/ScreenContainer';
+import { Queries } from '../../../requests/queries';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { Screens } from '../../../Screens';
+import { Screens } from '../../Screens';
 import { useIsFocused } from '@react-navigation/native';
-import { ClientOutDTO } from '@workspace/api/src/modules/client/dtos/client.out.dto';
-import { useSnackbar } from '../../../../components/hooks/useSnackbar';
-import { Mutations } from '../../../../requests/mutations';
-import { RenderOptionsFunction, useDialog } from '../../../../components/hooks/useDialog';
-import { AppTheme } from '../../../../theme/type';
+import { EmployeeOutDTO } from '@workspace/api/src/modules/employee/dtos/employee.out.dto';
+import { useSnackbar } from '../../../components/hooks/useSnackbar';
+import { Mutations } from '../../../requests/mutations';
+import { RenderOptionsFunction, useDialog } from '../../../components/hooks/useDialog';
+import { AppTheme } from '../../../theme/type';
 
 export default memo<NativeStackScreenProps<any, string>>(
-  function ClientListScreen(props) {
+  function EmployeeListScreen(props) {
     const snackbar = useSnackbar()
 
     const enabled = useIsFocused();
-    const clients = useQuery(
-      Queries.getClients({
+    const employees = useQuery(
+      Queries.getEmployees({
         enabled,
         onError() { snackbar.show('A aparut o eroare la listarea angajatilor!') }
       })
     );
-    const deleteClient = useMutation(Mutations.deleteClient({
-      onSuccess() { clients.refetch(); },
+    const deleteEmployee = useMutation(Mutations.deleteEmployee({
+      onSuccess() { employees.refetch(); },
       onError() { snackbar.show('A aparut o eroare la stergerea angajatului!') },
     }),);
 
     const { colors } = useTheme<AppTheme>();
-    const dialog = useDialog<ClientOutDTO>();
+    const dialog = useDialog<EmployeeOutDTO>();
 
     const onPress = useCallback(
-      (client: ClientOutDTO) => {
-        props.navigation.navigate(Screens.APP_CLIENT_UPSERT, client);
+      (employee: EmployeeOutDTO) => {
+        props.navigation.navigate(Screens.APP_EMPLOYEE_UPSERT, employee);
       },
       [props.navigation],
     );
 
-    const renderClient = useCallback(
-      (client: ClientOutDTO) => (
+    const renderEmployee = useCallback(
+      (employee: EmployeeOutDTO, index: number) => (
         <View
           style={[styles.touchStyle]}
-          key={client.id}
+          key={employee.id}
         >
           <View style={[styles.item]}>
             <View style={[styles.itemRow]}>
               <TouchableRipple
-                onPress={() => onPress(client)}
+                onPress={() => onPress(employee)}
                 style={[{ flex: 1 }]}
               >
                 <View>
-                  <Text style={[styles.itemText]}>{client.name}</Text>
+                  <Text style={[styles.itemText]}>{employee.name}</Text>
                   <Text style={[styles.itemSubText, { color: colors.error }]}>
-                    {client.cif}
+                    {employee.position}
                   </Text>
                   <View style={[{ marginBottom: 10 }]} />
                 </View>
               </TouchableRipple>
               <TouchableRipple
-                onPress={() => dialog.show(client)}
+                onPress={() => dialog.show(employee)}
                 style={[styles.iconContainer]}
               >
                 <Icon
@@ -77,27 +77,27 @@ export default memo<NativeStackScreenProps<any, string>>(
       [colors.danger, colors.error, dialog, onPress],
     );
 
-    const dialogRenderOptions: RenderOptionsFunction<ClientOutDTO> = useCallback((client) => ({
+    const dialogRenderOptions: RenderOptionsFunction<EmployeeOutDTO> = useCallback((employee) => ({
       title: `Sterge sablon activitate`,
       message: <View>
-        <Text>'{client?.name}' va fi sters!</Text>
+        <Text>'{employee?.name}' va fi sters!</Text>
         <Text>Esti sigur?</Text>
       </View>,
       buttons: [
         {
           label: 'Sterge',
           textColor: colors.danger,
-          onPress: () => deleteClient.mutate(client.id),
+          onPress: () => deleteEmployee.mutate(employee.id),
         },
         () => <View style={{ flex: 1 }} />,
         { label: 'Renunta' },
       ],
-    }), [colors.danger, deleteClient]);
+    }), [colors.danger, deleteEmployee]);
 
     return (
-      <ScreenContainer loading={clients.isLoading} scrollContainerStyle={[styles.scrollContainer]}>
+      <ScreenContainer loading={employees.isLoading} scrollContainerStyle={[styles.scrollContainer]}>
         <View style={[styles.list]}>
-          {clients.data?.data?.map(renderClient)}
+          {employees.data?.data?.map(renderEmployee)}
         </View>
         {dialog.renderDialog(dialogRenderOptions)}
         {snackbar.renderSnackbar()}

@@ -1,21 +1,19 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation } from '@tanstack/react-query';
-import { UserOutDTO } from '@workspace/api/src/modules/user/dtos/user-out.dto';
 import { isNotEmpty, isString } from 'class-validator';
 import { memo, useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 import { HelperText } from 'react-native-paper';
-import MGButton from '../../../../components/MGButton';
-import MGTextInput from '../../../../components/MGTextInput';
-import ScreenContainer from '../../../../components/ScreenContainer';
-import { useSnackbar } from '../../../../components/hooks/useSnackbar';
-import { Mutations } from '../../../../requests/mutations';
-import { Screens } from '../../../Screens';
+import MGButton from '../../../components/MGButton';
+import MGTextInput from '../../../components/MGTextInput';
+import ScreenContainer from '../../../components/ScreenContainer';
+import { useSnackbar } from '../../../components/hooks/useSnackbar';
+import { Mutations } from '../../../requests/mutations';
+import { Screens } from '../../Screens';
 import { CreateUserDTO } from '@workspace/api/src/modules/user/dtos/user.create.dto';
-import { Role } from '@workspace/api/node_modules/@prisma/client';
-import MGSelect from '../../../../components/MGSelect';
-import { Queries } from '../../../../requests/queries';
+import MGSelect from '../../../components/MGSelect';
+import { Queries } from '../../../requests/queries';
 
 export default memo<NativeStackScreenProps<any, string>>(
   function UserUpsertScreen(props) {

@@ -7,17 +7,17 @@ import { useTheme } from 'react-native-paper';
 import { Screens } from '../../Screens';
 import SettingsScreen from './SettingsScreen';
 import { Platform } from 'react-native';
-import EmployeeListScreen from './employee/EmployeeListScreen';
-import EmployeeAddScreen from './employee/EmployeeUpsertScreen';
-import ActivityTemplateListScreen from './activity/ActivityTemplateListScreen';
-import ActivityTemplateUpsertScreen from './activity/ActivityTemplateUpsertScreen';
+import EmployeeListScreen from '../employee/EmployeeListScreen';
+import EmployeeAddScreen from '../employee/EmployeeUpsertScreen';
+import ActivityTemplateListScreen from '../activity/ActivityTemplateListScreen';
+import ActivityTemplateUpsertScreen from '../activity/ActivityTemplateUpsertScreen';
 import { HeaderAddButton } from '../../../components/HeaderAddButton';
-import UserListScreen from './user/UserListScreen';
-import UserUpsertScreen from './user/UserUpsertScreen';
-import SupplierUpsertScreen from './supplier/SupplierUpsertScreen';
-import SupplierListScreen from './supplier/SupplierListScreen';
-import ClientUpsertScreen from './client/ClientUpsertScreen';
-import ClientListScreen from './client/ClientListScreen';
+import UserListScreen from '../user/UserListScreen';
+import UserUpsertScreen from '../user/UserUpsertScreen';
+import SupplierUpsertScreen from '../supplier/SupplierUpsertScreen';
+import SupplierListScreen from '../supplier/SupplierListScreen';
+import ClientUpsertScreen from '../client/ClientUpsertScreen';
+import ClientListScreen from '../client/ClientListScreen';
 
 const Stack = createNativeStackNavigator();
 

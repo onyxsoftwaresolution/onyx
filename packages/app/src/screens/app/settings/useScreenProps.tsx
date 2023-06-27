@@ -3,7 +3,7 @@ import { RouteProp } from "@react-navigation/native";
 import { HeaderAddButton } from "../../../components/HeaderAddButton";
 import { Screens } from "../../Screens";
 import { useScreenOptions } from "../../useScreenOptions";
-import ActivityTemplateListScreen from "./activity/ActivityTemplateListScreen";
+import ActivityTemplateListScreen from "../activity/ActivityTemplateListScreen";
 import EmployeeListScreen from "./employee/EmployeeListScreen";
 import React from 'react';
 

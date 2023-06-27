@@ -2,66 +2,73 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { memo, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
-import ScreenContainer from '../../../../components/ScreenContainer';
-import { Queries } from '../../../../requests/queries';
+import ScreenContainer from '../../../components/ScreenContainer';
+import { Queries } from '../../../requests/queries';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { Screens } from '../../../Screens';
+import { Screens } from '../../Screens';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
 import { useIsFocused } from '@react-navigation/native';
-import { SupplierOutDTO } from '@workspace/api/src/modules/supplier/dtos/supplier.out.dto';
-import { useSnackbar } from '../../../../components/hooks/useSnackbar';
-import { Mutations } from '../../../../requests/mutations';
-import { RenderOptionsFunction, useDialog } from '../../../../components/hooks/useDialog';
-import { AppTheme } from '../../../../theme/type';
+import { useSnackbar } from '../../../components/hooks/useSnackbar';
+import { RenderOptionsFunction, useDialog } from '../../../components/hooks/useDialog';
+import { AppTheme } from '../../../theme/type';
+import { Mutations } from '../../../requests/mutations';
 
 export default memo<NativeStackScreenProps<any, string>>(
-  function SupplierListScreen(props) {
-    const snackbar = useSnackbar()
+  function ActivityTemplateListScreen(props) {
+    const snackbar = useSnackbar();
 
     const enabled = useIsFocused();
-    const suppliers = useQuery(
-      Queries.getSuppliers({
+    const activities = useQuery(
+      Queries.getActivityTemplates({
         enabled,
-        onError() { snackbar.show('A aparut o eroare la listarea angajatilor!') }
+        onError() { snackbar.show('A aparut o eroare la listarea activitatilor!') },
       })
     );
-    const deleteSupplier = useMutation(Mutations.deleteSupplier({
-      onSuccess() { suppliers.refetch(); },
-      onError() { snackbar.show('A aparut o eroare la stergerea angajatului!') },
+    const deleteActivity = useMutation(Mutations.deleteActivityTemplate({
+      onSuccess() { activities.refetch(); },
+      onError() { snackbar.show('A aparut o eroare la stergerea activitatii!') },
     }),);
 
     const { colors } = useTheme<AppTheme>();
-    const dialog = useDialog<SupplierOutDTO>();
+    const dialog = useDialog<ActivityTemplateOutDTO>();
 
     const onPress = useCallback(
-      (supplier: SupplierOutDTO) => {
-        props.navigation.navigate(Screens.APP_SUPPLIER_UPSERT, supplier);
+      (activity: ActivityTemplateOutDTO) => {
+        props.navigation.navigate(
+          Screens.APP_ACTIVITY_TEMPLATE_UPSERT,
+          activity,
+        );
       },
       [props.navigation],
     );
 
-    const renderSupplier = useCallback(
-      (supplier: SupplierOutDTO) => (
+    const renderActivity = useCallback(
+      (activity: ActivityTemplateOutDTO, index: number) => (
         <View
+          key={activity.id}
           style={[styles.touchStyle]}
-          key={supplier.id}
         >
           <View style={[styles.item]}>
             <View style={[styles.itemRow]}>
               <TouchableRipple
-                onPress={() => onPress(supplier)}
+                onPress={() => onPress(activity)}
                 style={[{ flex: 1 }]}
               >
                 <View>
-                  <Text style={[styles.itemText]}>{supplier.name}</Text>
+                  <Text style={[styles.itemText]}>{activity.description}</Text>
                   <Text style={[styles.itemSubText, { color: colors.error }]}>
-                    {supplier.cif}
+                    {activity.material}
+                  </Text>
+                  <Text style={[styles.itemSubText, { color: colors.error }]}>
+                    {activity.cost}
                   </Text>
                   <View style={[{ marginBottom: 10 }]} />
                 </View>
               </TouchableRipple>
               <TouchableRipple
-                onPress={() => dialog.show(supplier)}
+                onPress={() => dialog.show(activity)}
                 style={[styles.iconContainer]}
               >
                 <Icon
@@ -77,27 +84,30 @@ export default memo<NativeStackScreenProps<any, string>>(
       [colors.danger, colors.error, dialog, onPress],
     );
 
-    const dialogRenderOptions: RenderOptionsFunction<SupplierOutDTO> = useCallback((supplier) => ({
+    const dialogRenderOptions: RenderOptionsFunction<ActivityTemplateOutDTO> = useCallback((activity) => ({
       title: `Sterge sablon activitate`,
       message: <View>
-        <Text>'{supplier?.name}' va fi sters!</Text>
+        <Text>'{activity?.description}' va fi sters!</Text>
         <Text>Esti sigur?</Text>
       </View>,
       buttons: [
         {
           label: 'Sterge',
           textColor: colors.danger,
-          onPress: () => deleteSupplier.mutate(supplier.id),
+          onPress: () => deleteActivity.mutate(activity.id),
         },
         () => <View style={{ flex: 1 }} />,
         { label: 'Renunta' },
       ],
-    }), [colors.danger, deleteSupplier]);
+    }), [colors.danger, deleteActivity]);
 
     return (
-      <ScreenContainer loading={suppliers.isLoading} scrollContainerStyle={[styles.scrollContainer]}>
+      <ScreenContainer
+        loading={activities.isLoading}
+        scrollContainerStyle={[styles.scrollContainer]}
+      >
         <View style={[styles.list]}>
-          {suppliers.data?.data?.map(renderSupplier)}
+          {activities.data?.data?.map(renderActivity)}
         </View>
         {dialog.renderDialog(dialogRenderOptions)}
         {snackbar.renderSnackbar()}
@@ -124,6 +134,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   itemRow: {
+    maxWidth: '100%',
     flex: 1,
     flexDirection: 'row',
   },
@@ -135,7 +146,7 @@ const styles = StyleSheet.create({
   itemSubText: {
     paddingHorizontal: 10,
     fontSize: 16,
-    paddingBottom: 0,
+    paddingBottom: 10,
   },
   iconContainer: {
     alignItems: 'center',
