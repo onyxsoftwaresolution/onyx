@@ -11,6 +11,12 @@ import { ClientService } from '../service/client.service';
 export class ClientController {
   constructor(private clientService: ClientService) { }
 
+  @Get('client/:id')
+  @Roles(Role.ADMIN)
+  async getClient(@Param('id') id: number) {
+    return await this.clientService.getClient(id);
+  }
+
   @Get('clients')
   @Roles(Role.ADMIN, Role.USER)
   async listClients() {

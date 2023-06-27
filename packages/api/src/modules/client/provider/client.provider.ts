@@ -33,6 +33,26 @@ export class ClientProvider {
     });
   }
 
+  async getClient(id: number) {
+    return await this.prismaService.client.client.findFirst({
+      where: {
+        id,
+        deleted: false,
+      },
+      select: {
+        id: true,
+        name: true,
+        address: true,
+        cif: true,
+        rc: true,
+        bankName: true,
+        bankIban: true,
+        email: true,
+        phoneNumber: true,
+      },
+    });
+  }
+
   async updateClient({ id, ...data }: UpdateClientDTO) {
     return await this.prismaService.client.client.update({
       data,

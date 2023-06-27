@@ -20,6 +20,10 @@ export class ClientService {
     return clients.map((e) => new ClientOutDTO(e));
   }
 
+  async getClient(id: number): Promise<ClientOutDTO> {
+    return new ClientOutDTO(await this.clientProvider.getClient(id));
+  }
+
   async updateClient(data: UpdateClientDTO) {
     return new ClientOutDTO(await this.clientProvider.updateClient(data));
   }
