@@ -10,4 +10,5 @@ export type MenuItemData = {
   onPress: () => void;
   icon: string;
   chevron: string;
+  screen: string;
 };

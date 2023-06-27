@@ -80,15 +80,16 @@ function CustomBottomTabNavigator({
 
   const data = useMemo(() => state.routes.map(route => descriptors[route.key]), [descriptors, state.routes]);
 
-  const renderSubMenuItem = useCallback((item: MenuItem, itemData: MenuItemData) => {
+  const renderSubMenuItem = useCallback((item: MenuItem, itemData: MenuItemData, screen: string) => {
+    const isCurrentLink = itemData.screen === screen;
     return (
       <TouchableRipple
         style={[{ paddingLeft: 10, paddingVertical: 10 }]}
         onPress={itemData.onPress}
       >
         <View style={[{ flexDirection: 'row', paddingLeft: 21 }]}>
-          <Icon name={itemData.icon} style={[{ color: itemData.color, fontSize: 18 }]} />
-          <Text style={[{ fontSize: 18, color: itemData.color, paddingLeft: 10 }]}>{item.label}</Text>
+          <Icon name={itemData.icon} style={[{ color: isCurrentLink ? colors.primary : itemData.color, fontSize: 18 }]} />
+          <Text style={[{ fontSize: 18, color: isCurrentLink ? colors.primary : itemData.color, paddingLeft: 10 }]}>{item.label}</Text>
         </View>
       </TouchableRipple>
     );
@@ -97,6 +98,7 @@ function CustomBottomTabNavigator({
   const renderSubMenuItems = useCallback((
     items: MenuItem[],
     getItemData: (item: MenuItem) => MenuItemData,
+    screen: string,
   ) => {
     return (
       <View
@@ -104,7 +106,7 @@ function CustomBottomTabNavigator({
       >
         <FlatList
           data={items?.filter(item => item.hide !== true)}
-          renderItem={item => renderSubMenuItem(item.item, getItemData(item.item))}
+          renderItem={item => renderSubMenuItem(item.item, getItemData(item.item), screen)}
           keyExtractor={(descriptor, index) => `${index}`}
           ItemSeparatorComponent={Divider}
         />
@@ -144,7 +146,7 @@ function CustomBottomTabNavigator({
           : null}
         <View style={[{ flexDirection: 'column' }]}>
           {hasSubMenu != null
-            ? renderSubMenuItems(item.item.options.items!, item.item.options.getItemData!)
+            ? renderSubMenuItems(item.item.options.items!, item.item.options.getItemData!, (item.item.route.params as { screen: string })?.screen)
             : null}
         </View>
       </>

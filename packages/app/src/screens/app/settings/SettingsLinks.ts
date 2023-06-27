@@ -39,6 +39,7 @@ export const getSettingItemData = (
         onPress: logout,
         icon: 'sign-out-alt',
         chevron: '',
+        screen: '',
       };
 
     case SettingLinks.EMPLOYEES:
@@ -46,11 +47,12 @@ export const getSettingItemData = (
         color: colors.inverseSurface,
         onPress: () => {
           navigation.navigate(Screens.APP_SETTINGS_NAVIGATOR, {
-            screen: Screens.APP_EMPLOYEE_LIST
+            screen: Screens.APP_EMPLOYEE_LIST,
           });
         },
         icon: 'user-alt',
         chevron: 'chevron-right',
+        screen: Screens.APP_EMPLOYEE_LIST,
       };
 
     case SettingLinks.ACTIVITIES:
@@ -58,11 +60,12 @@ export const getSettingItemData = (
         color: colors.inverseSurface,
         onPress: () => {
           navigation.navigate(Screens.APP_SETTINGS_NAVIGATOR, {
-            screen: Screens.APP_ACTIVITY_TEMPLATE_LIST
+            screen: Screens.APP_ACTIVITY_TEMPLATE_LIST,
           });
         },
         icon: 'tools',
         chevron: 'chevron-right',
+        screen: Screens.APP_ACTIVITY_TEMPLATE_LIST,
       };
 
     case SettingLinks.ABOUT:
@@ -71,6 +74,7 @@ export const getSettingItemData = (
         onPress: showAboutDialog,
         icon: 'mobile-alt',
         chevron: '',
+        screen: '',
       }
 
     case SettingLinks.USERS:
@@ -78,11 +82,12 @@ export const getSettingItemData = (
         color: colors.inverseSurface,
         onPress: () => {
           navigation.navigate(Screens.APP_SETTINGS_NAVIGATOR, {
-            screen: Screens.APP_USER_LIST
+            screen: Screens.APP_USER_LIST,
           });
         },
         icon: 'user-lock',
         chevron: 'chevron-right',
+        screen: Screens.APP_USER_LIST,
       }
 
     case SettingLinks.CLIENTS:
@@ -90,11 +95,12 @@ export const getSettingItemData = (
         color: colors.inverseSurface,
         onPress: () => {
           navigation.navigate(Screens.APP_SETTINGS_NAVIGATOR, {
-            screen: Screens.APP_USER_LIST
+            screen: Screens.APP_USER_LIST,
           });
         },
         icon: 'fire',
         chevron: 'chevron-right',
+        screen: Screens.APP_USER_LIST,
       }
 
     case SettingLinks.SUPPLIERS:
@@ -107,6 +113,7 @@ export const getSettingItemData = (
         },
         icon: 'parachute-box',
         chevron: 'chevron-right',
+        screen: Screens.APP_SUPPLIER_LIST,
       }
 
     case SettingLinks.CONTRACTS:
@@ -119,6 +126,7 @@ export const getSettingItemData = (
         },
         icon: 'file-contract',
         chevron: 'chevron-right',
+        screen: Screens.APP_USER_LIST,
       }
 
     default:
@@ -127,6 +135,7 @@ export const getSettingItemData = (
         onPress: () => { },
         icon: '',
         chevron: '',
+        screen: '',
       };
   }
 };
