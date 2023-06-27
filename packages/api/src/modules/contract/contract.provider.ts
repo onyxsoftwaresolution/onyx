@@ -1,6 +1,6 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { UpsertContractDTO } from '../dtos/contract.in.dto';
+import { UpsertContractDTO } from './dtos/contract.in.dto';
 
 @Injectable()
 export class ContractProvider {

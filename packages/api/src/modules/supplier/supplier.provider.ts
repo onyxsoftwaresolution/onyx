@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import {
   UpdateSupplierDTO,
   UpsertSupplierDTO,
-} from '../dtos/supplier.in.dto';
+} from './dtos/supplier.in.dto';
 
 @Injectable()
 export class SupplierProvider {

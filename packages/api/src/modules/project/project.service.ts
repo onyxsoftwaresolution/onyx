@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { UpsertProjectDTO } from '../dtos/project.in.dto';
-import { ProjectOutDTO } from '../dtos/project.out.dto';
-import { ProjectProvider } from '../provider/project.provider';
+import { UpsertProjectDTO } from './dtos/project.in.dto';
+import { ProjectOutDTO } from './dtos/project.out.dto';
+import { ProjectProvider } from './project.provider';
 
 @Injectable()
 export class ProjectService {

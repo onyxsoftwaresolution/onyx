@@ -1,11 +1,11 @@
 import { Roles } from '@modules/auth/rbac/role.decorator';
 import { JwtUserDTO } from '@modules/user/dtos/jwt.user.dto';
 import { JwtUser } from '@modules/user/user.decorator';
-import { UserService } from '@modules/user/service/user.service';
+import { UserService } from '@modules/user/user.service';
 import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
 import { Role, User } from '@prisma/client';
-import { CreateUserDTO } from '../dtos/user.create.dto';
-import { UserOutDTO } from '../dtos/user-out.dto';
+import { CreateUserDTO } from './dtos/user.create.dto';
+import { UserOutDTO } from './dtos/user-out.dto';
 
 @Controller({
   version: '1',

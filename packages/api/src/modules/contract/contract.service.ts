@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import {
   UpsertContractDTO,
-} from '../dtos/contract.in.dto';
-import { ContractOutDTO } from '../dtos/contract.out.dto';
-import { ContractProvider } from '../provider/contract.provider';
+} from './dtos/contract.in.dto';
+import { ContractOutDTO } from './dtos/contract.out.dto';
+import { ContractProvider } from './contract.provider';
 
 @Injectable()
 export class ContractService {

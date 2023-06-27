@@ -3,7 +3,7 @@ import { Security } from '@common/security/Secutity';
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { CreateUserDTO } from '../dtos/user.create.dto';
+import { CreateUserDTO } from './dtos/user.create.dto';
 
 @Injectable()
 export class UserRepository {

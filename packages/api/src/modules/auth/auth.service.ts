@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { LoginTokenDTO } from '../dtos/login.token.dto';
-import { UserRepository } from '@modules/user/repository/user.repository';
+import { LoginTokenDTO } from './dtos/login.token.dto';
+import { UserRepository } from '@modules/user/user.repository';
 import { JwtUserDTO } from '@modules/user/dtos/jwt.user.dto';
 import { User } from '@prisma/client';
 import { Security } from '@common/security/Secutity';

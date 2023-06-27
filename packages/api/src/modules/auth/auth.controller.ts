@@ -1,8 +1,8 @@
 import { Controller, Get, Header, Post, Query, Request, Response, SerializeOptions, UseGuards } from '@nestjs/common';
 import { LocalAuthGuard } from '@modules/auth/passport/local-auth.guard';
-import { AuthService } from '@modules/auth/service/auth.service';
+import { AuthService } from '@modules/auth/auth.service';
 import { AllowAnonymous } from '@modules/auth/rbac/anonymous.decorator';
-import { LoginTokenDTO } from '../dtos/login.token.dto';
+import { LoginTokenDTO } from './dtos/login.token.dto';
 import { JwtUserDTO } from '@modules/user/dtos/jwt.user.dto';
 import { Response as ExpressResponse } from "express";
 

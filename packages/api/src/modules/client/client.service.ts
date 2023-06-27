@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import {
   UpsertClientDTO,
-} from '../dtos/client.in.dto';
-import { ClientOutDTO } from '../dtos/client.out.dto';
-import { ClientProvider } from '../provider/client.provider';
+} from './dtos/client.in.dto';
+import { ClientOutDTO } from './dtos/client.out.dto';
+import { ClientProvider } from './client.provider';
 
 @Injectable()
 export class ClientService {

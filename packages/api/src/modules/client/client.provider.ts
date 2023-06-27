@@ -2,7 +2,7 @@ import { PrismaService } from '@modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import {
   UpsertClientDTO,
-} from '../dtos/client.in.dto';
+} from './dtos/client.in.dto';
 
 @Injectable()
 export class ClientProvider {

@@ -1,6 +1,6 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { UpsertProjectDTO } from '../dtos/project.in.dto';
+import { UpsertProjectDTO } from './dtos/project.in.dto';
 
 @Injectable()
 export class ProjectProvider {

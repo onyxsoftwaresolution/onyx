@@ -3,9 +3,9 @@ import {
   CreateEmployeeDTO,
   UpdateEmployeeDTO,
   UpsertEmployeeDTO,
-} from '../dtos/employee.in.dto';
-import { EmployeeOutDTO } from '../dtos/employee.out.dto';
-import { EmployeeProvider } from '../provider/employee.provider';
+} from './dtos/employee.in.dto';
+import { EmployeeOutDTO } from './dtos/employee.out.dto';
+import { EmployeeProvider } from './employee.provider';
 
 @Injectable()
 export class EmployeeService {

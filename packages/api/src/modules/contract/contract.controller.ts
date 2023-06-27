@@ -1,8 +1,8 @@
 import { Roles } from '@modules/auth/rbac/role.decorator';
 import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
 import { Role } from '@prisma/client';
-import { UpsertContractDTO } from '../dtos/contract.in.dto';
-import { ContractService } from '../service/contract.service';
+import { UpsertContractDTO } from './dtos/contract.in.dto';
+import { ContractService } from './contract.service';
 
 @Controller({
   version: '1',
