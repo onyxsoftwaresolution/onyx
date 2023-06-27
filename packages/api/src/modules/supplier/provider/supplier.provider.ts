@@ -1,7 +1,6 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import {
-  CreateSupplierDTO,
   UpdateSupplierDTO,
   UpsertSupplierDTO,
 } from '../dtos/supplier.in.dto';
@@ -9,24 +8,6 @@ import {
 @Injectable()
 export class SupplierProvider {
   constructor(private prismaService: PrismaService) { }
-
-  async createSupplier(data: CreateSupplierDTO) {
-    return await this.prismaService.client.supplier.create({
-      data,
-      select: {
-        id: true,
-        name: true,
-        address: true,
-        bankName: true,
-        bankIban: true,
-        cif: true,
-        email: true,
-        phoneNumber: true,
-        rc: true,
-        products: true,
-      },
-    });
-  }
 
   async listSuppliers() {
     return await this.prismaService.client.supplier.findMany({
@@ -52,13 +33,6 @@ export class SupplierProvider {
         phoneNumber: true,
         products: true,
       },
-    });
-  }
-
-  async updateSupplier({ id, ...data }: UpdateSupplierDTO) {
-    return await this.prismaService.client.supplier.update({
-      data,
-      where: { id },
     });
   }
 

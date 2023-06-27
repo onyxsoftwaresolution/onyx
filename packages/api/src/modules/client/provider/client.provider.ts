@@ -1,31 +1,12 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import {
-  CreateClientDTO,
-  UpdateClientDTO,
   UpsertClientDTO,
 } from '../dtos/client.in.dto';
 
 @Injectable()
 export class ClientProvider {
   constructor(private prismaService: PrismaService) { }
-
-  async createClient(data: CreateClientDTO) {
-    return await this.prismaService.client.client.create({
-      data,
-      select: {
-        id: true,
-        name: true,
-        address: true,
-        bankName: true,
-        bankIban: true,
-        cif: true,
-        email: true,
-        phoneNumber: true,
-        rc: true,
-      },
-    });
-  }
 
   async listClients() {
     return await this.prismaService.client.client.findMany({
@@ -50,13 +31,6 @@ export class ClientProvider {
         email: true,
         phoneNumber: true,
       },
-    });
-  }
-
-  async updateClient({ id, ...data }: UpdateClientDTO) {
-    return await this.prismaService.client.client.update({
-      data,
-      where: { id },
     });
   }
 

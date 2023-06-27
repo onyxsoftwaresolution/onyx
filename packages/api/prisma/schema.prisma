@@ -43,6 +43,7 @@ model Client {
   bankIban    String
   phoneNumber String
   email       String
+  contracts   Contract[]
 
   @@map("Clients")
 }
@@ -64,6 +65,25 @@ model Supplier {
   products    String
 
   @@map("Suppliers")
+}
+
+model Contract {
+  id       Int      @id @unique @default(autoincrement())
+  created  DateTime @default(now())
+  modified DateTime @default(now())
+  deleted  Boolean  @default(false)
+
+  number         String
+  cost           Float
+  start          DateTime
+  end            DateTime
+  location       String
+  details        String
+  clientId       Int      @unique
+  client         Client   @relation(fields: [clientId], references: [id])
+  representative String
+
+  @@map("Contracts")
 }
 
 model ActivityTemplate {

@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import {
-  CreateClientDTO,
-  UpdateClientDTO,
   UpsertClientDTO,
 } from '../dtos/client.in.dto';
 import { ClientOutDTO } from '../dtos/client.out.dto';
@@ -11,10 +9,6 @@ import { ClientProvider } from '../provider/client.provider';
 export class ClientService {
   constructor(private clientProvider: ClientProvider) { }
 
-  async createClient(data: CreateClientDTO) {
-    return new ClientOutDTO(await this.clientProvider.createClient(data));
-  }
-
   async listClients() {
     const clients = await this.clientProvider.listClients();
     return clients.map((e) => new ClientOutDTO(e));
@@ -22,10 +16,6 @@ export class ClientService {
 
   async getClient(id: number): Promise<ClientOutDTO> {
     return new ClientOutDTO(await this.clientProvider.getClient(id));
-  }
-
-  async updateClient(data: UpdateClientDTO) {
-    return new ClientOutDTO(await this.clientProvider.updateClient(data));
   }
 
   async upsertClient(data: UpsertClientDTO) {

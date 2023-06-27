@@ -33,4 +33,7 @@ export class ClientOutDTO extends EntityOutDTO implements Client {
 
   @Expose()
   email: string;
+
+  @Expose()
+  contractId: number;
 }
