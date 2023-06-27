@@ -11,6 +11,8 @@ import { API_URL } from '@env';
 import { InfoDTO } from "@workspace/api/src/modules/app/dtos/info.dto"
 import { UserOutDTO } from '@workspace/api/src/modules/user/dtos/user-out.dto';
 import { Role } from '@workspace/api/node_modules/@prisma/client';
+import { SupplierOutDTO } from '@workspace/api/src/modules/supplier/dtos/supplier.out.dto';
+import { ClientOutDTO } from '@workspace/api/src/modules/client/dtos/client.out.dto';
 
 type Options<T = never> = Partial<Pick<UseQueryOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -85,6 +87,50 @@ export class Queries {
     onSuccess,
     enabled,
   } as UseQueryOptions<FetchResponse<EmployeeOutDTO[]>, FetchError>);
+
+  static getClients = ({ enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
+    queryKey: ['clients'],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/clients`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<ClientOutDTO[]>, FetchError>);
+
+  static getClient = (id: number, { enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<ClientOutDTO>> = {}) => ({
+    queryKey: [`client-${id}`],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/client/${id}`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<ClientOutDTO>, FetchError>);
+
+  static getSuppliers = ({ enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
+    queryKey: ['suppliers'],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/suppliers`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<SupplierOutDTO[]>, FetchError>);
+
+  static getSupplier = (id: number, { enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<SupplierOutDTO>> = {}) => ({
+    queryKey: [`supplier-${id}`],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/supplier/${id}`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<SupplierOutDTO>, FetchError>);
 
   static getActivityTemplates = ({ enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
     queryKey: ['activity-templates'],

@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { Screens } from '../Screens';
 import DailyReportStackNavigator from './daily/DailyReportStackNavigator';
 import MonthlyReportStackNavigator from './monthly/MonthlyReportStackNavigator';
@@ -10,13 +10,28 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { createCustomBottomTabNavigator } from '../../components/CustomBottomTabNavigator';
 import { useIsMobile } from '../../components/hooks/useIsMobile';
 import { useIsAdmin } from '../../components/hooks/useIsAdmin';
+import { getSettingItemData, settingMenuItems } from './settings/SettingsLinks';
+import { useDialog } from '../../components/hooks/useDialog';
+import { useUser } from '../../context/userContext';
+import { Store } from '../../storage/Store';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 const Tab = createCustomBottomTabNavigator();
 
-export default memo(function AppTabNavigator() {
+export default memo<NativeStackScreenProps<any, string>>(function AppTabNavigator({ navigation }) {
   const theme = useTheme<AppTheme>();
   const isMobile = useIsMobile();
   const isAdmin = useIsAdmin();
+  const { colors } = useTheme<AppTheme>();
+
+  const [user, setUser] = useUser();
+
+  const logout = useCallback(async () => {
+    await Store.delete('access_token');
+    setUser?.(undefined);
+  }, [setUser]);
+
+  const showAboutDialog = useCallback(() => { }, []);
 
   return (
     <Tab.Navigator
@@ -107,6 +122,8 @@ export default memo(function AppTabNavigator() {
         component={SettingsStackNavigator}
         options={{
           title: 'Setari',
+          items: settingMenuItems,
+          getItemData: item => getSettingItemData(item, colors, navigation, logout, showAboutDialog),
           tabBarIcon: (props) => (
             <>
               <Icon

@@ -13,6 +13,7 @@ export default memo(function MainStackNavigator() {
 
   const isLoading = useMemo(() => { return user == null || user?.isLoading }, [user?.isLoading]);
 
+  // @ts-expect-error tmp
   const isLoggedIn = useMemo(() => { return user?.ok }, [user]);
 
   return (

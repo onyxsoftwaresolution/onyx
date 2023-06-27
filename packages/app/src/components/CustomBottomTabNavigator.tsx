@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   useNavigationBuilder,
   createNavigatorFactory,
@@ -14,6 +14,8 @@ import { BottomTabNavigationEventMap, BottomTabNavigationOptions, BottomTabView 
 import { StyleProp, View, ViewStyle, FlatList, ListRenderItemInfo } from 'react-native';
 import { useTheme, Text, TouchableRipple, Divider } from 'react-native-paper';
 import { AppTheme } from '../theme/type';
+import { MenuItem, MenuItemData } from './MenuItem';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 // Props accepted by the view
 type TabNavigationConfig = {
@@ -25,6 +27,8 @@ type TabNavigationConfig = {
 // Supported screen options
 type TabNavigationOptions = BottomTabNavigationOptions & {
   title?: string;
+  items?: MenuItem[];
+  getItemData?: (item: MenuItem) => MenuItemData;
 };
 
 // Map of event name and the type of data (in event.data)
@@ -76,9 +80,40 @@ function CustomBottomTabNavigator({
 
   const data = useMemo(() => state.routes.map(route => descriptors[route.key]), [descriptors, state.routes]);
 
+  const renderSubMenuItem = useCallback((item: MenuItem, itemData: MenuItemData) => {
+    return (
+      <TouchableRipple
+        style={[{ paddingLeft: 10, paddingVertical: 10 }]}
+        onPress={itemData.onPress}
+      >
+        <View style={[{ flexDirection: 'row', paddingLeft: 21 }]}>
+          <Icon name={itemData.icon} style={[{ color: itemData.color, fontSize: 18 }]} />
+          <Text style={[{ fontSize: 18, color: itemData.color, paddingLeft: 10 }]}>{item.label}</Text>
+        </View>
+      </TouchableRipple>
+    );
+  }, []);
+
+  const renderSubMenuItems = useCallback((
+    items: MenuItem[],
+    getItemData: (item: MenuItem) => MenuItemData,
+  ) => {
+    return (
+      <View
+        style={[{ paddingLeft: 0 }]}
+      >
+        <FlatList
+          data={items?.filter(item => item.hide !== true)}
+          renderItem={item => renderSubMenuItem(item.item, getItemData(item.item))}
+          keyExtractor={(descriptor, index) => `${index}`}
+          ItemSeparatorComponent={Divider}
+        />
+      </View>
+    );
+  }, [renderSubMenuItem]);
+
   const renderItem = useCallback((item: ListRenderItemInfo<typeof descriptors[0]>) => {
     const isCurrentLink = state.history.at(-1)?.key === item.item.route.key;
-
     const onPressed = () => {
       if (isCurrentLink) {
         navigation.popToTop();
@@ -87,22 +122,34 @@ function CustomBottomTabNavigator({
       navigation.navigate(item.item.route.name, item.item.route.params)
     }
 
+    const hasSubMenu = item.item.options.getItemData != null && item.item.options.items;
+
     return (
-      <TouchableRipple
-        style={[{ paddingLeft: 10, paddingVertical: 10 }]}
-        onPress={onPressed}
-      >
-        <View style={[{ flexDirection: 'row' }]}>
-          {item.item.options.tabBarIcon?.({
-            color: isCurrentLink ? colors.primary : '',
-            focused: isCurrentLink,
-            size: 18,
-          })}
-          <Text style={[{ fontSize: 18, color: isCurrentLink ? colors.primary : undefined, paddingLeft: 10 }]}>{item.item.options.title}</Text>
+      <>
+        <TouchableRipple
+          style={[{ paddingLeft: 10, paddingVertical: 10 }]}
+          onPress={onPressed}
+        >
+          <View style={[{ flexDirection: 'row' }]}>
+            {item.item.options.tabBarIcon?.({
+              color: isCurrentLink ? colors.primary : '',
+              focused: isCurrentLink,
+              size: 18,
+            })}
+            <Text style={[{ fontSize: 18, color: isCurrentLink ? colors.primary : undefined, paddingLeft: 10 }]}>{item.item.options.title}</Text>
+          </View>
+        </TouchableRipple>
+        {hasSubMenu && item.index + 1 === data.length
+          ? <Divider />
+          : null}
+        <View style={[{ flexDirection: 'column' }]}>
+          {hasSubMenu != null
+            ? renderSubMenuItems(item.item.options.items!, item.item.options.getItemData!)
+            : null}
         </View>
-      </TouchableRipple>
+      </>
     )
-  }, [colors.primary, navigation, state.history])
+  }, [colors.primary, data.length, navigation, renderSubMenuItems, state.history])
 
   return (
     <NavigationContent>

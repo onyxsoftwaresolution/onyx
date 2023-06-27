@@ -10,8 +10,8 @@ import { useIsAdmin } from '../../../components/hooks/useIsAdmin';
 import { useUser } from '../../../context/userContext';
 import { Store } from '../../../storage/Store';
 import { AppTheme } from '../../../theme/type';
-import { Screens } from '../../Screens';
 import { Role } from "@workspace/api/node_modules/@prisma/client";
+import { getSettingItemData, settingMenuItems } from './SettingsLinks';
 
 export default memo<NativeStackScreenProps<any, string>>(
   function SettingsScreen({ navigation }) {
@@ -26,95 +26,14 @@ export default memo<NativeStackScreenProps<any, string>>(
       setUser?.(undefined);
     }, [setUser]);
 
-    const getItemData = useCallback(
-      (item: (typeof settings)[0]) => {
-        switch (item.value) {
-          case Links.LOGOUT:
-            return {
-              color: colors.danger,
-              onPress: logout,
-              icon: 'sign-out-alt',
-              chevron: '',
-            };
+    const showAboutDialog = useCallback(() => {
+      aboutDialog.show();
+    }, [aboutDialog]);
 
-          case Links.EMPLOYEES:
-            return {
-              color: colors.inverseSurface,
-              onPress: () => {
-                navigation.navigate(Screens.APP_EMPLOYEE_LIST);
-              },
-              icon: 'user-alt',
-              chevron: 'chevron-right',
-            };
-
-          case Links.ACTIVITIES:
-            return {
-              color: colors.inverseSurface,
-              onPress: () => {
-                navigation.navigate(Screens.APP_ACTIVITY_TEMPLATE_LIST);
-              },
-              icon: 'tools',
-              chevron: 'chevron-right',
-            };
-
-          case Links.ABOUT:
-            return {
-              color: colors.inverseSurface,
-              onPress: () => { aboutDialog.show(); },
-              icon: 'mobile-alt',
-              chevron: '',
-            }
-
-          case Links.USERS:
-            return {
-              color: colors.inverseSurface,
-              onPress: () => {
-                navigation.navigate(Screens.APP_USER_LIST);
-              },
-              icon: 'user-lock',
-              chevron: 'chevron-right',
-            }
-
-          case Links.CLIENTS:
-            return {
-              color: colors.inverseSurface,
-              onPress: () => {
-                navigation.navigate(Screens.APP_USER_LIST);
-              },
-              icon: 'fire',
-              chevron: 'chevron-right',
-            }
-
-          case Links.SUPPLIERS:
-            return {
-              color: colors.inverseSurface,
-              onPress: () => {
-                navigation.navigate(Screens.APP_USER_LIST);
-              },
-              icon: 'parachute-box',
-              chevron: 'chevron-right',
-            }
-
-          case Links.CONTRACTS:
-            return {
-              color: colors.inverseSurface,
-              onPress: () => {
-                navigation.navigate(Screens.APP_USER_LIST);
-              },
-              icon: 'file-contract',
-              chevron: 'chevron-right',
-            }
-
-          default:
-            return {
-              color: colors.inverseSurface,
-              onPress: () => { },
-              icon: '',
-              chevron: '',
-            };
-        }
-      },
-      [colors.danger, colors.inverseSurface, aboutDialog, logout, navigation],
+    const getItemData = useCallback((item: (typeof settingMenuItems)[0]) => {
+      return getSettingItemData(item, colors, navigation, logout, showAboutDialog);
+    },
+      [colors, navigation, logout, showAboutDialog],
     );
 
     const aboutDialogOptions: RenderOptionsFunction<unknown> = useCallback(() => ({
@@ -126,7 +45,7 @@ export default memo<NativeStackScreenProps<any, string>>(
       ({
         item,
         index,
-      }: Pick<ListRenderItemInfo<(typeof settings)[0]>, 'item' | 'index'>) => {
+      }: Pick<ListRenderItemInfo<(typeof settingMenuItems)[0]>, 'item' | 'index'>) => {
         const data = getItemData(item);
         return (
           <TouchableRipple key={index} onPress={data.onPress}>
@@ -164,35 +83,13 @@ export default memo<NativeStackScreenProps<any, string>>(
               Buna {user?.data?.username}!
             </Text>
           </View>
-          {settings.filter(s => s.roles.length === 0 || isAdmin && s.roles?.includes(Role.ADMIN)).map((s, i) => renderItem({ item: s, index: i }))}
+          {settingMenuItems.filter(s => s.roles.length === 0 || isAdmin && s.roles?.includes(Role.ADMIN)).map((s, i) => renderItem({ item: s, index: i }))}
         </View>
         {aboutDialog.renderDialog(aboutDialogOptions)}
       </ScreenContainer>
     );
   },
 );
-
-enum Links {
-  EMPLOYEES,
-  ACTIVITIES,
-  USERS,
-  CLIENTS,
-  SUPPLIERS,
-  CONTRACTS,
-  LOGOUT,
-  ABOUT,
-}
-
-const settings = [
-  { label: 'Angajati', value: Links.EMPLOYEES, roles: [Role.ADMIN] },
-  { label: 'Activitati', value: Links.ACTIVITIES, roles: [Role.ADMIN] },
-  { label: 'Utilizatori', value: Links.USERS, roles: [Role.ADMIN] },
-  { label: 'Clienti', value: Links.CLIENTS, roles: [Role.ADMIN] },
-  { label: 'Furnizori', value: Links.SUPPLIERS, roles: [Role.ADMIN] },
-  { label: 'Contracte', value: Links.CONTRACTS, roles: [Role.ADMIN] },
-  { label: 'Despre aplicatie', value: Links.ABOUT, roles: [] },
-  { label: 'Logout', value: Links.LOGOUT, roles: [] },
-];
 
 const styles = StyleSheet.create({
   scrollContainer: {

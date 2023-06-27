@@ -14,6 +14,8 @@ import ActivityTemplateUpsertScreen from './activity/ActivityTemplateUpsertScree
 import { HeaderAddButton } from '../../../components/HeaderAddButton';
 import UserListScreen from './user/UserListScreen';
 import UserUpsertScreen from './user/UserUpsertScreen';
+import SupplierUpsertScreen from './supplier/SupplierUpsertScreen';
+import SupplierListScreen from './supplier/SupplierListScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -149,7 +151,7 @@ export default memo(function SettingsStackNavigator() {
       />
       <Stack.Screen
         name={Screens.APP_SUPPLIER_LIST}
-        component={UserUpsertScreen}
+        component={SupplierListScreen}
         options={(screenProps) => ({
           ...options('Furnizori'),
           headerRight: (headerProps) => (
@@ -157,13 +159,14 @@ export default memo(function SettingsStackNavigator() {
               {...screenProps}
               {...headerProps}
               screenName={Screens.APP_SUPPLIER_UPSERT}
+              params={{}}
             />
           ),
         })}
       />
       <Stack.Screen
         name={Screens.APP_SUPPLIER_UPSERT}
-        component={UserUpsertScreen}
+        component={SupplierUpsertScreen}
         options={(screenProps) => ({
           ...options(''),
           title:

@@ -12,6 +12,8 @@ import { API_URL } from '@env';
 import { ProjectReportOutDTO } from '@workspace/api/src/modules/report/dtos/report-out.dto';
 import { UserOutDTO } from '@workspace/api/src/modules/user/dtos/user-out.dto';
 import { CreateUserDTO } from '@workspace/api/src/modules/user/dtos/user.create.dto';
+import { ClientOutDTO } from '@workspace/api/src/modules/client/dtos/client.out.dto';
+import { SupplierOutDTO } from '@workspace/api/src/modules/supplier/dtos/supplier.out.dto';
 
 type Options<T = never> = Partial<Pick<UseMutationOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -123,6 +125,44 @@ export class Mutations {
     } as UseMutationOptions<FetchResponse<EmployeeOutDTO>, FetchError, Partial<EmployeeOutDTO>>;
   }
 
+  static upsertClient({ onError, onLoading, onSuccess }: Options<FetchResponse<ClientOutDTO>> = {}) {
+    return {
+      mutationKey: ['client'],
+      mutationFn: async (body) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/client`,
+          {
+            // @ts-expect-error a simple typescript mistake
+            body,
+            method: 'PUT',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<ClientOutDTO>, FetchError, Partial<ClientOutDTO>>;
+  }
+
+  static upsertSupplier({ onError, onLoading, onSuccess }: Options<FetchResponse<SupplierOutDTO>> = {}) {
+    return {
+      mutationKey: ['supplier'],
+      mutationFn: async (body) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/supplier`,
+          {
+            // @ts-expect-error a simple typescript mistake
+            body,
+            method: 'PUT',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<SupplierOutDTO>, FetchError, Partial<SupplierOutDTO>>;
+  }
+
   static deleteActivityTemplate({ onError, onLoading, onSuccess }: Options = {}) {
     return {
       mutationKey: [`/v1/activity-template/`],
@@ -155,6 +195,40 @@ export class Mutations {
       onSuccess,
       onError,
     } as UseMutationOptions<FetchResponse<EmployeeOutDTO>, FetchError, number>;
+  }
+
+  static deleteClient({ onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: [`/v1/client/`],
+      mutationFn: async (id) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/client/${id}`,
+          {
+            method: 'DELETE',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<ClientOutDTO>, FetchError, number>;
+  }
+
+  static deleteSupplier({ onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: [`/v1/supplier/`],
+      mutationFn: async (id) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/supplier/${id}`,
+          {
+            method: 'DELETE',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<SupplierOutDTO>, FetchError, number>;
   }
 
   static upsertActivityTemplate({ onError, onLoading, onSuccess }: Options<FetchResponse<ActivityTemplateOutDTO>> = {}) {
