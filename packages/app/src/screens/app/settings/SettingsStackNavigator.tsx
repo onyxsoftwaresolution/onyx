@@ -16,6 +16,8 @@ import UserListScreen from './user/UserListScreen';
 import UserUpsertScreen from './user/UserUpsertScreen';
 import SupplierUpsertScreen from './supplier/SupplierUpsertScreen';
 import SupplierListScreen from './supplier/SupplierListScreen';
+import ClientUpsertScreen from './client/ClientUpsertScreen';
+import ClientListScreen from './client/ClientListScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -124,7 +126,7 @@ export default memo(function SettingsStackNavigator() {
       />
       <Stack.Screen
         name={Screens.APP_CLIENT_LIST}
-        component={UserUpsertScreen}
+        component={ClientListScreen}
         options={(screenProps) => ({
           ...options('Clienti'),
           headerRight: (headerProps) => (
@@ -132,13 +134,14 @@ export default memo(function SettingsStackNavigator() {
               {...screenProps}
               {...headerProps}
               screenName={Screens.APP_CLIENT_UPSERT}
+              params={{}}
             />
           ),
         })}
       />
       <Stack.Screen
         name={Screens.APP_CLIENT_UPSERT}
-        component={UserUpsertScreen}
+        component={ClientUpsertScreen}
         options={(screenProps) => ({
           ...options(''),
           title:
@@ -178,21 +181,22 @@ export default memo(function SettingsStackNavigator() {
         })}
       />
       <Stack.Screen
-        name={Screens.APP_CONTRACTS_LIST}
-        component={UserUpsertScreen}
+        name={Screens.APP_CONTRACT_LIST}
+        component={UserListScreen}
         options={(screenProps) => ({
           ...options('Contracte'),
           headerRight: (headerProps) => (
             <HeaderAddButton
               {...screenProps}
               {...headerProps}
-              screenName={Screens.APP_CONTRACTS_UPSERT}
+              screenName={Screens.APP_CONTRACT_UPSERT}
+              params={{}}
             />
           ),
         })}
       />
       <Stack.Screen
-        name={Screens.APP_CONTRACTS_UPSERT}
+        name={Screens.APP_CONTRACT_UPSERT}
         component={UserUpsertScreen}
         options={(screenProps) => ({
           ...options(''),

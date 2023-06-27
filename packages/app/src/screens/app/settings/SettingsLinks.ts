@@ -95,12 +95,12 @@ export const getSettingItemData = (
         color: colors.inverseSurface,
         onPress: () => {
           navigation.navigate(Screens.APP_SETTINGS_NAVIGATOR, {
-            screen: Screens.APP_USER_LIST,
+            screen: Screens.APP_CLIENT_LIST,
           });
         },
         icon: 'fire',
         chevron: 'chevron-right',
-        screen: Screens.APP_USER_LIST,
+        screen: Screens.APP_CLIENT_LIST,
       }
 
     case SettingLinks.SUPPLIERS:
@@ -121,12 +121,12 @@ export const getSettingItemData = (
         color: colors.inverseSurface,
         onPress: () => {
           navigation.navigate(Screens.APP_SETTINGS_NAVIGATOR, {
-            screen: Screens.APP_USER_LIST
+            screen: Screens.APP_CONTRACT_LIST
           });
         },
         icon: 'file-contract',
         chevron: 'chevron-right',
-        screen: Screens.APP_USER_LIST,
+        screen: Screens.APP_CONTRACT_LIST,
       }
 
     default:
