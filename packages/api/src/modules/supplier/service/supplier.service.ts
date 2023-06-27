@@ -20,6 +20,10 @@ export class SupplierService {
     return suppliers.map((e) => new SupplierOutDTO(e));
   }
 
+  async getSupplier(id: number): Promise<SupplierOutDTO> {
+    return new SupplierOutDTO(await this.supplierProvider.getSupplier(id));
+  }
+
   async updateSupplier(data: UpdateSupplierDTO) {
     return new SupplierOutDTO(await this.supplierProvider.updateSupplier(data));
   }

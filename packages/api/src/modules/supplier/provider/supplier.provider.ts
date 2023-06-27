@@ -34,6 +34,27 @@ export class SupplierProvider {
     });
   }
 
+  async getSupplier(id: number) {
+    return await this.prismaService.client.supplier.findFirst({
+      where: {
+        id,
+        deleted: false,
+      },
+      select: {
+        id: true,
+        name: true,
+        address: true,
+        cif: true,
+        rc: true,
+        bankName: true,
+        bankIban: true,
+        email: true,
+        phoneNumber: true,
+        products: true,
+      },
+    });
+  }
+
   async updateSupplier({ id, ...data }: UpdateSupplierDTO) {
     return await this.prismaService.client.supplier.update({
       data,

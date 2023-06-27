@@ -11,6 +11,12 @@ import { SupplierService } from '../service/supplier.service';
 export class SupplierController {
   constructor(private supplierService: SupplierService) { }
 
+  @Get('supplier/:id')
+  @Roles(Role.ADMIN)
+  async getSupplier(@Param('id') id: number) {
+    return await this.supplierService.getSupplier(id);
+  }
+
   @Get('suppliers')
   @Roles(Role.ADMIN, Role.USER)
   async listSuppliers() {
