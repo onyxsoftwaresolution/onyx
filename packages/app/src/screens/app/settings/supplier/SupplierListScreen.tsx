@@ -35,13 +35,13 @@ export default memo<NativeStackScreenProps<any, string>>(
 
     const onPress = useCallback(
       (supplier: SupplierOutDTO) => {
-        props.navigation.navigate(Screens.APP_EMPLOYEE_UPSERT, supplier);
+        props.navigation.navigate(Screens.APP_SUPPLIER_UPSERT, supplier);
       },
       [props.navigation],
     );
 
     const renderSupplier = useCallback(
-      (supplier: SupplierOutDTO, index: number) => (
+      (supplier: SupplierOutDTO) => (
         <View
           style={[styles.touchStyle]}
           key={supplier.id}

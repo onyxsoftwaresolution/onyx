@@ -95,11 +95,10 @@ export default memo<NativeStackScreenProps<any, string>>(function SupplierUpsert
               ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
               : null}
             <MGTextInput
-              multiline
               value={value}
               onChangeText={onChange}
               containerStyle={[{ justifyContent: 'flex-end' }]}
-              style={{ marginBottom: 7, height: 77 }}
+              style={{ marginBottom: 7 }}
               label={'Nume furnizor'}
             />
           </View>
@@ -109,22 +108,269 @@ export default memo<NativeStackScreenProps<any, string>>(function SupplierUpsert
     );
   }, [control, errors.name, upsert?.error?.data.code, upsert?.isError]);
 
+  const renderCif = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Cif field is required!' },
+          validate: (value) => isString(value) && isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View style={[{ flex: 1 }]}>
+            {errors.cif != null
+              ? <HelperText type="error">{errors.cif.message}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGTextInput
+              value={value}
+              onChangeText={onChange}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
+              style={{ marginBottom: 7 }}
+              label={'CIF'}
+            />
+          </View>
+        )}
+        name="cif"
+      />
+    );
+  }, [control, errors.cif, upsert?.error?.data.code, upsert?.isError]);
+
+  const renderRc = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Rc field is required!' },
+          validate: (value) => isString(value) && isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View style={[{ flex: 1 }]}>
+            {errors.rc != null
+              ? <HelperText type="error">{errors.rc.message}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGTextInput
+              value={value}
+              onChangeText={onChange}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
+              style={{ marginBottom: 7 }}
+              label={'RC'}
+            />
+          </View>
+        )}
+        name="rc"
+      />
+    );
+  }, [control, errors.rc, upsert?.error?.data.code, upsert?.isError]);
+
+  const renderAddress = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Address field is required!' },
+          validate: (value) => isString(value) && isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View style={[{ flex: 1 }]}>
+            {errors.address != null
+              ? <HelperText type="error">{errors.address.message}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGTextInput
+              value={value}
+              onChangeText={onChange}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
+              style={{ marginBottom: 7 }}
+              label={'Adresa'}
+            />
+          </View>
+        )}
+        name="address"
+      />
+    );
+  }, [control, errors.address, upsert?.error?.data.code, upsert?.isError]);
+
+  const renderBankName = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'BankName field is required!' },
+          validate: (value) => isString(value) && isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View style={[{ flex: 1 }]}>
+            {errors.bankName != null
+              ? <HelperText type="error">{errors.bankName.message}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGTextInput
+              value={value}
+              onChangeText={onChange}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
+              style={{ marginBottom: 7 }}
+              label={'Banca'}
+            />
+          </View>
+        )}
+        name="bankName"
+      />
+    );
+  }, [control, errors.bankName, upsert?.error?.data.code, upsert?.isError]);
+
+  const renderBankIban = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'BankIban field is required!' },
+          validate: (value) => isString(value) && isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View style={[{ flex: 1 }]}>
+            {errors.bankIban != null
+              ? <HelperText type="error">{errors.bankIban.message}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGTextInput
+              value={value}
+              onChangeText={onChange}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
+              style={{ marginBottom: 7 }}
+              label={'Iban'}
+            />
+          </View>
+        )}
+        name="bankIban"
+      />
+    );
+  }, [control, errors.bankIban, upsert?.error?.data.code, upsert?.isError]);
+
+  const renderPhoneNumber = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'PhoneNumber field is required!' },
+          validate: (value) => isString(value) && isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View style={[{ flex: 1 }]}>
+            {errors.phoneNumber != null
+              ? <HelperText type="error">{errors.phoneNumber.message}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGTextInput
+              value={value}
+              onChangeText={onChange}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
+              style={{ marginBottom: 7 }}
+              label={'Telefon'}
+            />
+          </View>
+        )}
+        name="phoneNumber"
+      />
+    );
+  }, [control, errors.phoneNumber, upsert?.error?.data.code, upsert?.isError]);
+
+  const renderEmail = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Email field is required!' },
+          validate: (value) => isString(value) && isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View style={[{ flex: 1 }]}>
+            {errors.email != null
+              ? <HelperText type="error">{errors.email.message}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGTextInput
+              value={value}
+              onChangeText={onChange}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
+              style={{ marginBottom: 7 }}
+              label={'Email'}
+            />
+          </View>
+        )}
+        name="email"
+      />
+    );
+  }, [control, errors.email, upsert?.error?.data.code, upsert?.isError]);
+
+  const renderProducts = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Products field is required!' },
+          validate: (value) => isString(value) && isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View style={[{ flex: 1 }]}>
+            {errors.products != null
+              ? <HelperText type="error">{errors.products.message}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGTextInput
+              value={value}
+              onChangeText={onChange}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
+              style={{ marginBottom: 7 }}
+              label={'Produse'}
+            />
+          </View>
+        )}
+        name="products"
+      />
+    );
+  }, [control, errors.products, upsert?.error?.data.code, upsert?.isError]);
+
   return (
     <ScreenContainer
       loading={(supplier.isLoading && params.id != null) || upsert.isLoading}
       scrollContainerStyle={[styles.scrollContainer]}
     >
       <View style={[styles.view]}>
-        <MGCard title={'Detalii furnizor'}>
+        <MGCard>
+          <View style={[{ height: 20 }]} />
           {renderName()}
           <MGRow>
-            {/* {renderArea()}
-            {renderCode()} */}
+            {renderCif()}
+            {renderRc()}
+          </MGRow>
+          {renderAddress()}
+          <MGRow>
+            {renderBankName()}
+            {renderBankIban()}
           </MGRow>
           <MGRow>
-            {/* {renderStart()}
-            {renderEnd()} */}
+            {renderPhoneNumber()}
+            {renderEmail()}
           </MGRow>
+          {renderProducts()}
         </MGCard>
         <MGButton
           icon="send"

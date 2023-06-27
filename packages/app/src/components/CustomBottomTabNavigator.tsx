@@ -93,7 +93,7 @@ function CustomBottomTabNavigator({
         </View>
       </TouchableRipple>
     );
-  }, []);
+  }, [colors.primary]);
 
   const renderSubMenuItems = useCallback((
     items: MenuItem[],
