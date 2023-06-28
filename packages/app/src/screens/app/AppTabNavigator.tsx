@@ -1,20 +1,19 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { memo, useCallback } from 'react';
+import { useTheme } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { createCustomBottomTabNavigator } from '../../components/CustomBottomTabNavigator';
+import { useIsAdmin } from '../../components/hooks/useIsAdmin';
+import { useIsMobile } from '../../components/hooks/useIsMobile';
+import { useUser } from '../../context/userContext';
+import { Store } from '../../storage/Store';
+import { AppTheme } from '../../theme/type';
 import { Screens } from '../Screens';
 import DailyReportStackNavigator from './daily/DailyReportStackNavigator';
 import MonthlyReportStackNavigator from './monthly/MonthlyReportStackNavigator';
 import ProjectStackNavigator from './projects/ProjectStackNavigator';
-import SettingsStackNavigator from './settings/SettingsStackNavigator';
-import { useTheme } from 'react-native-paper';
-import { AppTheme } from '../../theme/type';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import { createCustomBottomTabNavigator } from '../../components/CustomBottomTabNavigator';
-import { useIsMobile } from '../../components/hooks/useIsMobile';
-import { useIsAdmin } from '../../components/hooks/useIsAdmin';
 import { getSettingItemData, settingMenuItems } from './settings/SettingsLinks';
-import { useDialog } from '../../components/hooks/useDialog';
-import { useUser } from '../../context/userContext';
-import { Store } from '../../storage/Store';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import SettingsStackNavigator from './settings/SettingsStackNavigator';
 
 const Tab = createCustomBottomTabNavigator();
 

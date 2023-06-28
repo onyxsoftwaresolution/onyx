@@ -13,6 +13,7 @@ import { UserOutDTO } from '@workspace/api/src/modules/user/dtos/user-out.dto';
 import { Role } from '@workspace/api/node_modules/@prisma/client';
 import { SupplierOutDTO } from '@workspace/api/src/modules/supplier/dtos/supplier.out.dto';
 import { ClientOutDTO } from '@workspace/api/src/modules/client/dtos/client.out.dto';
+import { ContractOutDTO } from '@workspace/api/src/modules/contract/dtos/contract.out.dto';
 
 type Options<T = never> = Partial<Pick<UseQueryOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -166,6 +167,30 @@ export class Queries {
     onSuccess,
     enabled,
   } as UseQueryOptions<FetchResponse<ProjectOutDTO>, FetchError>);
+
+  static getContracts({ enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<ContractOutDTO[]>> = {}) {
+    return ({
+      queryKey: ['contracts'],
+      async queryFn() {
+        onLoading?.();
+        return await Queries.queryFn(`${API_URL}/v1/contracts`);
+      },
+      onError,
+      onSuccess,
+      enabled,
+    } as UseQueryOptions<FetchResponse<ContractOutDTO[]>>);
+  }
+
+  static getContract = (id: number, { enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<ContractOutDTO>> = {}) => ({
+    queryKey: [`contract-${id}`],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/contract/${id}`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<ContractOutDTO>, FetchError>);
 
   static getReports = (type: Report, projectId: number, { enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
     queryKey: [`/v1/${type}-reports/${projectId}`],

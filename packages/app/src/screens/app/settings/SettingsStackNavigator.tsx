@@ -18,6 +18,8 @@ import SupplierUpsertScreen from '../supplier/SupplierUpsertScreen';
 import SupplierListScreen from '../supplier/SupplierListScreen';
 import ClientUpsertScreen from '../client/ClientUpsertScreen';
 import ClientListScreen from '../client/ClientListScreen';
+import ContractListScreen from '../contract/ContractListScreen';
+import ContractUpsertScreen from '../contract/ContractUpsertScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -182,7 +184,7 @@ export default memo(function SettingsStackNavigator() {
       />
       <Stack.Screen
         name={Screens.APP_CONTRACT_LIST}
-        component={UserListScreen}
+        component={ContractListScreen}
         options={(screenProps) => ({
           ...options('Contracte'),
           headerRight: (headerProps) => (
@@ -197,7 +199,7 @@ export default memo(function SettingsStackNavigator() {
       />
       <Stack.Screen
         name={Screens.APP_CONTRACT_UPSERT}
-        component={UserUpsertScreen}
+        component={ContractUpsertScreen}
         options={(screenProps) => ({
           ...options(''),
           title:

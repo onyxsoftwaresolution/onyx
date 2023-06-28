@@ -1,50 +1,38 @@
 import { UpsertClientDTO } from '@modules/client/dtos/client.in.dto';
 import { PickType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsDateString, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 class CreateContractInDTO {
   @IsInt()
   @IsNotEmpty()
   id: number;
 
-  @IsInt()
-  @IsNotEmpty()
-  created?: string | Date;
-
-  @IsInt()
-  @IsNotEmpty()
-  modified?: string | Date;
-
-  @IsInt()
-  @IsNotEmpty()
-  deleted?: boolean;
-
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
   number: string;
 
-  @IsInt()
+  @IsNumber()
   @IsNotEmpty()
   cost: number;
 
-  @IsInt()
+  @IsDateString()
   @IsNotEmpty()
   start: string | Date;
 
-  @IsInt()
+  @IsDateString()
   @IsNotEmpty()
   end: string | Date;
 
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
   location: string;
 
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
   details: string;
 
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
   representative: string;
 

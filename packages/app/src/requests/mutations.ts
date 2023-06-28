@@ -14,6 +14,8 @@ import { UserOutDTO } from '@workspace/api/src/modules/user/dtos/user-out.dto';
 import { CreateUserDTO } from '@workspace/api/src/modules/user/dtos/user.create.dto';
 import { ClientOutDTO } from '@workspace/api/src/modules/client/dtos/client.out.dto';
 import { SupplierOutDTO } from '@workspace/api/src/modules/supplier/dtos/supplier.out.dto';
+import { ContractOutDTO } from '@workspace/api/src/modules/contract/dtos/contract.out.dto';
+import { UpsertContractDTO } from '@workspace/api/src/modules/contract/dtos/contract.in.dto';
 
 type Options<T = never> = Partial<Pick<UseMutationOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -266,6 +268,23 @@ export class Mutations {
     } as UseMutationOptions<FetchResponse<ProjectOutDTO>, unknown, number>;
   }
 
+  static deleteContract({ onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: ['contract'],
+      mutationFn: async (id) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/contract/${id}`,
+          {
+            method: 'DELETE',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<ContractOutDTO>, unknown, number>;
+  }
+
   static getReport = (
     type: Report, isNew: boolean, projectId: number, projectReportId: number | undefined, month: string,
     { onError, onLoading, onSuccess }: Options<FetchResponse<ProjectReportOutDTO>> = {}
@@ -323,6 +342,29 @@ export class Mutations {
       FetchResponse<ProjectOutDTO>,
       FetchError,
       UpsertProjectDTO,
+      unknown
+    >;
+  }
+
+  static upsertContract({ onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: ['contract'],
+      mutationFn: async (body) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/contract/`,
+          {
+            body: body as any,
+            method: 'PUT',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<
+      FetchResponse<ContractOutDTO>,
+      FetchError,
+      UpsertContractDTO,
       unknown
     >;
   }
