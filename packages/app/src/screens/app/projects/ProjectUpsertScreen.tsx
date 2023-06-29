@@ -24,6 +24,8 @@ import MGRow from '../../../components/MGRow';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { AppTheme } from '../../../theme/type';
 import MGMultipleSelect from '../../../components/MGMultipleSelect';
+import { SupplierOutDTO } from '@workspace/api/src/modules/supplier/dtos/supplier.out.dto';
+import { ContractOutDTO } from '@workspace/api/src/modules/contract/dtos/contract.out.dto';
 
 type Params = {
   id: number;
@@ -58,7 +60,9 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
       projectActivities: data?.projectActivities ?? [],
       localAdmin: data?.localAdmin ?? null,
       areaAdmin: data?.areaAdmin ?? null,
-    });
+      contract: data?.contract ?? null,
+      suppliers: data?.suppliers ?? [],
+    } as UpsertProjectDTO);
   }, [project.data?.data]);
 
   const {
@@ -73,7 +77,12 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
     values,
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields: supplierFields, append: appendSupplier, remove: removeSupplier } = useFieldArray({
+    control,
+    name: "suppliers",
+  });
+
+  const { fields: activityFields, append: appendActivity, remove: removeActivity } = useFieldArray({
     control,
     name: "projectActivities",
   });
@@ -88,6 +97,90 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
     },
     [params?.id, upsert],
   );
+
+  const renderContract = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Contract field is required!' },
+          validate: (value) => isInt(value.id) && isNotEmpty(value.id),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View style={[{ flex: 1 }]}>
+            {errors.contract != null
+              ? <HelperText type="error">{errors.contract.message?.toString()}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGSelect
+              title='Alege contract'
+              type='input'
+              getter={() => Queries.getContracts({ enabled }) as any}
+              text={(data: ContractOutDTO) => data?.number ?? value?.number ?? ""}
+              data={value}
+              onSelect={(contract: ContractOutDTO) => { onChange(contract) }}
+              label="Contract"
+              containerStyle={[{ marginBottom: 7 }]}
+            />
+          </View>
+        )}
+        name={`contract`}
+      />
+    );
+  }, [control, enabled, errors.contract, upsert?.error?.data.code, upsert?.isError]);
+
+  const renderClient = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Contract field is required!' },
+          validate: (value) => isInt(value.id) && isNotEmpty(value.id),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View style={[{ flex: 1 }]}>
+            {errors.contract != null
+              ? <HelperText type="error">{errors.contract.message?.toString()}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGRow>
+              <MGTextInput
+                disabled
+                value={(value as ContractOutDTO)?.client?.name ?? ''}
+                onChangeText={() => { }}
+                containerStyle={[{ justifyContent: 'flex-end' }]}
+                style={{ marginBottom: 7 }}
+                label={'Nume client'}
+              />
+            </MGRow>
+            <MGRow>
+              <MGTextInput
+                disabled
+                value={(value as ContractOutDTO)?.client?.cif ?? ''}
+                onChangeText={() => { }}
+                containerStyle={[{ justifyContent: 'flex-end' }]}
+                style={{ marginBottom: 7 }}
+                label={'CIF client'}
+              />
+              <MGTextInput
+                disabled
+                value={(value as ContractOutDTO)?.client?.rc ?? ''}
+                onChangeText={() => { }}
+                containerStyle={[{ justifyContent: 'flex-end' }]}
+                style={{ marginBottom: 7 }}
+                label={'RC client'}
+              />
+            </MGRow>
+          </View>
+        )}
+        name={`contract`}
+      />
+    );
+  }, [control, errors.contract, upsert?.error?.data.code, upsert?.isError]);
 
   const renderDescription = useCallback(() => {
     return (
@@ -367,16 +460,16 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
     return (
       <View style={[{ flexDirection: 'row', width: '100%' }]}>
         <Text style={[{ flex: 1, alignItems: 'center', display: 'flex' }]}>{`Activitate ${index + 1}`}</Text>
-        <TouchableRipple onPress={() => { remove(index) }}>
+        <TouchableRipple onPress={() => { removeActivity(index) }}>
           <Icon style={[{ padding: 10, color: colors.danger }]} name='times' />
         </TouchableRipple>
       </View>
     );
-  }, [colors.danger, remove]);
+  }, [colors.danger, removeActivity]);
 
   const renderProjectActivity = useCallback((index: number) => {
     return (
-      <MGCard key={`${index}-${fields[index].id}`} title={renderActivityCardTitle(index)}>
+      <MGCard key={`${index}-${activityFields[index].id}`} title={renderActivityCardTitle(index)}>
         {renderProjectActivityDescription(index)}
         <MGRow>
           {renderProjectActivityMaterial(index)}
@@ -385,7 +478,57 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
         </MGRow>
       </MGCard>
     );
-  }, [fields, renderActivityCardTitle, renderProjectActivityCost, renderProjectActivityDescription, renderProjectActivityMaterial, renderProjectActivityQuantity]);
+  }, [activityFields, renderActivityCardTitle, renderProjectActivityCost, renderProjectActivityDescription, renderProjectActivityMaterial, renderProjectActivityQuantity]);
+
+  const renderSupplierCardTitle = useCallback((index: number) => {
+    return (
+      <View style={[{ flexDirection: 'row', width: '100%' }]}>
+        <Text style={[{ flex: 1, alignItems: 'center', display: 'flex' }]}>{`Furnizor ${index + 1}`}</Text>
+        <TouchableRipple onPress={() => { removeSupplier(index) }}>
+          <Icon style={[{ padding: 10, color: colors.danger }]} name='times' />
+        </TouchableRipple>
+      </View>
+    );
+  }, [colors.danger, removeSupplier]);
+
+  const renderSupplierName = useCallback((index: number) => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Name field is required!' },
+          validate: (value) => isString(value) && isNotEmpty(value),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View style={[{ flex: 1 }]}>
+            {errors.suppliers?.[index]?.name != null
+              ? <HelperText type="error">{errors.suppliers?.[index]?.name?.message}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGTextInput
+              disabled
+              value={value}
+              onChangeText={onChange}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
+              style={{ marginBottom: 7 }}
+              label={'Nume furnizor'}
+            />
+          </View>
+        )}
+        name={`suppliers.${index}.name`}
+      />
+    );
+  }, [control, errors.suppliers, upsert?.error?.data.code, upsert?.isError]);
+
+  const renderSupplier = useCallback((index: number) => {
+    return (
+      <MGCard key={`${index}-${supplierFields[index].id}`} title={renderSupplierCardTitle(index)}>
+        {renderSupplierName(index)}
+      </MGCard>
+    );
+  }, [supplierFields, renderSupplierCardTitle, renderSupplierName]);
 
   const renderLocalAdmin = useCallback(() => {
     return (
@@ -462,7 +605,6 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           validate: (value) => true,
         }}
         render={({ field: { onChange, value } }) => {
-          console.log(value);
           return (
             <View style={[{ flex: 1 }]}>
               {errors.areaAdmin != null
@@ -478,7 +620,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
                 getText={(data: ActivityTemplateOutDTO) => data?.description ?? ''}
                 getId={(data: ActivityTemplateOutDTO) => data?.description ?? ''}
                 onSelect={(datas: ActivityTemplateOutDTO[]) => {
-                  append(datas.map(data => ({ cost: data.cost, description: data.description, material: data.material, quantity: 0 })));
+                  appendActivity(datas.map(data => ({ cost: data.cost, description: data.description, material: data.material, quantity: 0 })));
                 }}
                 label="Adauga activitate"
                 containerStyle={[{ marginTop: 10, marginHorizontal: 10 }]}
@@ -489,7 +631,38 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
         name={`projectActivities`}
       />
     );
-  }, [append, control, enabled, errors.areaAdmin, upsert?.error?.data.code, upsert?.isError]);
+  }, [appendActivity, control, enabled, errors.areaAdmin, upsert?.error?.data.code, upsert?.isError]);
+
+  const renderSupplierMultiselect = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: '!' },
+          validate: (value) => true,
+        }}
+        render={({ field: { onChange, value } }) => {
+          return (
+            <View style={[{ flex: 1 }]}>
+              <MGMultipleSelect
+                data={value ?? []}
+                title='Alege furnizor'
+                getter={() => Queries.getSuppliers({ enabled }) as any}
+                getText={(data: SupplierOutDTO) => data?.name ?? ''}
+                getId={(data: SupplierOutDTO) => data?.name ?? ''}
+                onSelect={(datas: SupplierOutDTO[]) => {
+                  appendSupplier(datas.map(data => ({ name: data.name })));
+                }}
+                label="Adauga furnizor"
+                containerStyle={[{ marginTop: 10, marginHorizontal: 10 }]}
+              />
+            </View>
+          );
+        }}
+        name={`suppliers`}
+      />
+    );
+  }, [appendSupplier, control, enabled]);
 
   return (
     <ScreenContainer
@@ -497,6 +670,14 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
       scrollContainerStyle={[styles.scrollContainer]}
     >
       <View style={[styles.view]}>
+        <MGCard title="Detalii contract">
+          <MGRow>
+            {renderContract()}
+          </MGRow>
+          <MGRow>
+            {renderClient()}
+          </MGRow>
+        </MGCard>
         <MGCard title={'Detalii proiect'}>
           {renderDescription()}
           <MGRow>
@@ -509,7 +690,10 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
           </MGRow>
         </MGCard>
         <View>
-          {fields.map((_, index) => renderProjectActivity(index))}
+          {activityFields.map((_, index) => renderProjectActivity(index))}
+          {renderActivityMultiselect()}
+          {supplierFields.map((_, index) => renderSupplier(index))}
+          {renderSupplierMultiselect()}
           {/* <MGSelect
             title='Alege activitate'
             getter={() => Queries.getActivityTemplates({ enabled }) as any}
@@ -521,7 +705,6 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
             label="Adauga activitate"
             containerStyle={[{ marginTop: 10, marginHorizontal: 10 }]}
           /> */}
-          {renderActivityMultiselect()}
         </View>
         <MGCard title={`Angajati`}>
           <MGRow>

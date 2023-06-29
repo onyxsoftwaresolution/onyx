@@ -23,6 +23,7 @@ export class ContractProvider {
   async listContracts() {
     return await this.prismaService.client.contract.findMany({
       where: { deleted: false },
+      include: { client: true },
       orderBy: { modified: 'desc' },
     });
   }

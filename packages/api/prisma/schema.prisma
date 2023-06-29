@@ -64,6 +64,8 @@ model Supplier {
   email       String
   products    String
 
+  Project Project[]
+
   @@map("Suppliers")
 }
 
@@ -79,9 +81,10 @@ model Contract {
   end            DateTime
   location       String
   details        String
-  clientId       Int      @unique
-  client         Client   @relation(fields: [clientId], references: [id])
+  clientId       Int       @unique
+  client         Client    @relation(fields: [clientId], references: [id])
   representative String
+  projects       Project[]
 
   @@map("Contracts")
 }
@@ -136,8 +139,14 @@ model Project {
   projectActivities ProjectActivity[]
   reports           ProjectReport[]
 
+  contractId Int?
+  contract   Contract? @relation(fields: [contractId], references: [id])
+
+  suppliers Supplier[]
+
   @@index([areaAdminId])
   @@index([localAdminId])
+  @@index([contractId])
   @@map("Projects")
 }
 

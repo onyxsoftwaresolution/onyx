@@ -27,6 +27,8 @@ type TabNavigationConfig = {
 // Supported screen options
 type TabNavigationOptions = BottomTabNavigationOptions & {
   title?: string;
+  name?: string;
+  initialScreen?: string;
   items?: MenuItem[];
   getItemData?: (item: MenuItem) => MenuItemData;
 };
@@ -118,11 +120,15 @@ function CustomBottomTabNavigator({
   const renderItem = useCallback((item: ListRenderItemInfo<typeof descriptors[0]>) => {
     const isCurrentLink = state.history.at(-1)?.key === item.item.route.key;
     const onPressed = () => {
-      if (isCurrentLink) {
+      if (!isCurrentLink) {
+        navigation.navigate(item.item.route.name, item.item.route.params);
+        return;
+      }
+      if (item.item.options.name == null || item.item.options.initialScreen == null) {
         navigation.popToTop();
         return;
       }
-      navigation.navigate(item.item.route.name, item.item.route.params)
+      navigation.navigate(item.item.options.name!, { screen: item.item.options.initialScreen });
     }
 
     const hasSubMenu = item.item.options.getItemData != null && item.item.options.items;

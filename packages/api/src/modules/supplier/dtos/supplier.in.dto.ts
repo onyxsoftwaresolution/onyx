@@ -74,3 +74,9 @@ export class UpsertSupplierDTO extends CreateSupplierDTO {
   @IsOptional()
   id?: number;
 }
+
+export class UpsertSupplierByIdDTO {
+  @IsInt()
+  @IsOptional()
+  id?: number;
+}

@@ -121,6 +121,8 @@ export default memo<NativeStackScreenProps<any, string>>(function AppTabNavigato
         component={SettingsStackNavigator}
         options={{
           title: 'Setari',
+          name: Screens.APP_SETTINGS_NAVIGATOR,
+          initialScreen: Screens.APP_SETTINGS_SCREEN,
           items: settingMenuItems,
           getItemData: item => getSettingItemData(item, colors, navigation, logout, showAboutDialog),
           tabBarIcon: (props) => (
