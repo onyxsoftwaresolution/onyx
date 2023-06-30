@@ -6,15 +6,19 @@ import { UpsertProjectDTO } from './dtos/project.in.dto';
 export class ProjectProvider {
   constructor(private prismaService: PrismaService) { }
 
-  async upsertProject({ id, area, areaAdmin, code, description, end, localAdmin, projectActivities, start }: UpsertProjectDTO): ReturnType<ProjectProvider["getProject"]> {
-    const currentProjectActivities = await this.prismaService.client.projectActivity.findMany({
-      where: { projectId: id }
-    });
+  async upsertProject({ id, area, areaAdmin, code, description, end, localAdmin, projectActivities, start, suppliers, contract }: UpsertProjectDTO): ReturnType<ProjectProvider["getProject"]> {
+    const currentProject = await this.getProject(id);
 
+    const currentProjectActivities = currentProject.projectActivities;
     const remainingProjectActivityIds = projectActivities.filter(pa => pa.id != null).map(pa => pa.id);
     const deleteProjectActivityIds = currentProjectActivities.map(pa => pa.id).filter(id => !remainingProjectActivityIds.includes(id));
     const createProjectActivities = projectActivities.filter(pa => pa.id == null);
     const updateProjectActivities = projectActivities.filter(pa => pa.id != null);
+
+    const currentSuppliers = currentProject.suppliers;
+    const connectSuppliers = suppliers;
+    const connectSupplierIds = connectSuppliers.map(s => s.id);
+    const disconnectSuppliers = currentSuppliers.filter(s => !connectSupplierIds.includes(s.id));
 
     await this.prismaService.client.project.upsert({
       where: { id: id ?? -1 },
@@ -28,6 +32,7 @@ export class ProjectProvider {
       },
       update: {
         id, area, code, description, end, start, areaAdminId: areaAdmin.id, localAdminId: localAdmin.id,
+        contractId: contract.id,
         projectActivities: {
           createMany: {
             data: createProjectActivities.map(({ description, cost, material, quantity }) => ({ description, cost, material, quantity })),
@@ -46,7 +51,11 @@ export class ProjectProvider {
             where: { id },
             data: { description, cost, material, quantity },
           })),
-        }
+        },
+        suppliers: {
+          connect: connectSuppliers.map(s => ({ id: s.id })),
+          disconnect: disconnectSuppliers.map(s => ({ id: s.id })),
+        },
       }
     });
 
@@ -70,36 +79,24 @@ export class ProjectProvider {
       select: {
         id: true,
         area: true,
-        areaAdmin: {
-          select: {
-            id: true,
-            name: true,
-            position: true,
-          },
-        },
+        areaAdmin: true,
         areaAdminId: true,
         available: true,
         code: true,
         description: true,
         start: true,
         end: true,
-        localAdmin: {
-          select: {
-            id: true,
-            name: true,
-            position: true,
-          }
-        },
+        localAdmin: true,
         localAdminId: true,
         projectActivities: {
           where: { deleted: false },
-          select: {
-            id: true,
-            cost: true,
-            description: true,
-            material: true,
-            quantity: true,
-          }
+        },
+        contractId: true,
+        contract: {
+          include: { client: true, }
+        },
+        suppliers: {
+          where: { deleted: false },
         },
       },
     });
