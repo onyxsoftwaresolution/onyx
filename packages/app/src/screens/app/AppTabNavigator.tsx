@@ -14,6 +14,7 @@ import MonthlyReportStackNavigator from './monthly/MonthlyReportStackNavigator';
 import ProjectStackNavigator from './projects/ProjectStackNavigator';
 import { getSettingItemData, settingMenuItems } from './settings/SettingsLinks';
 import SettingsStackNavigator from './settings/SettingsStackNavigator';
+import { financialMenuItems, getFinancialItemData } from './financial/FinancialLinks';
 
 const Tab = createCustomBottomTabNavigator();
 
@@ -105,6 +106,10 @@ export default memo<NativeStackScreenProps<any, string>>(function AppTabNavigato
         component={SettingsStackNavigator}
         options={{
           title: 'Financiar',
+          name: Screens.APP_FINANCIAL_NAVIGATOR,
+          initialScreen: Screens.APP_FINANCIAL_SCREEN,
+          items: financialMenuItems,
+          getItemData: item => getFinancialItemData(item, colors, navigation),
           tabBarIcon: (props) => (
             <>
               <Icon

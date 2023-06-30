@@ -148,7 +148,7 @@ function CustomBottomTabNavigator({
             <Text style={[{ fontSize: 18, color: isCurrentLink ? colors.primary : undefined, paddingLeft: 10 }]}>{item.item.options.title}</Text>
           </View>
         </TouchableRipple>
-        {hasSubMenu && item.index + 1 === data.length
+        {hasSubMenu
           ? <Divider />
           : null}
         <View style={[{ flexDirection: 'column' }]}>
