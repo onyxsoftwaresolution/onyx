@@ -651,7 +651,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
                 getText={(data: SupplierOutDTO) => data?.name ?? ''}
                 getId={(data: SupplierOutDTO) => data?.name ?? ''}
                 onSelect={(datas: SupplierOutDTO[]) => {
-                  appendSupplier(datas.map(data => ({ name: data.name })));
+                  appendSupplier(datas.map(data => ({ id: data.id, name: data.name })));
                 }}
                 label="Adauga furnizor"
                 containerStyle={[{ marginTop: 10, marginHorizontal: 10 }]}
