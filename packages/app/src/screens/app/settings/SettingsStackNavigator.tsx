@@ -1,12 +1,9 @@
 import {
   createNativeStackNavigator,
-  NativeStackNavigationOptions,
 } from '@react-navigation/native-stack';
-import React, { memo, useCallback } from 'react';
-import { useTheme } from 'react-native-paper';
+import React, { memo } from 'react';
 import { Screens } from '../../Screens';
 import SettingsScreen from './SettingsScreen';
-import { Platform } from 'react-native';
 import EmployeeListScreen from '../employee/EmployeeListScreen';
 import EmployeeAddScreen from '../employee/EmployeeUpsertScreen';
 import ActivityTemplateListScreen from '../activity/ActivityTemplateListScreen';
@@ -20,22 +17,12 @@ import ClientUpsertScreen from '../client/ClientUpsertScreen';
 import ClientListScreen from '../client/ClientListScreen';
 import ContractListScreen from '../contract/ContractListScreen';
 import ContractUpsertScreen from '../contract/ContractUpsertScreen';
+import { useScreenOptions } from '../../useScreenOptions';
 
 const Stack = createNativeStackNavigator();
 
 export default memo(function SettingsStackNavigator() {
-  const { colors } = useTheme();
-
-  const options = useCallback(
-    (title: string): NativeStackNavigationOptions => ({
-      title,
-      headerStyle: { backgroundColor: colors.surface },
-      headerTitleStyle: { color: colors.inverseSurface },
-      headerTintColor:
-        Platform.OS === 'ios' ? colors.primary : colors.inverseSurface,
-    }),
-    [colors.inverseSurface, colors.primary, colors.surface],
-  );
+  const options = useScreenOptions();
 
   return (
     <Stack.Navigator

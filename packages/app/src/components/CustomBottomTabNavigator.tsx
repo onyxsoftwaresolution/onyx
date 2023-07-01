@@ -131,7 +131,7 @@ function CustomBottomTabNavigator({
       navigation.navigate(item.item.options.name!, { screen: item.item.options.initialScreen });
     }
 
-    const hasSubMenu = item.item.options.getItemData != null && item.item.options.items;
+    const hasSubMenu = item.item.options.getItemData != null && item.item.options.items != null;
 
     return (
       <>
@@ -158,7 +158,7 @@ function CustomBottomTabNavigator({
         </View>
       </>
     )
-  }, [colors.primary, data.length, navigation, renderSubMenuItems, state.history])
+  }, [colors.primary, navigation, renderSubMenuItems, state.history])
 
   return (
     <NavigationContent>

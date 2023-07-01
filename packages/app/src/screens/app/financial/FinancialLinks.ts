@@ -6,13 +6,13 @@ import { Screens } from "../../Screens";
 export enum FinancialLinks {
   INVOICES,
   COSTS,
-  COLLECTIONS,
+  RECEIPTS,
 }
 
 export const financialMenuItems: MenuItem[] = [
   { label: 'Facturi', value: FinancialLinks.INVOICES, roles: [Role.ADMIN] },
   { label: 'Costuri', value: FinancialLinks.COSTS, roles: [Role.ADMIN] },
-  { label: 'Incasari', value: FinancialLinks.COLLECTIONS, roles: [Role.ADMIN] },
+  { label: 'Incasari', value: FinancialLinks.RECEIPTS, roles: [Role.ADMIN] },
 ];
 
 export const getFinancialItemData = (
@@ -47,17 +47,17 @@ export const getFinancialItemData = (
         screen: Screens.APP_FINANCIAL_COST_LIST,
       };
 
-    case FinancialLinks.COLLECTIONS:
+    case FinancialLinks.RECEIPTS:
       return {
         color: colors.inverseSurface,
         onPress: () => {
           navigation.navigate(Screens.APP_FINANCIAL_NAVIGATOR, {
-            screen: Screens.APP_FINANCIAL_COLLECTION_LIST,
+            screen: Screens.APP_FINANCIAL_RECEIPT_LIST,
           });
         },
         icon: 'euro-sign',
         chevron: 'chevron-right',
-        screen: Screens.APP_FINANCIAL_COLLECTION_LIST,
+        screen: Screens.APP_FINANCIAL_RECEIPT_LIST,
       }
 
     default:

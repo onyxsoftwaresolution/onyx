@@ -15,6 +15,7 @@ import ProjectStackNavigator from './projects/ProjectStackNavigator';
 import { getSettingItemData, settingMenuItems } from './settings/SettingsLinks';
 import SettingsStackNavigator from './settings/SettingsStackNavigator';
 import { financialMenuItems, getFinancialItemData } from './financial/FinancialLinks';
+import FinancialStackNavigator from './financial/FinancialStackNavigator';
 
 const Tab = createCustomBottomTabNavigator();
 
@@ -103,7 +104,7 @@ export default memo<NativeStackScreenProps<any, string>>(function AppTabNavigato
         /> : null}
       <Tab.Screen
         name={Screens.APP_FINANCIAL_NAVIGATOR}
-        component={SettingsStackNavigator}
+        component={FinancialStackNavigator}
         options={{
           title: 'Financiar',
           name: Screens.APP_FINANCIAL_NAVIGATOR,
