@@ -8,21 +8,21 @@ import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 import { HelperText, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import MGButton from '../../../../components/MGButton';
-import MGCard from '../../../../components/MGCard';
-import MGRow from '../../../../components/MGRow';
-import MGTextInput from '../../../../components/MGTextInput';
-import ScreenContainer from '../../../../components/ScreenContainer';
-import { useSnackbar } from '../../../../components/hooks/useSnackbar';
-import { Mutations } from '../../../../requests/mutations';
-import { Queries } from '../../../../requests/queries';
-import { AppTheme } from '../../../../theme/type';
+import MGButton from '../../../components/MGButton';
+import MGCard from '../../../components/MGCard';
+import MGRow from '../../../components/MGRow';
+import MGTextInput from '../../../components/MGTextInput';
+import ScreenContainer from '../../../components/ScreenContainer';
+import { useSnackbar } from '../../../components/hooks/useSnackbar';
+import { Mutations } from '../../../requests/mutations';
+import { Queries } from '../../../requests/queries';
+import { AppTheme } from '../../../theme/type';
 
 type Params = {
   id: number;
 };
 
-export default memo<NativeStackScreenProps<any, string>>(function EmployeeReceiptUpsertScreen(props) {
+export default memo<NativeStackScreenProps<any, string>>(function ReceiptUpsertScreen(props) {
   const params = props.route.params as unknown as Params;
 
   const { colors } = useTheme<AppTheme>();

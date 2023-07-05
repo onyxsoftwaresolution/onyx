@@ -10,7 +10,7 @@ import { useIsAdmin } from '../../../components/hooks/useIsAdmin';
 import { useUser } from '../../../context/userContext';
 import { Store } from '../../../storage/Store';
 import { AppTheme } from '../../../theme/type';
-import { Role } from "@workspace/api/node_modules/@prisma/client";
+import { Role } from "@workspace/api/prisma/prisma";
 import { getSettingItemData, settingMenuItems } from './SettingsLinks';
 
 export default memo<NativeStackScreenProps<any, string>>(

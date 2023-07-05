@@ -10,7 +10,7 @@ import { JwtUserDTO } from '@workspace/api/src/modules/user/dtos/jwt.user.dto';
 import { API_URL } from '@env';
 import { InfoDTO } from "@workspace/api/src/modules/app/dtos/info.dto"
 import { UserOutDTO } from '@workspace/api/src/modules/user/dtos/user-out.dto';
-import { Role } from '@workspace/api/node_modules/@prisma/client';
+import { Role } from '@workspace/api/prisma/prisma';
 import { SupplierOutDTO } from '@workspace/api/src/modules/supplier/dtos/supplier.out.dto';
 import { ClientOutDTO } from '@workspace/api/src/modules/client/dtos/client.out.dto';
 import { ContractOutDTO } from '@workspace/api/src/modules/contract/dtos/contract.out.dto';

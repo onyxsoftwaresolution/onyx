@@ -6,12 +6,12 @@ import { Screens } from '../../Screens';
 import FinancialScreen from './FinancialScreen';
 import { useScreenOptions } from '../../useScreenOptions';
 import { HeaderAddButton } from '../../../components/HeaderAddButton';
-import EmployeeInvoiceListScreen from './invoice/EmployeeInvoiceListScreen';
-import EmployeeInvoiceUpsertScreen from './invoice/EmployeeInvoiceUpsertScreen';
-import EmployeeCostListScreen from './cost/EmployeeCostListScreen';
-import EmployeeCostUpsertScreen from './cost/EmployeeCostUpsertScreen';
-import EmployeeReceiptListScreen from './receipt/EmployeeReceiptListScreen';
-import EmployeeReceiptUpsertScreen from './receipt/EmployeeReceiptUpsertScreen';
+import EmployeeInvoiceListScreen from '../invoice/InvoiceListScreen';
+import EmployeeInvoiceUpsertScreen from '../invoice/InvoiceUpsertScreen';
+import EmployeeCostListScreen from '../cost/CostListScreen';
+import EmployeeCostUpsertScreen from '../cost/CostUpsertScreen';
+import EmployeeReceiptListScreen from '../receipt/ReceiptListScreen';
+import EmployeeReceiptUpsertScreen from '../receipt/ReceiptUpsertScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,13 +20,13 @@ export default memo(function FinancialStackNavigator() {
 
   return (
     <Stack.Navigator
-      initialRouteName={Screens.APP_SETTINGS_SCREEN}
+      initialRouteName={Screens.APP_FINANCIAL_SCREEN}
       screenOptions={{ headerShown: true }}
     >
       <Stack.Screen
-        name={Screens.APP_SETTINGS_SCREEN}
+        name={Screens.APP_FINANCIAL_SCREEN}
         component={FinancialScreen}
-        options={options('Setari')}
+        options={options('Financiar')}
       />
       <Stack.Screen
         name={Screens.APP_FINANCIAL_INVOICE_LIST}

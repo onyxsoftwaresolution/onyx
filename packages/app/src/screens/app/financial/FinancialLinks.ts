@@ -1,4 +1,4 @@
-import { Role } from "@workspace/api/node_modules/@prisma/client";
+import { Role } from "@workspace/api/prisma/prisma";
 import { MenuItem, MenuItemData } from "../../../components/MenuItem";
 import { AppTheme } from "../../../theme/type";
 import { Screens } from "../../Screens";

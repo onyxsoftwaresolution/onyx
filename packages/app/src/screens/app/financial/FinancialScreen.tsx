@@ -9,7 +9,7 @@ import { RenderOptionsFunction, useDialog } from '../../../components/hooks/useD
 import { useIsAdmin } from '../../../components/hooks/useIsAdmin';
 import { useUser } from '../../../context/userContext';
 import { AppTheme } from '../../../theme/type';
-import { Role } from "@workspace/api/node_modules/@prisma/client";
+import { Role } from "@workspace/api/prisma/prisma";
 import { getFinancialItemData, financialMenuItems } from './FinancialLinks';
 
 export default memo<NativeStackScreenProps<any, string>>(
@@ -66,13 +66,6 @@ export default memo<NativeStackScreenProps<any, string>>(
     return (
       <ScreenContainer scrollContainerStyle={[styles.scrollContainer]}>
         <View style={[styles.list]}>
-          <View>
-            <Text
-              style={[styles.itemText, { paddingLeft: 0, marginBottom: 18 }]}
-            >
-              Buna {user?.data?.username}!
-            </Text>
-          </View>
           {financialMenuItems.filter(s => s.roles.length === 0 || isAdmin && s.roles?.includes(Role.ADMIN)).map((s, i) => renderItem({ item: s, index: i }))}
         </View>
         {aboutDialog.renderDialog(aboutDialogOptions)}
