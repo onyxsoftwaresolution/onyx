@@ -1,7 +1,6 @@
 import { IsNonPrimitiveArray } from '@common/validator/IsNonPrimitiveArray';
 import { UpsertContractDTO } from '@modules/contract/dtos/contract.in.dto';
 import { UpsertEmployeeDTO } from '@modules/employee/dtos/employee.in.dto';
-import { UpsertSupplierByIdDTO, UpsertSupplierDTO } from '@modules/supplier/dtos/supplier.in.dto';
 import { Type } from 'class-transformer';
 import { IsArray, IsDateString, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested, } from 'class-validator';
 
@@ -45,12 +44,6 @@ export class UpsertProjectDTO {
   @IsOptional()
   @Type(() => UpsertContractDTO)
   contract?: UpsertContractDTO;
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @IsNonPrimitiveArray()
-  @Type(() => UpsertSupplierByIdDTO)
-  suppliers: UpsertSupplierByIdDTO[];
 }
 
 export class UpsertBasicProjectDTO {
@@ -99,4 +92,12 @@ export class UpsertProjectActivityDTO {
   @IsNumber()
   @IsNotEmpty()
   cost: number;
+
+  @IsInt()
+  @IsNotEmpty()
+  activityTemplateId: number;
+
+  @IsInt()
+  @IsNotEmpty()
+  projectId: number;
 }

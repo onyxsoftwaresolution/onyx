@@ -38,4 +38,7 @@ export class ContractOutDTO extends EntityOutDTO implements Contract {
 
   @Expose()
   representative: string;
+
+  @Expose()
+  active: boolean;
 }

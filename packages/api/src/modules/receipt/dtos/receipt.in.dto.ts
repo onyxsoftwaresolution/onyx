@@ -1,8 +1,7 @@
 import { PickType } from '@nestjs/swagger';
-import { Prisma } from '@prisma/client';
 import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-class CreateReceiptInDTO implements Prisma.ReceiptCreateInput {
+class CreateReceiptInDTO {
   @IsInt()
   @IsNotEmpty()
   id: number;
@@ -30,6 +29,10 @@ class CreateReceiptInDTO implements Prisma.ReceiptCreateInput {
   @IsString()
   @IsNotEmpty()
   type: string;
+
+  @IsInt()
+  @IsNotEmpty()
+  contractId: number;
 }
 
 export class CreateReceiptDTO extends PickType(CreateReceiptInDTO, [

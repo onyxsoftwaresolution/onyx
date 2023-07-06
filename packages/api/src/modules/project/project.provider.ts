@@ -6,7 +6,7 @@ import { UpsertProjectDTO } from './dtos/project.in.dto';
 export class ProjectProvider {
   constructor(private prismaService: PrismaService) { }
 
-  async upsertProject({ id, area, areaAdmin, code, description, end, localAdmin, projectActivities, start, suppliers, contract }: UpsertProjectDTO): ReturnType<ProjectProvider["getProject"]> {
+  async upsertProject({ id, area, areaAdmin, code, description, end, localAdmin, projectActivities, start, contract }: UpsertProjectDTO): ReturnType<ProjectProvider["getProject"]> {
     const currentProject = await this.getProject(id);
 
     const currentProjectActivities = currentProject.projectActivities;
@@ -15,18 +15,13 @@ export class ProjectProvider {
     const createProjectActivities = projectActivities.filter(pa => pa.id == null);
     const updateProjectActivities = projectActivities.filter(pa => pa.id != null);
 
-    const currentSuppliers = currentProject.suppliers;
-    const connectSuppliers = suppliers;
-    const connectSupplierIds = connectSuppliers.map(s => s.id);
-    const disconnectSuppliers = currentSuppliers.filter(s => !connectSupplierIds.includes(s.id));
-
     await this.prismaService.client.project.upsert({
       where: { id: id ?? -1 },
       create: {
         area, code, description, end, start, areaAdminId: areaAdmin.id, localAdminId: localAdmin.id,
         projectActivities: {
           createMany: {
-            data: createProjectActivities.map(({ description, cost, material, quantity }) => ({ description, cost, material, quantity })),
+            data: createProjectActivities.map(({ description, cost, material, quantity, activityTemplateId }) => ({ description, cost, material, quantity, activityTemplateId })),
           },
         }
       },
@@ -35,7 +30,7 @@ export class ProjectProvider {
         contractId: contract.id,
         projectActivities: {
           createMany: {
-            data: createProjectActivities.map(({ description, cost, material, quantity }) => ({ description, cost, material, quantity })),
+            data: createProjectActivities.map(({ description, cost, material, quantity, activityTemplateId }) => ({ description, cost, material, quantity, activityTemplateId })),
           },
           updateMany: [
             {
@@ -51,10 +46,6 @@ export class ProjectProvider {
             where: { id },
             data: { description, cost, material, quantity },
           })),
-        },
-        suppliers: {
-          connect: connectSuppliers.map(s => ({ id: s.id })),
-          disconnect: disconnectSuppliers.map(s => ({ id: s.id })),
         },
       }
     });
@@ -94,9 +85,6 @@ export class ProjectProvider {
         contractId: true,
         contract: {
           include: { client: true, }
-        },
-        suppliers: {
-          where: { deleted: false },
         },
       },
     });

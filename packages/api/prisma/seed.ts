@@ -31,11 +31,13 @@ import { EmployeeService } from '@modules/employee/employee.service';
 //   const cristina = await userService.upsertInitialUser({
 //     username: 'cristina',
 //     password: 'admin',
+//     confirmPassword: 'admin',
 //     role: Role.ADMIN,
 //   });
 //   const tase = await userService.upsertInitialUser({
 //     username: 'tase',
 //     password: 'admin',
+//     confirmPassword: 'admin',
 //     role: Role.USER,
 //   });
 //   console.log('seeded users:', { cristina, tase });

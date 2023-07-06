@@ -28,6 +28,20 @@ model User {
   @@map("Users")
 }
 
+model Product {
+  id       Int      @id @unique @default(autoincrement())
+  created  DateTime @default(now())
+  modified DateTime @default(now())
+  deleted  Boolean  @default(false)
+
+  name String
+
+  suppliers        Supplier[]
+  activityTemplate ActivityTemplate[]
+
+  @@map("Products")
+}
+
 model Client {
   id       Int      @id @unique @default(autoincrement())
   created  DateTime @default(now())
@@ -42,7 +56,8 @@ model Client {
   bankIban    String
   phoneNumber String
   email       String
-  contracts   Contract[]
+
+  contracts Contract[]
 
   @@map("Clients")
 }
@@ -61,11 +76,15 @@ model Supplier {
   bankIban    String
   phoneNumber String
   email       String
-  products    String
 
-  projects Project[]
-  costs    Cost[]
+  contractId Int?
+  Contract   Contract? @relation(fields: [contractId], references: [id])
 
+  products         Product[]
+  costs            Cost[]
+  activityTemplate ActivityTemplate[]
+
+  @@index([contractId])
   @@map("Suppliers")
 }
 
@@ -81,10 +100,15 @@ model Contract {
   end            DateTime
   location       String
   details        String
-  clientId       Int       @unique
-  client         Client    @relation(fields: [clientId], references: [id])
   representative String
-  projects       Project[]
+  active         Boolean  @default(true)
+
+  clientId Int    @unique
+  client   Client @relation(fields: [clientId], references: [id])
+
+  suppliers Supplier[]
+  projects  Project[]
+  receipt   Receipt[]
 
   @@map("Contracts")
 }
@@ -100,6 +124,15 @@ model ActivityTemplate {
   cost        Float
   available   Boolean @default(true)
 
+  supplierId Int
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+  productId  Int
+  product    Product  @relation(fields: [productId], references: [id])
+
+  projectActivities ProjectActivity[]
+
+  @@index([supplierId])
+  @@index([productId])
   @@map("ActivityTemplates")
 }
 
@@ -109,9 +142,10 @@ model Employee {
   modified DateTime @default(now())
   deleted  Boolean  @default(false)
 
-  name          String
-  position      String
-  available     Boolean   @default(true)
+  name      String
+  position  String
+  available Boolean @default(true)
+
   adminProjects Project[] @relation("admin")
   localProjects Project[] @relation("local")
 
@@ -135,14 +169,11 @@ model Project {
   areaAdmin    Employee? @relation("admin", fields: [areaAdminId], references: [id])
   localAdminId Int?
   localAdmin   Employee? @relation("local", fields: [localAdminId], references: [id])
+  contractId   Int?
+  contract     Contract? @relation(fields: [contractId], references: [id])
 
   projectActivities ProjectActivity[]
   reports           ProjectReport[]
-
-  contractId Int?
-  contract   Contract? @relation(fields: [contractId], references: [id])
-
-  suppliers Supplier[]
 
   @@index([areaAdminId])
   @@index([localAdminId])
@@ -155,10 +186,10 @@ model ProjectReport {
   created  DateTime @default(now())
   modified DateTime @default(now())
   deleted  Boolean  @default(false)
+  date     DateTime
 
   projectId Int?
   project   Project? @relation(fields: [projectId], references: [id])
-  date      DateTime
 
   dailyActivityReports   ActivityReport[] @relation("daily_report")
   monthlyActivityReports ActivityReport[] @relation("monthly_report")
@@ -173,19 +204,24 @@ model ProjectActivity {
   modified DateTime @default(now())
   deleted  Boolean  @default(false)
 
-  projectId Int
-  project   Project @relation(fields: [projectId], references: [id])
-
   quantity    Float  @default(0)
-  // from activity template
+  // copied from activity template
   description String
+  // copied from activity template
   material    String
+  // copied from activity template
   cost        Float
+
+  activityTemplateId Int
+  activityTemplate   ActivityTemplate @relation(fields: [activityTemplateId], references: [id])
+  projectId          Int
+  project            Project          @relation(fields: [projectId], references: [id])
 
   dailyActivityReports   ActivityReport[] @relation("daily_activity_report")
   monthlyActivityReports ActivityReport[] @relation("monthly_activity_report")
 
   @@index([projectId])
+  @@index([activityTemplateId])
   @@map("ProjectActivities")
 }
 
@@ -196,6 +232,7 @@ model ActivityReport {
   deleted  Boolean  @default(false)
 
   // daily
+
   todayStock        Int?
   addedStock        Int?
   totalStock        Int?
@@ -206,6 +243,7 @@ model ActivityReport {
   remainingUnits    Int?
 
   // monthly
+
   monthlyNoImplUnits  Int? // suma noImplToday
   monthlyActivityCost Float?
 
@@ -232,13 +270,13 @@ model Cost {
   modified DateTime @default(now())
   deleted  Boolean  @default(false)
 
-  supplierId Int
-  supplier   Supplier @relation(fields: [supplierId], references: [id])
-
   invoiceNumber String
   amount        Float
   date          DateTime
   details       String
+
+  supplierId Int
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
 
   @@index([supplierId])
   @@map("Costs")
@@ -255,5 +293,9 @@ model Receipt {
   date          DateTime
   type          String
 
+  contractId Int
+  contract   Contract @relation(fields: [contractId], references: [id])
+
+  @@index([contractId])
   @@map("Receipts")
 }

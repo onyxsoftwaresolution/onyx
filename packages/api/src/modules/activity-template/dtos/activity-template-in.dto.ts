@@ -16,9 +16,7 @@ function message(value: string) {
   };
 }
 
-export class ActivityTemplateInDTO
-  extends EntityInDTO
-  implements ActivityTemplate {
+export class ActivityTemplateInDTO extends EntityInDTO implements ActivityTemplate {
   @IsString({ message: message('Descrierea trebuie sa fie un sir de caractere!') })
   @IsNotEmpty({ message: message('Descrierea trebuie sa fie un sir de caractere!') })
   description: string;
@@ -31,6 +29,14 @@ export class ActivityTemplateInDTO
   @IsNotEmpty({ message: message('Costul trebuie sa fie un numar!') })
   cost: number;
   available: boolean;
+
+  @IsNumber({}, { message: message('Furnizorul nu este valid!') })
+  @IsNotEmpty({ message: message('Furnizorul nu este valid!') })
+  supplierId: number;
+
+  @IsNumber({}, { message: message('Produsul nu este valid!') })
+  @IsNotEmpty({ message: message('Produsul nu este valid!') })
+  productId: number;
 }
 
 export class CreateActivityTemplateDTO extends PickType(ActivityTemplateInDTO, [

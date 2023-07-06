@@ -37,10 +37,29 @@ export class SupplierProvider {
   }
 
   async upsertSupplier({ id, ...data }: UpsertSupplierDTO) {
+    const currentProject = await this.getSupplier(id);
+
+    const currentProducts = currentProject.products;
+    const connectProducts = data.products;
+    const connectProductIds = connectProducts.map(p => p.id);
+    const disconnectProducts = currentProducts.filter(p => !connectProductIds.includes(p.id));
+
     return await this.prismaService.client.supplier.upsert({
       where: id != null ? { id } : { id: -1 },
-      create: data,
-      update: id != null ? { id, ...data } : {},
+      create: {
+        ...data,
+        products: {
+          connect: connectProducts.map(p => ({ id: p.id })),
+        }
+      },
+      update: {
+        id,
+        ...data,
+        products: {
+          connect: connectProducts.map(p => ({ id: p.id })),
+          disconnect: disconnectProducts.map(p => ({ id: p.id })),
+        },
+      },
     });
   }
 

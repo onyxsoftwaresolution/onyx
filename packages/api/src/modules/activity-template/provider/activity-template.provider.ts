@@ -11,7 +11,11 @@ export class ActivityTemplateProvider {
 
   async createActivityTemplates(activity: CreateActivityTemplateDTO) {
     return await this.prismaService.client.activityTemplate.create({
-      data: activity,
+      data: {
+        ...activity,
+        supplier: {},
+        product: {},
+      },
       select: {
         id: true,
         description: true,
@@ -28,7 +32,12 @@ export class ActivityTemplateProvider {
   async upsertActivityTemplates({ id, ...data }: UpsertActivityTemplateDTO) {
     return await this.prismaService.client.activityTemplate.upsert({
       where: id != null ? { id } : { id: -1 },
-      create: data,
+      create: {
+        ...data,
+        projectActivities: {},
+        supplier: {},
+        product: {},
+      },
       update: id != null ? { id, ...data } : {},
     });
   }

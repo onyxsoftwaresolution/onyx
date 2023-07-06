@@ -16,6 +16,7 @@ import { ClientOutDTO } from '@workspace/api/src/modules/client/dtos/client.out.
 import { SupplierOutDTO } from '@workspace/api/src/modules/supplier/dtos/supplier.out.dto';
 import { ContractOutDTO } from '@workspace/api/src/modules/contract/dtos/contract.out.dto';
 import { UpsertContractDTO } from '@workspace/api/src/modules/contract/dtos/contract.in.dto';
+import { ProductOutDTO } from '@workspace/api/src/modules/product/dtos/product.out.dto';
 
 type Options<T = never> = Partial<Pick<UseMutationOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -165,6 +166,25 @@ export class Mutations {
     } as UseMutationOptions<FetchResponse<SupplierOutDTO>, FetchError, Partial<SupplierOutDTO>>;
   }
 
+  static upsertProduct({ onError, onLoading, onSuccess }: Options<FetchResponse<ProductOutDTO>> = {}) {
+    return {
+      mutationKey: ['product'],
+      mutationFn: async (body) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/product`,
+          {
+            // @ts-expect-error a simple typescript mistake
+            body,
+            method: 'PUT',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<ProductOutDTO>, FetchError, Partial<ProductOutDTO>>;
+  }
+
   static deleteActivityTemplate({ onError, onLoading, onSuccess }: Options = {}) {
     return {
       mutationKey: [`/v1/activity-template/`],
@@ -231,6 +251,23 @@ export class Mutations {
       onSuccess,
       onError,
     } as UseMutationOptions<FetchResponse<SupplierOutDTO>, FetchError, number>;
+  }
+
+  static deleteProduct({ onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: [`/v1/product/`],
+      mutationFn: async (id) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/product/${id}`,
+          {
+            method: 'DELETE',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<ProductOutDTO>, FetchError, number>;
   }
 
   static upsertActivityTemplate({ onError, onLoading, onSuccess }: Options<FetchResponse<ActivityTemplateOutDTO>> = {}) {

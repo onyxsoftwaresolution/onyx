@@ -18,6 +18,8 @@ import ClientListScreen from '../client/ClientListScreen';
 import ContractListScreen from '../contract/ContractListScreen';
 import ContractUpsertScreen from '../contract/ContractUpsertScreen';
 import { useScreenOptions } from '../../useScreenOptions';
+import ProductListScreen from '../product/ProductListScreen';
+import ProductUpsertScreen from '../product/ProductUpsertScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -195,6 +197,34 @@ export default memo(function SettingsStackNavigator() {
               // @ts-expect-error missing type
               ? `Modifica contract ${screenProps.route.params?.username}`
               : 'Adauga contract',
+        })}
+      />
+      <Stack.Screen
+        name={Screens.APP_PRODUCT_LIST}
+        component={ProductListScreen}
+        options={(screenProps) => ({
+          ...options('Produse'),
+          headerRight: (headerProps) => (
+            <HeaderAddButton
+              {...screenProps}
+              {...headerProps}
+              screenName={Screens.APP_PRODUCT_UPSERT}
+              params={{}}
+            />
+          ),
+        })}
+      />
+      <Stack.Screen
+        name={Screens.APP_PRODUCT_UPSERT}
+        component={ProductUpsertScreen}
+        options={(screenProps) => ({
+          ...options(''),
+          title:
+            // @ts-expect-error missing type
+            screenProps.route.params?.username != null
+              // @ts-expect-error missing type
+              ? `Modifica produs ${screenProps.route.params?.username}`
+              : 'Adauga produs',
         })}
       />
     </Stack.Navigator>

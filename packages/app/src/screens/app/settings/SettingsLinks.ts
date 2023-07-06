@@ -3,6 +3,7 @@ import { MenuItem, MenuItemData } from "../../../components/MenuItem";
 import { AppTheme } from "../../../theme/type";
 import { Screens } from "../../Screens";
 
+
 export enum SettingLinks {
   EMPLOYEES,
   ACTIVITIES,
@@ -10,6 +11,7 @@ export enum SettingLinks {
   CLIENTS,
   SUPPLIERS,
   CONTRACTS,
+  PRODUCTS,
   LOGOUT,
   ABOUT,
 }
@@ -21,6 +23,7 @@ export const settingMenuItems: MenuItem[] = [
   { label: 'Clienti', value: SettingLinks.CLIENTS, roles: [Role.ADMIN] },
   { label: 'Furnizori', value: SettingLinks.SUPPLIERS, roles: [Role.ADMIN] },
   { label: 'Contracte', value: SettingLinks.CONTRACTS, roles: [Role.ADMIN] },
+  { label: 'Produse', value: SettingLinks.PRODUCTS, roles: [Role.ADMIN] },
   { label: 'Despre aplicatie', value: SettingLinks.ABOUT, roles: [], hide: true },
   { label: 'Logout', value: SettingLinks.LOGOUT, roles: [] },
 ];
@@ -127,6 +130,19 @@ export const getSettingItemData = (
         icon: 'file-contract',
         chevron: 'chevron-right',
         screen: Screens.APP_CONTRACT_LIST,
+      }
+
+    case SettingLinks.PRODUCTS:
+      return {
+        color: colors.inverseSurface,
+        onPress: () => {
+          navigation.navigate(Screens.APP_SETTINGS_NAVIGATOR, {
+            screen: Screens.APP_PRODUCT_LIST
+          });
+        },
+        icon: 'product-hunt',
+        chevron: 'chevron-right',
+        screen: Screens.APP_PRODUCT_LIST,
       }
 
     default:

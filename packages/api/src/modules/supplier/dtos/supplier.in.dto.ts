@@ -1,8 +1,10 @@
+import { IsNonPrimitiveArray } from '@common/validator/IsNonPrimitiveArray';
+import { UpsertProductDTO } from '@modules/product/dtos/product.in.dto';
 import { PickType } from '@nestjs/swagger';
-import { Prisma } from '@prisma/client';
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsInt, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
 
-class CreateSupplierInDTO implements Prisma.SupplierCreateInput {
+class CreateSupplierInDTO {
   @IsInt()
   @IsNotEmpty()
   id: number;
@@ -39,9 +41,11 @@ class CreateSupplierInDTO implements Prisma.SupplierCreateInput {
   @IsNotEmpty()
   email: string;
 
-  @IsString()
-  @IsNotEmpty()
-  products: string;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @IsNonPrimitiveArray()
+  @Type(() => UpsertProductDTO)
+  products: UpsertProductDTO[];
 }
 
 export class CreateSupplierDTO extends PickType(CreateSupplierInDTO, [

@@ -26,7 +26,10 @@ export class ReceiptProvider {
   async upsertReceipt({ id, ...data }: UpsertReceiptDTO) {
     return await this.prismaService.client.receipt.upsert({
       where: id != null ? { id } : { id: -1 },
-      create: data,
+      create: {
+        ...data,
+        contract: {},
+      },
       update: id != null ? { id, ...data } : {},
     });
   }

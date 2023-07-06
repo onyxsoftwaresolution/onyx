@@ -16,6 +16,7 @@ import { AppProvider } from './app.provider';
 import { ClientModule } from '@modules/client/client.module';
 import { SupplierModule } from '@modules/supplier/supplier.module';
 import { ContractModule } from '@modules/contract/contract.module';
+import { ProductModule } from '@modules/product/product.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ContractModule } from '@modules/contract/contract.module';
     ProjectModule,
     ReportModule,
     ContractModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [

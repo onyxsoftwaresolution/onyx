@@ -14,6 +14,7 @@ import { Role } from '@workspace/api/prisma/prisma';
 import { SupplierOutDTO } from '@workspace/api/src/modules/supplier/dtos/supplier.out.dto';
 import { ClientOutDTO } from '@workspace/api/src/modules/client/dtos/client.out.dto';
 import { ContractOutDTO } from '@workspace/api/src/modules/contract/dtos/contract.out.dto';
+import { ProductOutDTO } from '@workspace/api/src/modules/product/dtos/product.out.dto';
 
 type Options<T = never> = Partial<Pick<UseQueryOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -132,6 +133,28 @@ export class Queries {
     onSuccess,
     enabled,
   } as UseQueryOptions<FetchResponse<SupplierOutDTO>, FetchError>);
+
+  static getProducts = ({ enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
+    queryKey: ['products'],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/products`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<ProductOutDTO[]>, FetchError>);
+
+  static getProduct = (id: number, { enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<ProductOutDTO>> = {}) => ({
+    queryKey: [`product-${id}`],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/product/${id}`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<ProductOutDTO>, FetchError>);
 
   static getActivityTemplates = ({ enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
     queryKey: ['activity-templates'],
