@@ -85,10 +85,6 @@ export class UpsertProjectActivityDTO {
   @IsNotEmpty()
   description: string;
 
-  @IsString()
-  @IsNotEmpty()
-  material: string;
-
   @IsNumber()
   @IsNotEmpty()
   cost: number;

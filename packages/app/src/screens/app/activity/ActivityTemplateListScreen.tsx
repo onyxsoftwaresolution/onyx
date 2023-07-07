@@ -7,7 +7,6 @@ import { Queries } from '../../../requests/queries';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Screens } from '../../Screens';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
 import { useIsFocused } from '@react-navigation/native';
 import { useSnackbar } from '../../../components/hooks/useSnackbar';
@@ -59,7 +58,7 @@ export default memo<NativeStackScreenProps<any, string>>(
                 <View>
                   <Text style={[styles.itemText]}>{activity.description}</Text>
                   <Text style={[styles.itemSubText, { color: colors.error }]}>
-                    {activity.material}
+                    {activity.product?.name}
                   </Text>
                   <Text style={[styles.itemSubText, { color: colors.error }]}>
                     {activity.cost}

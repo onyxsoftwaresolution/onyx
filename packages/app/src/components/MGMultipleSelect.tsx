@@ -7,11 +7,12 @@ import { StyleProp, View, ViewStyle } from "react-native";
 import MGButton from "./MGButton";
 import { ScrollView } from "react-native-gesture-handler";
 import { FetchError, FetchResponse } from "../requests/request";
+import { useIsFocused } from "@react-navigation/native";
 
 type MultipleSelectProps<T extends { id?: number }> = PropsWithChildren & {
   data: T[];
   onSelect(data: T[] | undefined): void;
-  getter(): UseQueryOptions<FetchResponse<T[]>, FetchError>;
+  getter(config?: { enabled: boolean }): UseQueryOptions<FetchResponse<T[]>, FetchError>;
   getText(data: T | undefined): string;
   getId(data: T | undefined): any;
   label?: string;
@@ -24,6 +25,7 @@ type MultipleSelectProps<T extends { id?: number }> = PropsWithChildren & {
 export default memo(function MGMultipleSelect<T extends { id?: number }>(props: MultipleSelectProps<T>) {
   const type = props.type ?? "button";
 
+  const isFocused = useIsFocused();
   const dialog = useDialog<void>();
   const { colors } = useTheme<AppTheme>()
   const [selected, setSelected] = useState<{ [id: number]: boolean }>({});
@@ -33,7 +35,7 @@ export default memo(function MGMultipleSelect<T extends { id?: number }>(props: 
     setDisabled(disabled => props.data.reduce((p, n) => { p[props.getId(n)] = true; return p; }, {} as { [id: number]: boolean }))
   }, [props.getId, props.data, props]);
 
-  const datas = useQuery(props.getter());
+  const datas = useQuery(props.getter({ enabled: dialog.isVisible && isFocused }));
 
   const onSelect = useCallback((a: T) => {
     setSelected(selected => ({

@@ -128,7 +128,7 @@ const DailyPDF = React.memo<Props>((props) => {
                   </View>
                   <View style={[styles.cell, styles.cell2]}>
                     <Text style={styles.text}>
-                      {dar.dailyProjectActivity.material}
+                      {dar.dailyProjectActivity.activityTemplate?.product?.name}
                     </Text>
                   </View>
                   <View style={[styles.cell, styles.cell3]}>

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import {
-  UpdateSupplierDTO,
   UpsertSupplierDTO,
 } from './dtos/supplier.in.dto';
 import { SupplierOutDTO } from './dtos/supplier.out.dto';
 import { SupplierProvider } from './supplier.provider';
+import { ProductOutDTO } from '@modules/product/dtos/product.out.dto';
 
 @Injectable()
 export class SupplierService {
@@ -13,6 +13,11 @@ export class SupplierService {
   async listSuppliers() {
     const suppliers = await this.supplierProvider.listSuppliers();
     return suppliers.map((e) => new SupplierOutDTO(e));
+  }
+
+  async listSupplierProducts(id: number) {
+    const products = await this.supplierProvider.listSupplierProducts(id);
+    return products.map((e) => new ProductOutDTO(e));
   }
 
   async getSupplier(id: number): Promise<SupplierOutDTO> {

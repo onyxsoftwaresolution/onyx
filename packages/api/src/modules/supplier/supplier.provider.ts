@@ -12,7 +12,15 @@ export class SupplierProvider {
   async listSuppliers() {
     return await this.prismaService.client.supplier.findMany({
       where: { deleted: false },
+      include: {
+        products: true,
+      },
     });
+  }
+
+  async listSupplierProducts(id: number) {
+    const supplier = await this.getSupplier(id);
+    return supplier.products;
   }
 
   async getSupplier(id: number) {
@@ -21,16 +29,7 @@ export class SupplierProvider {
         id,
         deleted: false,
       },
-      select: {
-        id: true,
-        name: true,
-        address: true,
-        cif: true,
-        rc: true,
-        bankName: true,
-        bankIban: true,
-        email: true,
-        phoneNumber: true,
+      include: {
         products: true,
       },
     });

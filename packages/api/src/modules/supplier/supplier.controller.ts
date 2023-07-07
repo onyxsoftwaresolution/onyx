@@ -17,6 +17,12 @@ export class SupplierController {
     return await this.supplierService.getSupplier(id);
   }
 
+  @Get('supplier/:id/products')
+  @Roles(Role.ADMIN, Role.USER)
+  async listSupplierProducts(@Param('id') id: number) {
+    return await this.supplierService.listSupplierProducts(id);
+  }
+
   @Get('suppliers')
   @Roles(Role.ADMIN, Role.USER)
   async listSuppliers() {

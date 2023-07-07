@@ -10,8 +10,6 @@ export class ActivityTemplateOutDTO extends EntityOutDTO implements ActivityTemp
   @Expose()
   description: string;
   @Expose()
-  material: string;
-  @Expose()
   cost: number;
   @Expose()
   available: boolean;
@@ -34,5 +32,5 @@ export class ActivityTemplateOutDTO extends EntityOutDTO implements ActivityTemp
 
   @Expose()
   @Type(() => ProductOutDTO)
-  product: ProductOutDTO[];
+  product: ProductOutDTO;
 }

@@ -134,6 +134,17 @@ export class Queries {
     enabled,
   } as UseQueryOptions<FetchResponse<SupplierOutDTO>, FetchError>);
 
+  static getSupplierProducts = (id: number, { enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<ProductOutDTO[]>> = {}) => ({
+    queryKey: [`supplier-${id}-products`],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/supplier/${id}/products`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<ProductOutDTO[]>, FetchError>);
+
   static getProducts = ({ enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
     queryKey: ['products'],
     queryFn: async () => {

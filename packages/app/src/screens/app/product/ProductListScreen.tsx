@@ -55,7 +55,7 @@ export default memo<NativeStackScreenProps<any, string>>(
                 <View>
                   <Text style={[styles.itemText]}>{product.name}</Text>
                   <Text style={[styles.itemSubText, { color: colors.error }]}>
-                    <Text>{product?.suppliers?.map(s => s.name).join(', ')}</Text>
+                    {product?.suppliers?.map(s => s.name).join(', ')}
                   </Text>
                   <View style={[{ marginBottom: 10 }]} />
                 </View>

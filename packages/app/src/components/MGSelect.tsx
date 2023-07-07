@@ -9,11 +9,12 @@ import { ScrollView } from "react-native-gesture-handler";
 import { FetchError, FetchResponse } from "../requests/request";
 import MGTextInput from "./MGTextInput";
 import { isObject } from "class-validator";
+import { useIsFocused } from "@react-navigation/native";
 
 type SelectProps<T extends { id?: number }> = PropsWithChildren & {
   data: T | undefined;
   onSelect(data: T | undefined): void;
-  getter(): UseQueryOptions<FetchResponse<T[]>, FetchError>;
+  getter(config?: { enabled: boolean }): UseQueryOptions<FetchResponse<T[]>, FetchError>;
   text(data: T | undefined): string;
   label?: string;
   type?: "button" | "input";
@@ -25,11 +26,12 @@ type SelectProps<T extends { id?: number }> = PropsWithChildren & {
 export default memo(function MGSelect<T extends { id?: number }>(props: SelectProps<T>) {
   const type = props.type ?? "button";
 
+  const isFocused = useIsFocused();
   const dialog = useDialog<void>();
   const { colors } = useTheme<AppTheme>()
   const [data, setData] = useState<T>();
 
-  const datas = useQuery(props.getter());
+  const datas = useQuery(props.getter({ enabled: dialog.isVisible && isFocused }));
 
   const onSelect = useCallback((a: T) => {
     setData(a);

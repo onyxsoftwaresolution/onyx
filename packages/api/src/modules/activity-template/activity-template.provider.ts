@@ -11,6 +11,10 @@ export class ActivityTemplateProvider {
   async listActivityTemplates() {
     return await this.prismaService.client.activityTemplate.findMany({
       where: { deleted: false, available: true },
+      include: {
+        supplier: true,
+        product: true,
+      }
     });
   }
 
@@ -22,20 +26,36 @@ export class ActivityTemplateProvider {
       },
       include: {
         supplier: true,
+        product: true,
       }
     });
   }
 
-  async upsertActivityTemplate({ id, ...data }: UpsertActivityTemplateDTO) {
+  async upsertActivityTemplate({ id, description, cost, product, supplier }: UpsertActivityTemplateDTO) {
     return await this.prismaService.client.activityTemplate.upsert({
       where: id != null ? { id } : { id: -1 },
       create: {
-        ...data,
+        description,
+        cost,
         projectActivities: {},
-        supplier: {},
-        product: {},
+        supplier: {
+          connect: { id: supplier.id }
+        },
+        product: {
+          connect: { id: product.id }
+        },
       },
-      update: { id, ...data },
+      update: {
+        description,
+        cost,
+        projectActivities: {},
+        supplier: {
+          connect: { id: supplier.id }
+        },
+        product: {
+          connect: { id: product.id }
+        },
+      },
     });
   }
 

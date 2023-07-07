@@ -77,14 +77,11 @@ model Supplier {
   phoneNumber String
   email       String
 
-  contractId Int?
-  Contract   Contract? @relation(fields: [contractId], references: [id])
-
+  contracts        Contract[]
   products         Product[]
   costs            Cost[]
   activityTemplate ActivityTemplate[]
 
-  @@index([contractId])
   @@map("Suppliers")
 }
 
@@ -120,7 +117,6 @@ model ActivityTemplate {
   deleted  Boolean  @default(false)
 
   description String
-  material    String
   cost        Float
   available   Boolean @default(true)
 
@@ -207,8 +203,6 @@ model ProjectActivity {
   quantity    Float  @default(0)
   // copied from activity template
   description String
-  // copied from activity template
-  material    String
   // copied from activity template
   cost        Float
 

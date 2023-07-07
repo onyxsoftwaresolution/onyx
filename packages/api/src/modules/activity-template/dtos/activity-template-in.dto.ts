@@ -24,21 +24,15 @@ export class ActivityTemplateInDTO extends EntityInDTO {
   @IsNotEmpty({ message: message('Descrierea trebuie sa fie un sir de caractere!') })
   description: string;
 
-  @IsString({ message: message('Materialul trebuie sa fie un sir de caractere!') })
-  @IsNotEmpty({ message: message('Materialul trebuie sa fie un sir de caractere!') })
-  material: string;
-
   @IsNumber({}, { message: message('Costul trebuie sa fie un numar!') })
   @IsNotEmpty({ message: message('Costul trebuie sa fie un numar!') })
   cost: number;
   available: boolean;
 
-  @IsNumber({}, { message: message('Furnizorul nu este valid!') })
   @IsNotEmpty({ message: message('Furnizorul nu este valid!') })
   @Type(() => UpsertSupplierByIdDTO)
   supplier: UpsertSupplierByIdDTO;
 
-  @IsNumber({}, { message: message('Produsul nu este valid!') })
   @IsNotEmpty({ message: message('Produsul nu este valid!') })
   @Type(() => UpsertProductByIdDTO)
   product: UpsertProductByIdDTO;
@@ -47,7 +41,8 @@ export class ActivityTemplateInDTO extends EntityInDTO {
 export class CreateActivityTemplateDTO extends PickType(ActivityTemplateInDTO, [
   'description',
   'cost',
-  'material',
+  'product',
+  'supplier',
 ] as const) { }
 
 export class UpsertActivityTemplateDTO extends CreateActivityTemplateDTO {

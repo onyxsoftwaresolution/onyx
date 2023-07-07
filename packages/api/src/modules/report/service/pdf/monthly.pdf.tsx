@@ -98,7 +98,7 @@ const MonthlyPDF = React.memo<Props>((props) => {
                   </View>
                   <View style={[styles.cell, styles.cell2]}>
                     <Text style={styles.text}>
-                      {mar.monthlyProjectActivity.material}
+                      {mar.monthlyProjectActivity.activityTemplate?.product?.name}
                     </Text>
                   </View>
                   <View style={[styles.cell, styles.cell3]}>

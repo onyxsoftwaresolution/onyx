@@ -2,7 +2,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { UpsertActivityTemplateDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-in.dto';
-import { isNotEmpty, isString } from 'class-validator';
+import { isInt, isNotEmpty, isString } from 'class-validator';
 import { memo, useCallback, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
@@ -15,6 +15,9 @@ import ScreenContainer from '../../../components/ScreenContainer';
 import { useSnackbar } from '../../../components/hooks/useSnackbar';
 import { Mutations } from '../../../requests/mutations';
 import { Queries } from '../../../requests/queries';
+import MGSelect from '../../../components/MGSelect';
+import { SupplierOutDTO } from '@workspace/api/src/modules/supplier/dtos/supplier.out.dto';
+import { ProductOutDTO } from '@workspace/api/src/modules/product/dtos/product.out.dto';
 
 type Params = {
   id: number;
@@ -42,10 +45,9 @@ export default memo<NativeStackScreenProps<any, string>>(function ActivityTempla
     return ({
       id: data?.id ?? undefined,
       description: data?.description ?? '',
-      material: data?.material ?? '',
       cost: (data?.cost ?? '') as unknown as number,
-      supplierId: data?.supplier ?? '',
-      productId: data?.product ?? '',
+      supplier: data?.supplier ?? '',
+      product: data?.product ?? '',
     });
   }, [supplier.data?.data]);
 
@@ -110,44 +112,6 @@ export default memo<NativeStackScreenProps<any, string>>(function ActivityTempla
     );
   }, [control, errors.description, upserErrors]);
 
-  const renderMaterial = useCallback(() => {
-    return (
-      <Controller
-        control={control}
-        rules={{
-          required: {
-            value: true,
-            message: 'required message',
-          },
-          validate: (value) => {
-            return isString(value) && isNotEmpty(value);
-          },
-        }}
-        render={({ field: { onChange, value } }) => (
-          <View style={[{ flex: 1 }]}>
-            {errors.material != null ? (
-              <HelperText type="error">
-                {errors.material.message}
-              </HelperText>
-            ) : null}
-            {upserErrors?.['material']?.at(0) ? (
-              <HelperText type="error">
-                Error: {upserErrors?.['material']?.at(0)}
-              </HelperText>
-            ) : null}
-            <MGTextInput
-              value={value}
-              onChangeText={onChange}
-              style={{ marginBottom: 7 }}
-              label={'Material'}
-            />
-          </View>
-        )}
-        name="material"
-      />
-    );
-  }, [control, errors.material, upserErrors]);
-
   const renderCost = useCallback(() => {
     return (
       <Controller
@@ -185,16 +149,83 @@ export default memo<NativeStackScreenProps<any, string>>(function ActivityTempla
     );
   }, [control, errors.cost, upserErrors]);
 
+  const renderSupplier = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Area admin field is required!' },
+          validate: (value) => isInt(value.id) && isNotEmpty(value.id),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View style={[{ flex: 1 }]}>
+            {errors.supplier != null
+              ? <HelperText type="error">{errors.supplier.message?.toString()}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGSelect
+              title='Alege furnizor'
+              type='input'
+              getter={(conf) => Queries.getSuppliers(conf) as any}
+              text={(data: SupplierOutDTO) => data?.name ?? value?.name ?? ""}
+              data={value}
+              onSelect={(data: SupplierOutDTO) => { onChange(data) }}
+              label="Furnizor"
+              containerStyle={[{ marginBottom: 7 }]}
+            />
+          </View>
+        )}
+        name={`supplier`}
+      />
+    );
+  }, [control, errors.supplier, upsert?.error?.data.code, upsert?.isError]);
+
+  const renderProduct = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: 'Area admin field is required!' },
+          validate: (value) => isInt(value.id) && isNotEmpty(value.id),
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View style={[{ flex: 1 }]}>
+            {errors.product != null
+              ? <HelperText type="error">{errors.product.message?.toString()}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGSelect
+              title='Alege produs'
+              type='input'
+              getter={(conf) => Queries.getSupplierProducts(getValues().supplier?.id, conf) as any}
+              text={(data: ProductOutDTO) => data?.name ?? value?.name ?? ""}
+              data={value}
+              onSelect={(data: ProductOutDTO) => { onChange(data) }}
+              label="Produs"
+              containerStyle={[{ marginBottom: 7 }]}
+            />
+          </View>
+        )}
+        name={`product`}
+      />
+    );
+  }, [control, errors.product, getValues, upsert?.error?.data.code, upsert?.isError]);
+
   return (
     <ScreenContainer loading={upsert.isLoading} scrollContainerStyle={[styles.scrollContainer]}>
       <View style={[styles.view]}>
         <MGCard title="Detalii activitate">
-          {renderDescription()}
           <MGRow>
-            {renderMaterial()}
+            {renderDescription()}
             {renderCost()}
           </MGRow>
           <MGRow>
+            {renderSupplier()}
+            {renderProduct()}
           </MGRow>
         </MGCard>
         <MGButton

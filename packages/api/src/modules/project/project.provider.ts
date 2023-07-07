@@ -21,7 +21,7 @@ export class ProjectProvider {
         area, code, description, end, start, areaAdminId: areaAdmin.id, localAdminId: localAdmin.id,
         projectActivities: {
           createMany: {
-            data: createProjectActivities.map(({ description, cost, material, quantity, activityTemplateId }) => ({ description, cost, material, quantity, activityTemplateId })),
+            data: createProjectActivities.map(({ description, cost, quantity, activityTemplateId }) => ({ description, cost, quantity, activityTemplateId })),
           },
         }
       },
@@ -30,7 +30,7 @@ export class ProjectProvider {
         contractId: contract.id,
         projectActivities: {
           createMany: {
-            data: createProjectActivities.map(({ description, cost, material, quantity, activityTemplateId }) => ({ description, cost, material, quantity, activityTemplateId })),
+            data: createProjectActivities.map(({ description, cost, quantity, activityTemplateId }) => ({ description, cost, quantity, activityTemplateId })),
           },
           updateMany: [
             {
@@ -42,9 +42,9 @@ export class ProjectProvider {
               },
             },
           ],
-          update: updateProjectActivities.map(({ id, description, cost, material, quantity }) => ({
+          update: updateProjectActivities.map(({ id, description, cost, quantity }) => ({
             where: { id },
-            data: { description, cost, material, quantity },
+            data: { description, cost, quantity },
           })),
         },
       }

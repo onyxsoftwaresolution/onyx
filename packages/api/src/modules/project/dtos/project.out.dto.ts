@@ -77,9 +77,6 @@ export class ProjectActivityOutDTO extends EntityOutDTO implements ProjectActivi
   description: string;
 
   @Expose()
-  material: string;
-
-  @Expose()
   cost: number;
 
   created: Date;
