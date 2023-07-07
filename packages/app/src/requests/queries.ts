@@ -145,6 +145,17 @@ export class Queries {
     enabled,
   } as UseQueryOptions<FetchResponse<ProductOutDTO[]>, FetchError>);
 
+  static getActivityTemplate = (id: number, { enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<ActivityTemplateOutDTO>> = {}) => ({
+    queryKey: [`activity-template-${id}`],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/activity-template/${id}`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<ActivityTemplateOutDTO>, FetchError>);
+
   static getProduct = (id: number, { enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<ProductOutDTO>> = {}) => ({
     queryKey: [`product-${id}`],
     queryFn: async () => {

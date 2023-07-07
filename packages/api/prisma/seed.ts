@@ -4,7 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from '@modules/app/app.module';
 import { bootstrap } from '../src/main';
 import { UserService } from '@modules/user/user.service';
-import { ActivityTemplateService } from '@modules/activity-template/service/activity-template.service';
+import { ActivityTemplateService } from '@modules/activity-template/activity-template.service';
 import { EmployeeService } from '@modules/employee/employee.service';
 
 (async () => {
