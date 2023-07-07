@@ -120,10 +120,10 @@ model ActivityTemplate {
   cost        Float
   available   Boolean @default(true)
 
-  supplierId Int
-  supplier   Supplier @relation(fields: [supplierId], references: [id])
-  productId  Int
-  product    Product  @relation(fields: [productId], references: [id])
+  supplierId Int?
+  supplier   Supplier? @relation(fields: [supplierId], references: [id])
+  productId  Int?
+  product    Product?  @relation(fields: [productId], references: [id])
 
   projectActivities ProjectActivity[]
 

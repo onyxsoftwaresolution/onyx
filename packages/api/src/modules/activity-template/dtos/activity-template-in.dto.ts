@@ -29,11 +29,11 @@ export class ActivityTemplateInDTO extends EntityInDTO {
   cost: number;
   available: boolean;
 
-  @IsNotEmpty({ message: message('Furnizorul nu este valid!') })
+  @IsOptional()
   @Type(() => UpsertSupplierByIdDTO)
   supplier: UpsertSupplierByIdDTO;
 
-  @IsNotEmpty({ message: message('Produsul nu este valid!') })
+  @IsOptional()
   @Type(() => UpsertProductByIdDTO)
   product: UpsertProductByIdDTO;
 }

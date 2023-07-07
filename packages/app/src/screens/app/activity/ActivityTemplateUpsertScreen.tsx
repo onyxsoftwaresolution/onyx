@@ -46,8 +46,8 @@ export default memo<NativeStackScreenProps<any, string>>(function ActivityTempla
       id: data?.id ?? undefined,
       description: data?.description ?? '',
       cost: (data?.cost ?? '') as unknown as number,
-      supplier: data?.supplier ?? '',
-      product: data?.product ?? '',
+      supplier: data?.supplier ?? undefined,
+      product: data?.product ?? undefined,
     });
   }, [supplier.data?.data]);
 
@@ -100,6 +100,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ActivityTempla
               </HelperText>
             ) : null}
             <MGTextInput
+              autoFocus
               value={value}
               onChangeText={onChange}
               style={{ marginBottom: 7 }}
@@ -154,8 +155,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ActivityTempla
       <Controller
         control={control}
         rules={{
-          required: { value: true, message: 'Area admin field is required!' },
-          validate: (value) => isInt(value.id) && isNotEmpty(value.id),
+          required: false,
         }}
         render={({ field: { onChange, value } }) => (
           <View style={[{ flex: 1 }]}>
@@ -187,8 +187,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ActivityTempla
       <Controller
         control={control}
         rules={{
-          required: { value: true, message: 'Area admin field is required!' },
-          validate: (value) => isInt(value.id) && isNotEmpty(value.id),
+          required: false,
         }}
         render={({ field: { onChange, value } }) => (
           <View style={[{ flex: 1 }]}>

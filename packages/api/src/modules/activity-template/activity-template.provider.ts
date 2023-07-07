@@ -38,23 +38,15 @@ export class ActivityTemplateProvider {
         description,
         cost,
         projectActivities: {},
-        supplier: {
-          connect: { id: supplier.id }
-        },
-        product: {
-          connect: { id: product.id }
-        },
+        supplier: supplier?.id != null ? { connect: { id: supplier.id } } : {},
+        product: supplier?.id != null && product?.id != null ? { connect: { id: product.id } } : {},
       },
       update: {
         description,
         cost,
         projectActivities: {},
-        supplier: {
-          connect: { id: supplier.id }
-        },
-        product: {
-          connect: { id: product.id }
-        },
+        supplier: supplier?.id != null ? { connect: { id: supplier.id } } : {},
+        product: supplier?.id != null && product?.id != null ? { connect: { id: product.id } } : {},
       },
     });
   }
