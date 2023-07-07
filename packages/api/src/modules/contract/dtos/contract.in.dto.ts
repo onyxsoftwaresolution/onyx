@@ -1,7 +1,9 @@
+import { IsNonPrimitiveArray } from '@common/validator/IsNonPrimitiveArray';
 import { UpsertClientDTO } from '@modules/client/dtos/client.in.dto';
+import { UpsertSupplierByIdDTO } from '@modules/supplier/dtos/supplier.in.dto';
 import { PickType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDateString, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 class CreateContractInDTO {
   @IsInt()
@@ -38,6 +40,12 @@ class CreateContractInDTO {
 
   @Type(() => UpsertClientDTO)
   client: UpsertClientDTO;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @IsNonPrimitiveArray()
+  @Type(() => UpsertSupplierByIdDTO)
+  suppliers: UpsertSupplierByIdDTO[];
 }
 
 export class CreateContractDTO extends PickType(CreateContractInDTO, [
@@ -49,6 +57,7 @@ export class CreateContractDTO extends PickType(CreateContractInDTO, [
   'representative',
   'number',
   'client',
+  'suppliers',
 ] as const) { }
 
 export class UpdateContractDTO extends PickType(CreateContractInDTO, [

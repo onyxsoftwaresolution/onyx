@@ -61,7 +61,6 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
       localAdmin: data?.localAdmin ?? null,
       areaAdmin: data?.areaAdmin ?? null,
       contract: data?.contract ?? null,
-      suppliers: data?.suppliers ?? [],
     } as UpsertProjectDTO);
   }, [project.data?.data]);
 
@@ -75,11 +74,6 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
   } = useForm<UpsertProjectDTO>({
     mode: 'onChange',
     values,
-  });
-
-  const { fields: supplierFields, append: appendSupplier, remove: removeSupplier } = useFieldArray({
-    control,
-    name: "suppliers",
   });
 
   const { fields: activityFields, append: appendActivity, remove: removeActivity } = useFieldArray({
@@ -480,56 +474,6 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
     );
   }, [activityFields, renderActivityCardTitle, renderProjectActivityCost, renderProjectActivityDescription, renderProjectActivityMaterial, renderProjectActivityQuantity]);
 
-  const renderSupplierCardTitle = useCallback((index: number) => {
-    return (
-      <View style={[{ flexDirection: 'row', width: '100%' }]}>
-        <Text style={[{ flex: 1, alignItems: 'center', display: 'flex' }]}>{`Furnizor ${index + 1}`}</Text>
-        <TouchableRipple onPress={() => { removeSupplier(index) }}>
-          <Icon style={[{ padding: 10, color: colors.danger }]} name='times' />
-        </TouchableRipple>
-      </View>
-    );
-  }, [colors.danger, removeSupplier]);
-
-  const renderSupplierName = useCallback((index: number) => {
-    return (
-      <Controller
-        control={control}
-        rules={{
-          required: { value: true, message: 'Name field is required!' },
-          validate: (value) => isString(value) && isNotEmpty(value),
-        }}
-        render={({ field: { onChange, value } }) => (
-          <View style={[{ flex: 1 }]}>
-            {errors.suppliers?.[index]?.name != null
-              ? <HelperText type="error">{errors.suppliers?.[index]?.name?.message}</HelperText>
-              : null}
-            {upsert?.isError
-              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
-              : null}
-            <MGTextInput
-              disabled
-              value={value}
-              onChangeText={onChange}
-              containerStyle={[{ justifyContent: 'flex-end' }]}
-              style={{ marginBottom: 7 }}
-              label={'Nume furnizor'}
-            />
-          </View>
-        )}
-        name={`suppliers.${index}.name`}
-      />
-    );
-  }, [control, errors.suppliers, upsert?.error?.data.code, upsert?.isError]);
-
-  const renderSupplier = useCallback((index: number) => {
-    return (
-      <MGCard key={`${index}-${supplierFields[index].id}`} title={renderSupplierCardTitle(index)}>
-        {renderSupplierName(index)}
-      </MGCard>
-    );
-  }, [supplierFields, renderSupplierCardTitle, renderSupplierName]);
-
   const renderLocalAdmin = useCallback(() => {
     return (
       <Controller
@@ -633,37 +577,6 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
     );
   }, [appendActivity, control, enabled, errors.areaAdmin, upsert?.error?.data.code, upsert?.isError]);
 
-  const renderSupplierMultiselect = useCallback(() => {
-    return (
-      <Controller
-        control={control}
-        rules={{
-          required: { value: true, message: '!' },
-          validate: (value) => true,
-        }}
-        render={({ field: { onChange, value } }) => {
-          return (
-            <View style={[{ flex: 1 }]}>
-              <MGMultipleSelect
-                data={value ?? []}
-                title='Alege furnizor'
-                getter={() => Queries.getSuppliers({ enabled }) as any}
-                getText={(data: SupplierOutDTO) => data?.name ?? ''}
-                getId={(data: SupplierOutDTO) => data?.name ?? ''}
-                onSelect={(datas: SupplierOutDTO[]) => {
-                  appendSupplier(datas.map(data => ({ id: data.id, name: data.name })));
-                }}
-                label="Adauga furnizor"
-                containerStyle={[{ marginTop: 10, marginHorizontal: 10 }]}
-              />
-            </View>
-          );
-        }}
-        name={`suppliers`}
-      />
-    );
-  }, [appendSupplier, control, enabled]);
-
   return (
     <ScreenContainer
       loading={(project.isLoading && params.id != null) || upsert.isLoading}
@@ -692,8 +605,6 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
         <View>
           {activityFields.map((_, index) => renderProjectActivity(index))}
           {renderActivityMultiselect()}
-          {supplierFields.map((_, index) => renderSupplier(index))}
-          {renderSupplierMultiselect()}
           {/* <MGSelect
             title='Alege activitate'
             getter={() => Queries.getActivityTemplates({ enabled }) as any}

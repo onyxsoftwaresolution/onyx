@@ -1,19 +1,34 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { UpsertContractDTO } from './dtos/contract.in.dto';
+import { Entity, getEntityConnections } from '@common/EntityConnections';
 
 @Injectable()
 export class ContractProvider {
   constructor(private prismaService: PrismaService) { }
 
-  async upsertContract({ id, end, start, client, cost, details, location, number, representative }: UpsertContractDTO): ReturnType<ContractProvider["getContract"]> {
+  async upsertContract({ id, end, start, client, cost, details, location, number, representative, suppliers }: UpsertContractDTO): ReturnType<ContractProvider["getContract"]> {
+    const currentContract = await this.getContract(id);
+
+    const {
+      connect: supplierConnect,
+      disconnect: supplierDisconnect
+    } = getEntityConnections((currentContract?.suppliers ?? []) as unknown as Entity[], suppliers as unknown as Entity[]);
+
     await this.prismaService.client.contract.upsert({
       where: { id: id ?? -1 },
       create: {
         end, start, clientId: client.id, cost, details, location, number, representative,
+        suppliers: {
+          connect: supplierConnect,
+        },
       },
       update: {
         end, start, clientId: client.id, cost, details, location, number, representative,
+        suppliers: {
+          connect: supplierConnect,
+          disconnect: supplierDisconnect,
+        },
       }
     });
 
@@ -36,18 +51,9 @@ export class ContractProvider {
       },
       select: {
         id: true,
-        client: {
-          select: {
-            id: true,
-            address: true,
-            bankIban: true,
-            bankName: true,
-            cif: true,
-            email: true,
-            name: true,
-            phoneNumber: true,
-            rc: true,
-          }
+        client: true,
+        suppliers: {
+          where: { deleted: false },
         },
         clientId: true,
         cost: true,

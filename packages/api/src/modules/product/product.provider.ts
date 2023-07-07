@@ -11,6 +11,7 @@ export class ProductProvider {
   async listProducts() {
     return await this.prismaService.client.product.findMany({
       where: { deleted: false },
+      include: { suppliers: true }
     });
   }
 

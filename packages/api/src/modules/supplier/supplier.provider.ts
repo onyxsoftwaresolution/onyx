@@ -1,9 +1,9 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import {
-  UpdateSupplierDTO,
   UpsertSupplierDTO,
 } from './dtos/supplier.in.dto';
+import { Entity, getEntityConnections } from '@common/EntityConnections';
 
 @Injectable()
 export class SupplierProvider {
@@ -37,27 +37,28 @@ export class SupplierProvider {
   }
 
   async upsertSupplier({ id, ...data }: UpsertSupplierDTO) {
-    const currentProject = await this.getSupplier(id);
+    const currentSupplier = await this.getSupplier(id);
 
-    const currentProducts = currentProject.products;
-    const connectProducts = data.products;
-    const connectProductIds = connectProducts.map(p => p.id);
-    const disconnectProducts = currentProducts.filter(p => !connectProductIds.includes(p.id));
+    const {
+      connect: productConnect,
+      disconnect: productDisconnect
+    } = getEntityConnections((currentSupplier?.products ?? []) as unknown as Entity[], data.products as unknown as Entity[]);
+
 
     return await this.prismaService.client.supplier.upsert({
       where: id != null ? { id } : { id: -1 },
       create: {
         ...data,
         products: {
-          connect: connectProducts.map(p => ({ id: p.id })),
+          connect: productConnect.map(p => ({ id: p.id })),
         }
       },
       update: {
         id,
         ...data,
         products: {
-          connect: connectProducts.map(p => ({ id: p.id })),
-          disconnect: disconnectProducts.map(p => ({ id: p.id })),
+          connect: productConnect.map(p => ({ id: p.id })),
+          disconnect: productDisconnect.map(p => ({ id: p.id })),
         },
       },
     });

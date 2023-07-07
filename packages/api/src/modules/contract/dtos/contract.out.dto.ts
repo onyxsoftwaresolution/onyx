@@ -1,5 +1,6 @@
 import { EntityOutDTO } from '@common/dtos/entity.out.dto';
 import { ClientOutDTO } from '@modules/client/dtos/client.out.dto';
+import { SupplierOutDTO } from '@modules/supplier/dtos/supplier.out.dto';
 import { Contract } from '@prisma/client';
 import { Expose, Type } from 'class-transformer';
 
@@ -41,4 +42,8 @@ export class ContractOutDTO extends EntityOutDTO implements Contract {
 
   @Expose()
   active: boolean;
+
+  @Expose()
+  @Type(() => SupplierOutDTO)
+  suppliers: SupplierOutDTO[];
 }

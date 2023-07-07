@@ -1,6 +1,7 @@
 import { EntityOutDTO } from '@common/dtos/entity.out.dto';
 import { IsNonPrimitiveArray } from '@common/validator/IsNonPrimitiveArray';
 import { ContractOutDTO } from '@modules/contract/dtos/contract.out.dto';
+import { ProductOutDTO } from '@modules/product/dtos/product.out.dto';
 import { ProjectOutDTO } from '@modules/project/dtos/project.out.dto';
 import { Supplier } from '@prisma/client';
 import { Expose, Type } from 'class-transformer';
@@ -39,7 +40,11 @@ export class SupplierOutDTO extends EntityOutDTO implements Supplier {
   email: string;
 
   @Expose()
-  products: string;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @IsNonPrimitiveArray()
+  @Type(() => ProductOutDTO)
+  products: ProductOutDTO[];
 
   @Expose()
   @IsArray()

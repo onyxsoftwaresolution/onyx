@@ -4,9 +4,9 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { UpsertSupplierDTO } from '@workspace/api/src/modules/supplier/dtos/supplier.in.dto';
 import { isNotEmpty, isString } from 'class-validator';
 import { memo, useCallback, useMemo } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
-import { HelperText, useTheme } from 'react-native-paper';
+import { HelperText, useTheme, Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import MGButton from '../../../components/MGButton';
 import MGCard from '../../../components/MGCard';
@@ -17,6 +17,8 @@ import { useSnackbar } from '../../../components/hooks/useSnackbar';
 import { Mutations } from '../../../requests/mutations';
 import { Queries } from '../../../requests/queries';
 import { AppTheme } from '../../../theme/type';
+import MGMultipleSelect from '../../../components/MGMultipleSelect';
+import { ProductOutDTO } from '@workspace/api/src/modules/product/dtos/product.out.dto';
 
 type Params = {
   id: number;
@@ -51,7 +53,7 @@ export default memo<NativeStackScreenProps<any, string>>(function SupplierUpsert
       bankIban: data?.bankIban ?? '',
       phoneNumber: data?.phoneNumber ?? '',
       email: data?.email ?? '',
-      products: data?.products ?? '',
+      products: data?.products ?? [],
     });
   }, [supplier.data?.data]);
 
@@ -65,6 +67,11 @@ export default memo<NativeStackScreenProps<any, string>>(function SupplierUpsert
   } = useForm<UpsertSupplierDTO>({
     mode: 'onChange',
     values,
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "products",
   });
 
   const submit = useCallback(
@@ -318,35 +325,86 @@ export default memo<NativeStackScreenProps<any, string>>(function SupplierUpsert
     );
   }, [control, errors.email, upsert?.error?.data.code, upsert?.isError]);
 
-  const renderProducts = useCallback(() => {
+  const renderProductCardTitle = useCallback((index: number) => {
+    return (
+      <View style={[{ flexDirection: 'row', width: '100%' }]}>
+        <Text style={[{ flex: 1, alignItems: 'center', display: 'flex' }]}>{`Furnizor ${index + 1}`}</Text>
+        <TouchableRipple onPress={() => { remove(index) }}>
+          <Icon style={[{ padding: 10, color: colors.danger }]} name='times' />
+        </TouchableRipple>
+      </View>
+    );
+  }, [colors.danger, remove]);
+
+  const renderProductName = useCallback((index: number) => {
     return (
       <Controller
         control={control}
         rules={{
-          required: { value: true, message: 'Products field is required!' },
+          required: { value: true, message: 'Name field is required!' },
           validate: (value) => isString(value) && isNotEmpty(value),
         }}
         render={({ field: { onChange, value } }) => (
           <View style={[{ flex: 1 }]}>
-            {errors.products != null
-              ? <HelperText type="error">{errors.products.message}</HelperText>
+            {errors.products?.[index]?.name != null
+              ? <HelperText type="error">{errors.products?.[index]?.name?.message}</HelperText>
               : null}
             {upsert?.isError
               ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
               : null}
             <MGTextInput
+              disabled
               value={value}
               onChangeText={onChange}
               containerStyle={[{ justifyContent: 'flex-end' }]}
               style={{ marginBottom: 7 }}
-              label={'Produse'}
+              label={'Nume furnizor'}
             />
           </View>
         )}
-        name="products"
+        name={`products.${index}.name`}
       />
     );
   }, [control, errors.products, upsert?.error?.data.code, upsert?.isError]);
+
+  const renderProduct = useCallback((index: number) => {
+    return (
+      <MGCard key={`${index}-${fields[index].id}`} title={renderProductCardTitle(index)}>
+        {renderProductName(index)}
+      </MGCard>
+    );
+  }, [fields, renderProductCardTitle, renderProductName]);
+
+  const renderProductMultiselect = useCallback(() => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true, message: '!' },
+          validate: (value) => true,
+        }}
+        render={({ field: { onChange, value } }) => {
+          return (
+            <View style={[{ flex: 1 }]}>
+              <MGMultipleSelect
+                data={value ?? []}
+                title='Alege produs'
+                getter={() => Queries.getProducts({ enabled }) as any}
+                getText={(data: ProductOutDTO) => data?.name ?? ''}
+                getId={(data: ProductOutDTO) => data?.name ?? ''}
+                onSelect={(datas: ProductOutDTO[]) => {
+                  append(datas.map(data => ({ id: data.id, name: data.name })));
+                }}
+                label="Adauga produs"
+                containerStyle={[{ marginTop: 10, marginHorizontal: 10 }]}
+              />
+            </View>
+          );
+        }}
+        name={`products`}
+      />
+    );
+  }, [append, control, enabled]);
 
   return (
     <ScreenContainer
@@ -370,8 +428,9 @@ export default memo<NativeStackScreenProps<any, string>>(function SupplierUpsert
             {renderPhoneNumber()}
             {renderEmail()}
           </MGRow>
-          {renderProducts()}
         </MGCard>
+        {fields.map((_, index) => renderProduct(index))}
+        {renderProductMultiselect()}
         <MGButton
           icon="send"
           label={'Salveaza'}
