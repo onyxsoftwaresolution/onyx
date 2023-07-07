@@ -38,3 +38,8 @@ export class UpsertProductDTO extends CreateProductDTO {
   @IsOptional()
   id?: number;
 }
+export class UpsertProductByIdDTO {
+  @IsInt()
+  @IsOptional()
+  id?: number;
+}

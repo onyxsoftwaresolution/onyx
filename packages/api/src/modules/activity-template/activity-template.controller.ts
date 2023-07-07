@@ -1,9 +1,8 @@
 import { Roles } from '@modules/auth/rbac/role.decorator';
 import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
 import { Role } from '@prisma/client';
-import { UpsertActivityTemplateDTO } from '../dtos/activity-template-in.dto';
-import { ActivityTemplateOutDTO } from '../dtos/activity-template-out.dto';
-import { ActivityTemplateService } from '../service/activity-template.service';
+import { UpsertActivityTemplateDTO } from './dtos/activity-template-in.dto';
+import { ActivityTemplateService } from './activity-template.service';
 
 @Controller({
   version: '1',
@@ -12,25 +11,27 @@ import { ActivityTemplateService } from '../service/activity-template.service';
 export class ActivityTemplateController {
   constructor(private activityService: ActivityTemplateService) { }
 
+  @Get('activity-template/:id')
+  @Roles(Role.ADMIN)
+  async getActivityTemplate(@Param('id') id: number) {
+    return await this.activityService.getActivityTemplate(id);
+  }
+
   @Get('activity-templates')
   @Roles(Role.ADMIN, Role.USER)
-  async listActivities(): Promise<ActivityTemplateOutDTO[]> {
+  async listActivityTemplates() {
     return await this.activityService.listActivityTemplates();
   }
 
   @Put('activity-template')
   @Roles(Role.ADMIN)
-  async upsertActivity(
-    @Body() activity: UpsertActivityTemplateDTO,
-  ): Promise<ActivityTemplateOutDTO> {
-    return await this.activityService.upsertActivityTemplate(activity);
+  async upsertActivityTemplate(@Body() data: UpsertActivityTemplateDTO) {
+    return await this.activityService.upsertActivityTemplate(data);
   }
 
   @Delete('activity-template/:id')
   @Roles(Role.ADMIN)
-  async deleteActivity(
-    @Param('id') id: number,
-  ): Promise<ActivityTemplateOutDTO> {
+  async deleteActivityTemplate(@Param('id') id: number) {
     return await this.activityService.deleteActivityTemplate(id);
   }
 }

@@ -44,7 +44,6 @@ export class SupplierProvider {
       disconnect: productDisconnect
     } = getEntityConnections((currentSupplier?.products ?? []) as unknown as Entity[], data.products as unknown as Entity[]);
 
-
     return await this.prismaService.client.supplier.upsert({
       where: id != null ? { id } : { id: -1 },
       create: {

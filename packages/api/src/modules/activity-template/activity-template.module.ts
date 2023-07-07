@@ -1,8 +1,8 @@
 import { PrismaModule } from '@modules/prisma/prisma.module';
 import { Module } from '@nestjs/common';
-import { ActivityTemplateController } from './controller/activity-template.controller';
-import { ActivityTemplateProvider } from './provider/activity-template.provider';
-import { ActivityTemplateService } from './service/activity-template.service';
+import { ActivityTemplateController } from './activity-template.controller';
+import { ActivityTemplateProvider } from './activity-template.provider';
+import { ActivityTemplateService } from './activity-template.service';
 
 @Module({
   imports: [PrismaModule],
@@ -10,4 +10,4 @@ import { ActivityTemplateService } from './service/activity-template.service';
   controllers: [ActivityTemplateController],
   exports: [ActivityTemplateService],
 })
-export class ActivityTemplateModule {}
+export class ActivityTemplateModule { }

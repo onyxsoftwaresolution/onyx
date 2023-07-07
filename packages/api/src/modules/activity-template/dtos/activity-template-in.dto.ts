@@ -9,6 +9,9 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { PickType } from '@nestjs/swagger';
+import { UpsertSupplierByIdDTO } from '@modules/supplier/dtos/supplier.in.dto';
+import { UpsertProductByIdDTO } from '@modules/product/dtos/product.in.dto';
+import { Type } from 'class-transformer';
 
 function message(value: string) {
   return (validationArguments: ValidationArguments) => {
@@ -16,7 +19,7 @@ function message(value: string) {
   };
 }
 
-export class ActivityTemplateInDTO extends EntityInDTO implements ActivityTemplate {
+export class ActivityTemplateInDTO extends EntityInDTO {
   @IsString({ message: message('Descrierea trebuie sa fie un sir de caractere!') })
   @IsNotEmpty({ message: message('Descrierea trebuie sa fie un sir de caractere!') })
   description: string;
@@ -32,11 +35,13 @@ export class ActivityTemplateInDTO extends EntityInDTO implements ActivityTempla
 
   @IsNumber({}, { message: message('Furnizorul nu este valid!') })
   @IsNotEmpty({ message: message('Furnizorul nu este valid!') })
-  supplierId: number;
+  @Type(() => UpsertSupplierByIdDTO)
+  supplier: UpsertSupplierByIdDTO;
 
   @IsNumber({}, { message: message('Produsul nu este valid!') })
   @IsNotEmpty({ message: message('Produsul nu este valid!') })
-  productId: number;
+  @Type(() => UpsertProductByIdDTO)
+  product: UpsertProductByIdDTO;
 }
 
 export class CreateActivityTemplateDTO extends PickType(ActivityTemplateInDTO, [
