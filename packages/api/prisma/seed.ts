@@ -1,18 +1,16 @@
-import { Role } from '@prisma/client';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from '@modules/app/app.module';
 import { bootstrap } from '../src/main';
 import { UserService } from '@modules/user/user.service';
-import { ActivityTemplateService } from '@modules/activity-template/activity-template.service';
-import { EmployeeService } from '@modules/employee/employee.service';
+import { Role } from '@prisma/client';
 
 (async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   await bootstrap(app);
 
-  // await seedUsers(app);
+  await seedUsers(app);
 
   // await seedActivityTemplates(app);
 
@@ -25,23 +23,23 @@ import { EmployeeService } from '@modules/employee/employee.service';
   process.exit(0);
 })();
 
-// const seedUsers = async (app: NestExpressApplication) => {
-//   const userService = app.get<UserService>(UserService);
+const seedUsers = async (app: NestExpressApplication) => {
+  const userService = app.get<UserService>(UserService);
 
-//   const cristina = await userService.upsertInitialUser({
-//     username: 'cristina',
-//     password: 'admin',
-//     confirmPassword: 'admin',
-//     role: Role.ADMIN,
-//   });
-//   const tase = await userService.upsertInitialUser({
-//     username: 'tase',
-//     password: 'admin',
-//     confirmPassword: 'admin',
-//     role: Role.USER,
-//   });
-//   console.log('seeded users:', { cristina, tase });
-// };
+  const cristina = await userService.upsertInitialUser({
+    username: 'cristina',
+    password: 'admin',
+    confirmPassword: 'admin',
+    role: Role.ADMIN,
+  });
+  const tase = await userService.upsertInitialUser({
+    username: 'tase',
+    password: 'admin',
+    confirmPassword: 'admin',
+    role: Role.USER,
+  });
+  console.log('seeded users:', { cristina, tase });
+};
 
 // const seedActivityTemplates = async (app: NestExpressApplication) => {
 //   const activityTemplateService = app.get<ActivityTemplateService>(

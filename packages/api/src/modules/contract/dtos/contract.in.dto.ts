@@ -40,12 +40,6 @@ class CreateContractInDTO {
 
   @Type(() => UpsertClientDTO)
   client: UpsertClientDTO;
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @IsNonPrimitiveArray()
-  @Type(() => UpsertSupplierByIdDTO)
-  suppliers: UpsertSupplierByIdDTO[];
 }
 
 export class CreateContractDTO extends PickType(CreateContractInDTO, [
@@ -57,11 +51,9 @@ export class CreateContractDTO extends PickType(CreateContractInDTO, [
   'representative',
   'number',
   'client',
-  'suppliers',
 ] as const) { }
 
 export class UpdateContractDTO extends PickType(CreateContractInDTO, [
-  'id',
   'cost',
   'details',
   'start',
@@ -69,6 +61,7 @@ export class UpdateContractDTO extends PickType(CreateContractInDTO, [
   'location',
   'representative',
   'number',
+  'client',
 ] as const) { }
 
 export class UpsertContractDTO extends CreateContractDTO {

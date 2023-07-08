@@ -1,29 +1,27 @@
 import { useIsFocused } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { ClientOutDTO } from '@workspace/api/src/modules/client/dtos/client.out.dto';
 import { UpsertContractDTO } from '@workspace/api/src/modules/contract/dtos/contract.in.dto';
 import { isDate, isDateString, isInt, isNotEmpty, isNumber, isString } from 'class-validator';
+import dayjs from 'dayjs';
 import { memo, useCallback, useMemo } from 'react';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
-import { HelperText, TouchableRipple, useTheme, Text } from 'react-native-paper';
+import { HelperText, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import MGButton from '../../../components/MGButton';
 import MGCard from '../../../components/MGCard';
+import MGDatePicker from '../../../components/MGDatePicker';
 import MGRow from '../../../components/MGRow';
+import MGSelect from '../../../components/MGSelect';
 import MGTextInput from '../../../components/MGTextInput';
 import ScreenContainer from '../../../components/ScreenContainer';
 import { useSnackbar } from '../../../components/hooks/useSnackbar';
+import { dayOrNull } from '../../../dayOrNull';
 import { Mutations } from '../../../requests/mutations';
 import { Queries } from '../../../requests/queries';
 import { AppTheme } from '../../../theme/type';
-import MGSelect from '../../../components/MGSelect';
-import { ClientOutDTO } from '@workspace/api/src/modules/client/dtos/client.out.dto';
-import MGDatePicker from '../../../components/MGDatePicker';
-import { dayOrNull } from '../../../dayOrNull';
-import dayjs from 'dayjs';
-import MGMultipleSelect from '../../../components/MGMultipleSelect';
-import { SupplierOutDTO } from '@workspace/api/src/modules/supplier/dtos/supplier.out.dto';
 
 type Params = {
   id: number;
@@ -58,7 +56,6 @@ export default memo<NativeStackScreenProps<any, string>>(function ContractUpsert
       location: data?.location ?? '',
       number: data?.number ?? '',
       representative: data?.representative ?? '',
-      suppliers: data?.suppliers ?? [],
     });
   }, [contract.data?.data]);
 
@@ -72,11 +69,6 @@ export default memo<NativeStackScreenProps<any, string>>(function ContractUpsert
   } = useForm<UpsertContractDTO>({
     mode: 'onChange',
     values,
-  });
-
-  const { fields: supplierFields, append: appendSupplier, remove: removeSupplier } = useFieldArray({
-    control,
-    name: "suppliers",
   });
 
   const submit = useCallback(
@@ -333,87 +325,6 @@ export default memo<NativeStackScreenProps<any, string>>(function ContractUpsert
     );
   }, [control, enabled, errors.client, upsert?.error?.data.code, upsert?.isError]);
 
-  const renderSupplierCardTitle = useCallback((index: number) => {
-    return (
-      <View style={[{ flexDirection: 'row', width: '100%' }]}>
-        <Text style={[{ flex: 1, alignItems: 'center', display: 'flex' }]}>{`Furnizor ${index + 1}`}</Text>
-        <TouchableRipple onPress={() => { removeSupplier(index) }}>
-          <Icon style={[{ padding: 10, color: colors.danger }]} name='times' />
-        </TouchableRipple>
-      </View>
-    );
-  }, [colors.danger, removeSupplier]);
-
-  const renderSupplierName = useCallback((index: number) => {
-    return (
-      <Controller
-        control={control}
-        rules={{
-          required: { value: true, message: 'Name field is required!' },
-          validate: (value) => isString(value) && isNotEmpty(value),
-        }}
-        render={({ field: { onChange, value } }) => (
-          <View style={[{ flex: 1 }]}>
-            {errors.suppliers?.[index]?.name != null
-              ? <HelperText type="error">{errors.suppliers?.[index]?.name?.message}</HelperText>
-              : null}
-            {upsert?.isError
-              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
-              : null}
-            <MGTextInput
-              disabled
-              value={value}
-              onChangeText={onChange}
-              containerStyle={[{ justifyContent: 'flex-end' }]}
-              style={{ marginBottom: 7 }}
-              label={'Nume furnizor'}
-            />
-          </View>
-        )}
-        name={`suppliers.${index}.name`}
-      />
-    );
-  }, [control, errors.suppliers, upsert?.error?.data.code, upsert?.isError]);
-
-  const renderSupplier = useCallback((index: number) => {
-    return (
-      <MGCard key={`${index}-${supplierFields[index].id}`} title={renderSupplierCardTitle(index)}>
-        {renderSupplierName(index)}
-      </MGCard>
-    );
-  }, [supplierFields, renderSupplierCardTitle, renderSupplierName]);
-
-  const renderSupplierMultiselect = useCallback(() => {
-    return (
-      <Controller
-        control={control}
-        rules={{
-          required: { value: true, message: '!' },
-          validate: (value) => true,
-        }}
-        render={({ field: { onChange, value } }) => {
-          return (
-            <View style={[{ flex: 1 }]}>
-              <MGMultipleSelect
-                data={value ?? []}
-                title='Alege furnizor'
-                getter={() => Queries.getSuppliers({ enabled }) as any}
-                getText={(data: SupplierOutDTO) => data?.name ?? ''}
-                getId={(data: SupplierOutDTO) => data?.name ?? ''}
-                onSelect={(datas: SupplierOutDTO[]) => {
-                  appendSupplier(datas.map(data => ({ id: data.id, name: data.name })));
-                }}
-                label="Adauga furnizor"
-                containerStyle={[{ marginTop: 10, marginHorizontal: 10 }]}
-              />
-            </View>
-          );
-        }}
-        name={`suppliers`}
-      />
-    );
-  }, [appendSupplier, control, enabled]);
-
   return (
     <ScreenContainer
       loading={(contract.isLoading && params.id != null) || upsert.isLoading}
@@ -437,8 +348,8 @@ export default memo<NativeStackScreenProps<any, string>>(function ContractUpsert
           {renderLocation()}
         </MGCard>
         <View>
-          {supplierFields.map((_, index) => renderSupplier(index))}
-          {renderSupplierMultiselect()}
+          {/* {supplierFields.map((_, index) => renderSupplier(index))} */}
+          {/* {renderSupplierMultiselect()} */}
         </View>
         <MGButton
           icon="send"

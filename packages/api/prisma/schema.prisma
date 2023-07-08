@@ -77,7 +77,6 @@ model Supplier {
   phoneNumber String
   email       String
 
-  contracts        Contract[]
   products         Product[]
   activityTemplate ActivityTemplate[]
 
@@ -99,13 +98,13 @@ model Contract {
   representative String
   active         Boolean  @default(true)
 
-  clientId Int    @unique
+  clientId Int
   client   Client @relation(fields: [clientId], references: [id])
 
-  suppliers Supplier[]
-  projects  Project[]
-  receipt   Receipt[]
+  projects Project[]
+  receipt  Receipt[]
 
+  @@index([clientId])
   @@map("Contracts")
 }
 

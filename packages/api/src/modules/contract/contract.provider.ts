@@ -1,38 +1,30 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { UpsertContractDTO } from './dtos/contract.in.dto';
-import { Entity, getEntityConnections } from '@common/EntityConnections';
 
 @Injectable()
 export class ContractProvider {
   constructor(private prismaService: PrismaService) { }
 
-  async upsertContract({ id, end, start, client, cost, details, location, number, representative, suppliers }: UpsertContractDTO): ReturnType<ContractProvider["getContract"]> {
-    const currentContract = await this.getContract(id);
-
-    const {
-      connect: supplierConnect,
-      disconnect: supplierDisconnect
-    } = getEntityConnections((currentContract?.suppliers ?? []) as unknown as Entity[], suppliers as unknown as Entity[]);
-
-    await this.prismaService.client.contract.upsert({
+  async upsertContract({ id, end, start, client, cost, details, location, number, representative }: UpsertContractDTO): ReturnType<ContractProvider["getContract"]> {
+    return await this.prismaService.client.contract.upsert({
       where: { id: id ?? -1 },
       create: {
-        end, start, clientId: client.id, cost, details, location, number, representative,
-        suppliers: {
-          connect: supplierConnect,
-        },
+        end, start, cost, details, location, number, representative,
+        client: {
+          connect: { id: client.id }
+        }
       },
       update: {
-        end, start, clientId: client.id, cost, details, location, number, representative,
-        suppliers: {
-          connect: supplierConnect,
-          disconnect: supplierDisconnect,
-        },
+        end, start, cost, details, location, number, representative,
+        client: {
+          connect: { id: client.id }
+        }
+      },
+      include: {
+        client: true,
       }
     });
-
-    return await this.getContract(id);
   }
 
   async listContracts() {
@@ -49,20 +41,8 @@ export class ContractProvider {
         id,
         deleted: false,
       },
-      select: {
-        id: true,
+      include: {
         client: true,
-        suppliers: {
-          where: { deleted: false },
-        },
-        clientId: true,
-        cost: true,
-        details: true,
-        location: true,
-        number: true,
-        representative: true,
-        start: true,
-        end: true,
       },
     });
   }
