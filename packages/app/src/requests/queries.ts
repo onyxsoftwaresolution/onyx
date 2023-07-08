@@ -1,7 +1,7 @@
 import { UseQueryOptions } from '@tanstack/react-query';
 import { Store } from '../storage/Store';
 import { FetchError, FetchResponse, request } from './request';
-import { ProjectOutDTO } from '@workspace/api/src/modules/project/dtos/project.out.dto';
+import { ProjectActivityOutDTO, ProjectOutDTO } from '@workspace/api/src/modules/project/dtos/project.out.dto';
 import { ActivityTemplateOutDTO } from "@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto"
 import { EmployeeOutDTO } from "@workspace/api/src/modules/employee/dtos/employee.out.dto"
 import { ReportListItemOutDTO } from '@workspace/api/src/modules/report/dtos/report-out.dto';
@@ -15,6 +15,7 @@ import { SupplierOutDTO } from '@workspace/api/src/modules/supplier/dtos/supplie
 import { ClientOutDTO } from '@workspace/api/src/modules/client/dtos/client.out.dto';
 import { ContractOutDTO } from '@workspace/api/src/modules/contract/dtos/contract.out.dto';
 import { ProductOutDTO } from '@workspace/api/src/modules/product/dtos/product.out.dto';
+import { CostOutDTO } from '@workspace/api/src/modules/cost/dtos/cost.out.dto';
 
 type Options<T = never> = Partial<Pick<UseQueryOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -112,6 +113,28 @@ export class Queries {
     enabled,
   } as UseQueryOptions<FetchResponse<ClientOutDTO>, FetchError>);
 
+  static getCosts = (activityId: number, { enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
+    queryKey: [`/v1/project-activity/${activityId}/costs`],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/project-activity/${activityId}/costs`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<CostOutDTO[]>, FetchError>);
+
+  static getCost = (id: number, { enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<CostOutDTO>> = {}) => ({
+    queryKey: [`cost-${id}`],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/cost/${id}`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<CostOutDTO>, FetchError>);
+
   static getSuppliers = ({ enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
     queryKey: ['suppliers'],
     queryFn: async () => {
@@ -188,6 +211,20 @@ export class Queries {
     onSuccess,
     enabled,
   } as UseQueryOptions<FetchResponse<ActivityTemplateOutDTO[]>, FetchError>);
+
+  static getProjectActivities = (projectId: number, { enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
+    queryKey: [`/v1/project/${projectId}/project-activities`],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/project/${projectId}/project-activities`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<
+    FetchResponse<ProjectActivityOutDTO[]>,
+    FetchError
+  >);
 
   static getProjects({ enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<ProjectOutDTO[]>> = {}) {
     return ({

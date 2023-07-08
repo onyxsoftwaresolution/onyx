@@ -39,12 +39,12 @@ export const getFinancialItemData = (
         color: colors.inverseSurface,
         onPress: () => {
           navigation.navigate(Screens.APP_FINANCIAL_NAVIGATOR, {
-            screen: Screens.APP_FINANCIAL_COST_LIST,
+            screen: Screens.APP_COST_PROJECT_LIST,
           });
         },
         icon: 'euro-sign',
         chevron: 'chevron-right',
-        screen: Screens.APP_FINANCIAL_COST_LIST,
+        screen: Screens.APP_COST_PROJECT_LIST,
       };
 
     case FinancialLinks.RECEIPTS:

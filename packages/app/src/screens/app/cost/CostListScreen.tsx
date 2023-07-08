@@ -8,102 +8,114 @@ import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Screens } from '../../Screens';
 import { useIsFocused } from '@react-navigation/native';
-import { SupplierOutDTO } from '@workspace/api/src/modules/supplier/dtos/supplier.out.dto';
+import { CostOutDTO } from '@workspace/api/src/modules/cost/dtos/cost.out.dto';
 import { useSnackbar } from '../../../components/hooks/useSnackbar';
 import { Mutations } from '../../../requests/mutations';
 import { RenderOptionsFunction, useDialog } from '../../../components/hooks/useDialog';
 import { AppTheme } from '../../../theme/type';
 
-export default memo<NativeStackScreenProps<any, string>>(
-  function ostListScreen(props) {
-    const snackbar = useSnackbar()
+type Params = {
+  activityId: number;
+};
 
-    const enabled = useIsFocused();
-    const suppliers = useQuery(
-      Queries.getSuppliers({
-        enabled,
-        onError() { snackbar.show('A aparut o eroare la listarea angajatilor!') }
-      })
-    );
-    const deleteSupplier = useMutation(Mutations.deleteSupplier({
-      onSuccess() { suppliers.refetch(); },
-      onError() { snackbar.show('A aparut o eroare la stergerea angajatului!') },
-    }),);
+export default memo<NativeStackScreenProps<any, string>>(function CostListScreen(props) {
+  const params = props.route.params as unknown as Params;
 
-    const { colors } = useTheme<AppTheme>();
-    const dialog = useDialog<SupplierOutDTO>();
+  const snackbar = useSnackbar()
 
-    const onPress = useCallback(
-      (supplier: SupplierOutDTO) => {
-        props.navigation.navigate(Screens.APP_SUPPLIER_UPSERT, supplier);
-      },
-      [props.navigation],
-    );
+  const enabled = useIsFocused();
+  const costs = useQuery(
+    Queries.getCosts(params.activityId, {
+      enabled,
+      onError() { snackbar.show('A aparut o eroare la listarea angajatilor!') }
+    })
+  );
+  const deleteCost = useMutation(Mutations.deleteCost({
+    onSuccess() { costs.refetch(); },
+    onError() { snackbar.show('A aparut o eroare la stergerea angajatului!') },
+  }),);
 
-    const renderSupplier = useCallback(
-      (supplier: SupplierOutDTO) => (
-        <View
-          style={[styles.touchStyle]}
-          key={supplier.id}
-        >
-          <View style={[styles.item]}>
-            <View style={[styles.itemRow]}>
-              <TouchableRipple
-                onPress={() => onPress(supplier)}
-                style={[{ flex: 1 }]}
-              >
-                <View>
-                  <Text style={[styles.itemText]}>{supplier.name}</Text>
-                  <Text style={[styles.itemSubText, { color: colors.error }]}>
-                    {supplier.cif}
-                  </Text>
-                  <View style={[{ marginBottom: 10 }]} />
-                </View>
-              </TouchableRipple>
-              <TouchableRipple
-                onPress={() => dialog.show(supplier)}
-                style={[styles.iconContainer]}
-              >
-                <Icon
-                  name={'trash-alt'}
-                  style={[{ color: colors.danger, fontSize: 18 }]}
-                />
-              </TouchableRipple>
-            </View>
-            <Divider />
+  const { colors } = useTheme<AppTheme>();
+  const dialog = useDialog<CostOutDTO>();
+
+  const onPress = useCallback(
+    (cost: CostOutDTO) => {
+      props.navigation.navigate(Screens.APP_COST_UPSERT, cost);
+    },
+    [props.navigation],
+  );
+
+  const renderCost = useCallback(
+    (cost: CostOutDTO) => (
+      <View
+        style={[styles.touchStyle]}
+        key={cost.id}
+      >
+        <View style={[styles.item]}>
+          <View style={[styles.itemRow]}>
+            <TouchableRipple
+              onPress={() => onPress(cost)}
+              style={[{ flex: 1 }]}
+            >
+              <View>
+                <Text style={[styles.itemText]}>{cost.details}</Text>
+                <Text style={[styles.itemSubText, { color: colors.error }]}>
+                  {cost.amount}
+                </Text>
+                <View style={[{ marginBottom: 10 }]} />
+              </View>
+            </TouchableRipple>
+            <TouchableRipple
+              onPress={() => dialog.show(cost)}
+              style={[styles.iconContainer]}
+            >
+              <Icon
+                name={'trash-alt'}
+                style={[{ color: colors.danger, fontSize: 18 }]}
+              />
+            </TouchableRipple>
           </View>
+          <Divider />
         </View>
-      ),
-      [colors.danger, colors.error, dialog, onPress],
-    );
+      </View>
+    ),
+    [colors.danger, colors.error, dialog, onPress],
+  );
 
-    const dialogRenderOptions: RenderOptionsFunction<SupplierOutDTO> = useCallback((supplier) => ({
-      title: `Sterge sablon activitate`,
-      message: <View>
-        <Text>'{supplier?.name}' va fi sters!</Text>
-        <Text>Esti sigur?</Text>
-      </View>,
-      buttons: [
-        {
-          label: 'Sterge',
-          textColor: colors.danger,
-          onPress: () => deleteSupplier.mutate(supplier.id),
-        },
-        () => <View style={{ flex: 1 }} />,
-        { label: 'Renunta' },
-      ],
-    }), [colors.danger, deleteSupplier]);
+  const dialogRenderOptions: RenderOptionsFunction<CostOutDTO> = useCallback((cost) => ({
+    title: `Sterge sablon activitate`,
+    message: <View>
+      <Text>'{cost?.details}' va fi sters!</Text>
+      <Text>Esti sigur?</Text>
+    </View>,
+    buttons: [
+      {
+        label: 'Sterge',
+        textColor: colors.danger,
+        onPress: () => deleteCost.mutate(cost.id),
+      },
+      () => <View style={{ flex: 1 }} />,
+      { label: 'Renunta' },
+    ],
+  }), [colors.danger, deleteCost]);
 
-    return (
-      <ScreenContainer loading={suppliers.isLoading} scrollContainerStyle={[styles.scrollContainer]}>
-        <View style={[styles.list]}>
-          {suppliers.data?.data?.map(renderSupplier)}
+  return (
+    <ScreenContainer loading={costs.isLoading} scrollContainerStyle={[styles.scrollContainer]}>
+      {costs.data?.data.length === 0
+        ? <View style={[styles.list]}>
+          <Text style={{ textAlign: 'center' }} variant="bodyLarge">
+            Nu ai nici un cost adaugat!
+          </Text>
         </View>
-        {dialog.renderDialog(dialogRenderOptions)}
-        {snackbar.renderSnackbar()}
-      </ScreenContainer>
-    );
-  },
+        : null}
+      <View style={[styles.list]}>
+        {costs.data?.data?.map(renderCost)}
+      </View>
+      {dialog.renderDialog(dialogRenderOptions)}
+      {snackbar.renderSnackbar()}
+    </ScreenContainer>
+  );
+},
 );
 
 const styles = StyleSheet.create({

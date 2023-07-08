@@ -57,7 +57,8 @@ export default memo<NativeStackScreenProps<any, string>>(function AppTabNavigato
         name={Screens.APP_DAILY_REPORT_NAVIGATOR}
         component={DailyReportStackNavigator}
         options={{
-          title: 'Rapoarte Zilnice',
+          title: 'Zilnice',
+          fullTitle: 'Rapoarte Zilnice',
           tabBarIcon: (props) => (
             <>
               <Icon
@@ -73,7 +74,8 @@ export default memo<NativeStackScreenProps<any, string>>(function AppTabNavigato
         name={Screens.APP_MONTHLY_REPORT_NAVIGATOR}
         component={MonthlyReportStackNavigator}
         options={{
-          title: 'Rapoarte Lunare',
+          title: 'Lunare',
+          fullTitle: 'Rapoarte Lunare',
           tabBarIcon: (props) => (
             <>
               <Icon

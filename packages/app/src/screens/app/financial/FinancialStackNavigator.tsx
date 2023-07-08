@@ -6,14 +6,19 @@ import { Screens } from '../../Screens';
 import FinancialScreen from './FinancialScreen';
 import { useScreenOptions } from '../../useScreenOptions';
 import { HeaderAddButton } from '../../../components/HeaderAddButton';
-import EmployeeInvoiceListScreen from '../invoice/InvoiceListScreen';
-import EmployeeInvoiceUpsertScreen from '../invoice/InvoiceUpsertScreen';
-import EmployeeCostListScreen from '../cost/CostListScreen';
-import EmployeeCostUpsertScreen from '../cost/CostUpsertScreen';
-import EmployeeReceiptListScreen from '../receipt/ReceiptListScreen';
-import EmployeeReceiptUpsertScreen from '../receipt/ReceiptUpsertScreen';
+import InvoiceListScreen from '../invoice/InvoiceListScreen';
+import InvoiceUpsertScreen from '../invoice/InvoiceUpsertScreen';
+import CostListScreen from '../cost/CostListScreen';
+import CostUpsertScreen from '../cost/CostUpsertScreen';
+import ReceiptListScreen from '../receipt/ReceiptListScreen';
+import ReceiptUpsertScreen from '../receipt/ReceiptUpsertScreen';
+import ProjectListScreen from '../projects/ProjectListScreen';
+import ProjectActivityListScreen from '../projects/ProjectActivityListScreen';
 
 const Stack = createNativeStackNavigator();
+
+const CostProjectListScreen = memo((props: any) => <ProjectListScreen {...props} type={'cost'} />);
+const CostProjectActivityListScreen = memo((props: any) => <ProjectActivityListScreen {...props} type={'cost'} />);
 
 export default memo(function FinancialStackNavigator() {
   const options = useScreenOptions();
@@ -30,7 +35,7 @@ export default memo(function FinancialStackNavigator() {
       />
       <Stack.Screen
         name={Screens.APP_FINANCIAL_INVOICE_LIST}
-        component={EmployeeInvoiceListScreen}
+        component={InvoiceListScreen}
         options={(screenProps) => ({
           ...options('Facturi'),
           headerRight: (headerProps) => (
@@ -44,7 +49,7 @@ export default memo(function FinancialStackNavigator() {
       />
       <Stack.Screen
         name={Screens.APP_FINANCIAL_INVOICE_UPSERT}
-        component={EmployeeInvoiceUpsertScreen}
+        component={InvoiceUpsertScreen}
         options={(screenProps) => ({
           ...options(''),
           title:
@@ -55,22 +60,38 @@ export default memo(function FinancialStackNavigator() {
         })}
       />
       <Stack.Screen
-        name={Screens.APP_FINANCIAL_COST_LIST}
-        component={EmployeeCostListScreen}
+        name={Screens.APP_COST_PROJECT_LIST}
+        component={CostProjectListScreen}
+        options={(screenProps) => ({
+          ...options('Alege un proiect...'),
+        })}
+      />
+      <Stack.Screen
+        name={Screens.APP_COST_PROJECT_ACTIVITY_LIST}
+        component={CostProjectActivityListScreen}
+        options={(screenProps) => ({
+          ...options('Alege o activitate...'),
+        })}
+      />
+      <Stack.Screen
+        name={Screens.APP_COST_LIST}
+        component={CostListScreen}
         options={(screenProps) => ({
           ...options('Costuri'),
           headerRight: (headerProps) => (
             <HeaderAddButton
               {...screenProps}
               {...headerProps}
-              screenName={Screens.APP_FINANCIAL_COST_UPSERT}
+              screenName={Screens.APP_COST_UPSERT}
+              // @ts-expect-error missing type
+              params={{ projectActivityId: screenProps.route.params?.activityId }}
             />
           ),
         })}
       />
       <Stack.Screen
-        name={Screens.APP_FINANCIAL_COST_UPSERT}
-        component={EmployeeCostUpsertScreen}
+        name={Screens.APP_COST_UPSERT}
+        component={CostUpsertScreen}
         options={(screenProps) => ({
           ...options(''),
           title:
@@ -82,7 +103,7 @@ export default memo(function FinancialStackNavigator() {
       />
       <Stack.Screen
         name={Screens.APP_FINANCIAL_RECEIPT_LIST}
-        component={EmployeeReceiptListScreen}
+        component={ReceiptListScreen}
         options={(screenProps) => ({
           ...options('Incasari'),
           headerRight: (headerProps) => (
@@ -96,7 +117,7 @@ export default memo(function FinancialStackNavigator() {
       />
       <Stack.Screen
         name={Screens.APP_FINANCIAL_RECEIPT_UPSERT}
-        component={EmployeeReceiptUpsertScreen}
+        component={ReceiptUpsertScreen}
         options={(screenProps) => ({
           ...options(''),
           title:

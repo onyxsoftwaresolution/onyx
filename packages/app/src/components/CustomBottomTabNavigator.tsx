@@ -27,6 +27,7 @@ type TabNavigationConfig = {
 // Supported screen options
 type TabNavigationOptions = BottomTabNavigationOptions & {
   title?: string;
+  fullTitle?: string;
   name?: string;
   initialScreen?: string;
   items?: MenuItem[];
@@ -145,7 +146,7 @@ function CustomBottomTabNavigator({
               focused: isCurrentLink,
               size: 18,
             })}
-            <Text style={[{ fontSize: 18, color: isCurrentLink ? colors.primary : undefined, paddingLeft: 10 }]}>{item.item.options.title}</Text>
+            <Text style={[{ fontSize: 18, color: isCurrentLink ? colors.primary : undefined, paddingLeft: 10 }]}>{item.item.options.fullTitle ?? item.item.options.title}</Text>
           </View>
         </TouchableRipple>
         {hasSubMenu

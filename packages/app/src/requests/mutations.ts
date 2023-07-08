@@ -17,6 +17,8 @@ import { SupplierOutDTO } from '@workspace/api/src/modules/supplier/dtos/supplie
 import { ContractOutDTO } from '@workspace/api/src/modules/contract/dtos/contract.out.dto';
 import { UpsertContractDTO } from '@workspace/api/src/modules/contract/dtos/contract.in.dto';
 import { ProductOutDTO } from '@workspace/api/src/modules/product/dtos/product.out.dto';
+import { CostOutDTO } from '@workspace/api/src/modules/cost/dtos/cost.out.dto';
+import { UpsertCostDTO } from '@workspace/api/src/modules/cost/dtos/cost.in.dto';
 
 type Options<T = never> = Partial<Pick<UseMutationOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -128,6 +130,23 @@ export class Mutations {
     } as UseMutationOptions<FetchResponse<EmployeeOutDTO>, FetchError, Partial<EmployeeOutDTO>>;
   }
 
+  static deleteEmployee({ onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: [`/v1/employee/`],
+      mutationFn: async (id) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/employee/${id}`,
+          {
+            method: 'DELETE',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<EmployeeOutDTO>, FetchError, number>;
+  }
+
   static upsertClient({ onError, onLoading, onSuccess }: Options<FetchResponse<ClientOutDTO>> = {}) {
     return {
       mutationKey: ['client'],
@@ -145,6 +164,64 @@ export class Mutations {
       onSuccess,
       onError,
     } as UseMutationOptions<FetchResponse<ClientOutDTO>, FetchError, Partial<ClientOutDTO>>;
+  }
+
+  static deleteClient({ onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: [`/v1/client/`],
+      mutationFn: async (id) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/client/${id}`,
+          {
+            method: 'DELETE',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<ClientOutDTO>, FetchError, number>;
+  }
+
+  static upsertCost({ onError, onLoading, onSuccess }: Options<FetchResponse<CostOutDTO>> = {}) {
+    return {
+      mutationKey: ['cost'],
+      mutationFn: async (body) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/cost`,
+          {
+            // @ts-expect-error a simple typescript mistake
+            body,
+            method: 'PUT',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<
+      FetchResponse<CostOutDTO>,
+      FetchError,
+      UpsertCostDTO,
+      unknown
+    >;
+  }
+
+  static deleteCost({ onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: [`/v1/cost/`],
+      mutationFn: async (id) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/cost/${id}`,
+          {
+            method: 'DELETE',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<CostOutDTO>, FetchError, number>;
   }
 
   static upsertSupplier({ onError, onLoading, onSuccess }: Options<FetchResponse<SupplierOutDTO>> = {}) {
@@ -166,6 +243,23 @@ export class Mutations {
     } as UseMutationOptions<FetchResponse<SupplierOutDTO>, FetchError, Partial<SupplierOutDTO>>;
   }
 
+  static deleteSupplier({ onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: [`/v1/supplier/`],
+      mutationFn: async (id) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/supplier/${id}`,
+          {
+            method: 'DELETE',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<SupplierOutDTO>, FetchError, number>;
+  }
+
   static upsertProduct({ onError, onLoading, onSuccess }: Options<FetchResponse<ProductOutDTO>> = {}) {
     return {
       mutationKey: ['product'],
@@ -183,74 +277,6 @@ export class Mutations {
       onSuccess,
       onError,
     } as UseMutationOptions<FetchResponse<ProductOutDTO>, FetchError, Partial<ProductOutDTO>>;
-  }
-
-  static deleteActivityTemplate({ onError, onLoading, onSuccess }: Options = {}) {
-    return {
-      mutationKey: [`/v1/activity-template/`],
-      mutationFn: async (id) => {
-        onLoading?.();
-        return await Mutations.mutationFn(
-          `${API_URL}/v1/activity-template/${id}`,
-          {
-            method: 'DELETE',
-          },
-        );
-      },
-      onSuccess,
-      onError,
-    } as UseMutationOptions<FetchResponse<ActivityTemplateOutDTO>, FetchError, number>;
-  }
-
-  static deleteEmployee({ onError, onLoading, onSuccess }: Options = {}) {
-    return {
-      mutationKey: [`/v1/employee/`],
-      mutationFn: async (id) => {
-        onLoading?.();
-        return await Mutations.mutationFn(
-          `${API_URL}/v1/employee/${id}`,
-          {
-            method: 'DELETE',
-          },
-        );
-      },
-      onSuccess,
-      onError,
-    } as UseMutationOptions<FetchResponse<EmployeeOutDTO>, FetchError, number>;
-  }
-
-  static deleteClient({ onError, onLoading, onSuccess }: Options = {}) {
-    return {
-      mutationKey: [`/v1/client/`],
-      mutationFn: async (id) => {
-        onLoading?.();
-        return await Mutations.mutationFn(
-          `${API_URL}/v1/client/${id}`,
-          {
-            method: 'DELETE',
-          },
-        );
-      },
-      onSuccess,
-      onError,
-    } as UseMutationOptions<FetchResponse<ClientOutDTO>, FetchError, number>;
-  }
-
-  static deleteSupplier({ onError, onLoading, onSuccess }: Options = {}) {
-    return {
-      mutationKey: [`/v1/supplier/`],
-      mutationFn: async (id) => {
-        onLoading?.();
-        return await Mutations.mutationFn(
-          `${API_URL}/v1/supplier/${id}`,
-          {
-            method: 'DELETE',
-          },
-        );
-      },
-      onSuccess,
-      onError,
-    } as UseMutationOptions<FetchResponse<SupplierOutDTO>, FetchError, number>;
   }
 
   static deleteProduct({ onError, onLoading, onSuccess }: Options = {}) {
@@ -288,13 +314,13 @@ export class Mutations {
     } as UseMutationOptions<FetchResponse<ActivityTemplateOutDTO>, FetchError, Partial<ActivityTemplateOutDTO>>;
   }
 
-  static deleteProject({ onError, onLoading, onSuccess }: Options = {}) {
+  static deleteActivityTemplate({ onError, onLoading, onSuccess }: Options = {}) {
     return {
-      mutationKey: ['project'],
+      mutationKey: [`/v1/activity-template/`],
       mutationFn: async (id) => {
         onLoading?.();
         return await Mutations.mutationFn(
-          `${API_URL}/v1/project/${id}`,
+          `${API_URL}/v1/activity-template/${id}`,
           {
             method: 'DELETE',
           },
@@ -302,63 +328,8 @@ export class Mutations {
       },
       onSuccess,
       onError,
-    } as UseMutationOptions<FetchResponse<ProjectOutDTO>, unknown, number>;
+    } as UseMutationOptions<FetchResponse<ActivityTemplateOutDTO>, FetchError, number>;
   }
-
-  static deleteContract({ onError, onLoading, onSuccess }: Options = {}) {
-    return {
-      mutationKey: ['contract'],
-      mutationFn: async (id) => {
-        onLoading?.();
-        return await Mutations.mutationFn(
-          `${API_URL}/v1/contract/${id}`,
-          {
-            method: 'DELETE',
-          },
-        );
-      },
-      onSuccess,
-      onError,
-    } as UseMutationOptions<FetchResponse<ContractOutDTO>, unknown, number>;
-  }
-
-  static getReport = (
-    type: Report, isNew: boolean, projectId: number, projectReportId: number | undefined, month: string,
-    { onError, onLoading, onSuccess }: Options<FetchResponse<ProjectReportOutDTO>> = {}
-  ) => {
-    let path = '';
-    if (isNew && type === Report.MONTHLY) {
-      path = `/v1/new-${type}-report/${projectId}/${month}`;
-    } else if (isNew && type === Report.DAILY) {
-      path = `/v1/new-${type}-report/${projectId}`;
-    } else if (projectReportId != null) {
-      path = `/v1/${type}-report/${projectId}/${projectReportId}`;
-    }
-    return ({
-      mutationKey: [`${path}`],
-      mutationFn: async () => {
-        onLoading?.();
-        return await Mutations.mutationFn(`${API_URL}${path}`);
-      },
-      onError,
-      onSuccess,
-    } as UseMutationOptions<FetchResponse<ProjectReportOutDTO>, FetchError>)
-  };
-
-  static deleteReport = (type: Report, { onError, onLoading, onSuccess }: Options<FetchResponse<ProjectReportOutDTO>> = {}) => {
-    return ({
-      mutationKey: [`delete-report}`],
-      mutationFn: async (projectReportId) => {
-        onLoading?.();
-        return await Mutations.mutationFn(
-          `${API_URL}/v1/${type}-report/${projectReportId}`,
-          { method: 'DELETE' }
-        );
-      },
-      onError,
-      onSuccess,
-    } as UseMutationOptions<FetchResponse<ProjectReportOutDTO>, FetchError, number>)
-  };
 
   static upsertProject({ onError, onLoading, onSuccess }: Options = {}) {
     return {
@@ -383,6 +354,23 @@ export class Mutations {
     >;
   }
 
+  static deleteProject({ onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: ['project'],
+      mutationFn: async (id) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/project/${id}`,
+          {
+            method: 'DELETE',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<ProjectOutDTO>, unknown, number>;
+  }
+
   static upsertContract({ onError, onLoading, onSuccess }: Options = {}) {
     return {
       mutationKey: ['contract'],
@@ -404,6 +392,23 @@ export class Mutations {
       UpsertContractDTO,
       unknown
     >;
+  }
+
+  static deleteContract({ onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: ['contract'],
+      mutationFn: async (id) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/contract/${id}`,
+          {
+            method: 'DELETE',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<ContractOutDTO>, unknown, number>;
   }
 
   static upsertReport(
@@ -431,6 +436,44 @@ export class Mutations {
       unknown
     >;
   }
+
+  static deleteReport = (type: Report, { onError, onLoading, onSuccess }: Options<FetchResponse<ProjectReportOutDTO>> = {}) => {
+    return ({
+      mutationKey: [`delete-report}`],
+      mutationFn: async (projectReportId) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/${type}-report/${projectReportId}`,
+          { method: 'DELETE' }
+        );
+      },
+      onError,
+      onSuccess,
+    } as UseMutationOptions<FetchResponse<ProjectReportOutDTO>, FetchError, number>)
+  };
+
+  static getReport = (
+    type: Report, isNew: boolean, projectId: number, projectReportId: number | undefined, month: string,
+    { onError, onLoading, onSuccess }: Options<FetchResponse<ProjectReportOutDTO>> = {}
+  ) => {
+    let path = '';
+    if (isNew && type === Report.MONTHLY) {
+      path = `/v1/new-${type}-report/${projectId}/${month}`;
+    } else if (isNew && type === Report.DAILY) {
+      path = `/v1/new-${type}-report/${projectId}`;
+    } else if (projectReportId != null) {
+      path = `/v1/${type}-report/${projectId}/${projectReportId}`;
+    }
+    return ({
+      mutationKey: [`${path}`],
+      mutationFn: async () => {
+        onLoading?.();
+        return await Mutations.mutationFn(`${API_URL}${path}`);
+      },
+      onError,
+      onSuccess,
+    } as UseMutationOptions<FetchResponse<ProjectReportOutDTO>, FetchError>)
+  };
 
   static emailReport(
     type: Report, projectId: number, projectReportId: number,

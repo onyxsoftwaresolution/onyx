@@ -20,7 +20,7 @@ import { Screens } from '../../Screens';
 import { Report } from '../reports/Report';
 
 type Props = NativeStackScreenProps<any, string> & {
-  type: 'project' | Report;
+  type: 'project' | Report | 'cost';
 }
 
 export default memo<Props>(function ProjectListScreen({ type, ...props }) {
@@ -41,13 +41,6 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
   const dialog = useDialog<ProjectOutDTO>();
   const snackbar = useSnackbar();
 
-  const onPress = useCallback(
-    (project: ProjectOutDTO) => {
-      props.navigation.navigate(Screens.APP_PROJECT_UPSERT, { id: project.id });
-    },
-    [props.navigation],
-  );
-
   const renderProject = useCallback((project: ProjectOutDTO, index: number) => (
     <View
       style={[styles.touchStyle]}
@@ -56,7 +49,7 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
       <View style={[styles.item]}>
         <View style={[styles.itemRow]}>
           <TouchableRipple
-            onPress={() => onPress(project)}
+            onPress={() => props.navigation.navigate(Screens.APP_PROJECT_UPSERT, { id: project.id })}
             style={[{ flex: 1 }]}
           >
             <View style={[{ flex: 1 }]}>
@@ -86,7 +79,7 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
         <Divider />
       </View>
     </View>
-  ), [colors.danger, colors.error, dialog, onPress]);
+  ), [colors.danger, colors.error, dialog, props.navigation]);
 
   const renderProjectForDaily = useCallback((project: ProjectOutDTO, index: number) => (
     <TouchableRipple
@@ -130,6 +123,27 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
     </TouchableRipple>
   ), [colors.error, props.navigation]);
 
+  const renderCost = useCallback((project: ProjectOutDTO, index: number) => (
+    <TouchableRipple
+      style={[styles.touchStyle]}
+      key={project.id}
+      onPress={() => { props.navigation.navigate(Screens.APP_COST_PROJECT_ACTIVITY_LIST, { projectId: project.id, description: project.description }) }}
+    >
+      <View style={[styles.item]}>
+        <View style={[styles.itemRow]}>
+          <View style={[{ flex: 1 }]}>
+            <Text style={[styles.itemText]}>{project.description}</Text>
+            <Text style={[styles.itemSubText, { color: colors.error }]}>
+              {dayjs(project.start).format('DD/MM/YYYY')} - {dayjs(project.end).format('DD/MM/YYYY')}
+            </Text>
+            <View style={[{ marginBottom: 10 }]} />
+          </View>
+        </View>
+        <Divider />
+      </View>
+    </TouchableRipple>
+  ), [colors.error, props.navigation]);
+
   const renderListItem = useCallback((project: ProjectOutDTO, index: number) => {
     switch (type) {
       case Report.DAILY:
@@ -141,10 +155,13 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
       case 'project':
         return renderProject(project, index);
 
+      case 'cost':
+        return renderCost(project, index);
+
       default:
         return null;
     }
-  }, [type, renderProjectForDaily, renderProjectForMonthly, renderProject]);
+  }, [type, renderProjectForDaily, renderProjectForMonthly, renderProject, renderCost]);
 
   const dialogRenderOptions: RenderOptionsFunction<ProjectOutDTO> = useCallback((project) => ({
     title: `Sterge proiect '${project?.description}'`,

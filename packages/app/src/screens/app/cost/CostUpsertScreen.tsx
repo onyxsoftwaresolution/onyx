@@ -1,8 +1,8 @@
 import { useIsFocused } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { UpsertSupplierDTO } from '@workspace/api/src/modules/supplier/dtos/supplier.in.dto';
-import { isNotEmpty, isString } from 'class-validator';
+import { UpsertCostDTO } from '@workspace/api/src/modules/cost/dtos/cost.in.dto';
+import { isDate, isDateString, isNotEmpty, isNumber, isNumberString, isString } from 'class-validator';
 import { memo, useCallback, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
@@ -17,9 +17,13 @@ import { useSnackbar } from '../../../components/hooks/useSnackbar';
 import { Mutations } from '../../../requests/mutations';
 import { Queries } from '../../../requests/queries';
 import { AppTheme } from '../../../theme/type';
+import MGDatePicker from '../../../components/MGDatePicker';
+import { dayOrNull } from '../../../dayOrNull';
+import dayjs from 'dayjs';
 
 type Params = {
   id: number;
+  projectActivityId: number;
 };
 
 export default memo<NativeStackScreenProps<any, string>>(function CostUpsertScreen(props) {
@@ -28,32 +32,28 @@ export default memo<NativeStackScreenProps<any, string>>(function CostUpsertScre
   const { colors } = useTheme<AppTheme>();
 
   const enabled = useIsFocused();
-  const supplier = useQuery(Queries.getSupplier(params.id, {
+  const cost = useQuery(Queries.getCost(params.id, {
     enabled: enabled && params.id != null,
     onSuccess: data => reset(data.data),
   }));
-  const upsert = useMutation(Mutations.upsertSupplier({
+  const upsert = useMutation(Mutations.upsertCost({
     onSuccess: () => props.navigation.pop(),
     onError: () => snackbar.show(),
   }));
 
   const snackbar = useSnackbar();
 
-  const values: UpsertSupplierDTO = useMemo(() => {
-    const data = supplier.data?.data;
+  const values: UpsertCostDTO = useMemo(() => {
+    const data = cost.data?.data;
     return ({
       id: data?.id ?? undefined,
-      name: data?.name ?? '',
-      address: data?.address ?? '',
-      cif: data?.cif ?? '',
-      rc: data?.rc ?? '',
-      bankName: data?.bankName ?? '',
-      bankIban: data?.bankIban ?? '',
-      phoneNumber: data?.phoneNumber ?? '',
-      email: data?.email ?? '',
-      products: data?.products ?? '',
+      amount: (data?.amount ?? '') as unknown as number,
+      projectActivityId: data?.projectActivityId ?? params.projectActivityId ?? undefined,
+      date: data?.date ?? '',
+      details: data?.details ?? '',
+      invoiceNumber: data?.invoiceNumber ?? '',
     });
-  }, [supplier.data?.data]);
+  }, [cost.data?.data, params.projectActivityId]);
 
   const {
     control,
@@ -62,13 +62,13 @@ export default memo<NativeStackScreenProps<any, string>>(function CostUpsertScre
     getValues,
     setValue,
     reset,
-  } = useForm<UpsertSupplierDTO>({
+  } = useForm<UpsertCostDTO>({
     mode: 'onChange',
     values,
   });
 
   const submit = useCallback(
-    ({ id, ...rest }: UpsertSupplierDTO) => {
+    ({ id, ...rest }: UpsertCostDTO) => {
       if (params?.id != null) {
         upsert.mutate({ id, ...rest });
       } else {
@@ -78,18 +78,18 @@ export default memo<NativeStackScreenProps<any, string>>(function CostUpsertScre
     [params?.id, upsert],
   );
 
-  const renderName = useCallback(() => {
+  const renderInvoiceNumber = useCallback(() => {
     return (
       <Controller
         control={control}
         rules={{
-          required: { value: true, message: 'Name field is required!' },
+          required: { value: true, message: 'InvoiceNumber field is required!' },
           validate: (value) => isString(value) && isNotEmpty(value),
         }}
         render={({ field: { onChange, value } }) => (
           <View style={[{ flex: 1 }]}>
-            {errors.name != null
-              ? <HelperText type="error">{errors.name.message}</HelperText>
+            {errors.invoiceNumber != null
+              ? <HelperText type="error">{errors.invoiceNumber.message}</HelperText>
               : null}
             {upsert?.isError
               ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
@@ -99,278 +99,124 @@ export default memo<NativeStackScreenProps<any, string>>(function CostUpsertScre
               onChangeText={onChange}
               containerStyle={[{ justifyContent: 'flex-end' }]}
               style={{ marginBottom: 7 }}
-              label={'Nume furnizor'}
+              label={'Numar factura'}
             />
           </View>
         )}
-        name="name"
+        name="invoiceNumber"
       />
     );
-  }, [control, errors.name, upsert?.error?.data.code, upsert?.isError]);
+  }, [control, errors.invoiceNumber, upsert?.error?.data.code, upsert?.isError]);
 
-  const renderCif = useCallback(() => {
+  const renderAmount = useCallback(() => {
     return (
       <Controller
         control={control}
         rules={{
-          required: { value: true, message: 'Cif field is required!' },
-          validate: (value) => isString(value) && isNotEmpty(value),
+          required: { value: true, message: 'Amount field is required!' },
+          validate: (value) => (isNumber(value) || isNumberString(value)) && isNotEmpty(value),
         }}
         render={({ field: { onChange, value } }) => (
           <View style={[{ flex: 1 }]}>
-            {errors.cif != null
-              ? <HelperText type="error">{errors.cif.message}</HelperText>
+            {errors.amount != null
+              ? <HelperText type="error">{errors.amount.message}</HelperText>
               : null}
             {upsert?.isError
               ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
               : null}
             <MGTextInput
-              value={value}
+              value={value?.toString()}
               onChangeText={onChange}
               containerStyle={[{ justifyContent: 'flex-end' }]}
               style={{ marginBottom: 7 }}
-              label={'CIF'}
+              label={'Suma'}
             />
           </View>
         )}
-        name="cif"
+        name="amount"
       />
     );
-  }, [control, errors.cif, upsert?.error?.data.code, upsert?.isError]);
+  }, [control, errors.amount, upsert?.error?.data.code, upsert?.isError]);
 
-  const renderRc = useCallback(() => {
+  const renderDate = useCallback(() => {
     return (
       <Controller
         control={control}
         rules={{
-          required: { value: true, message: 'Rc field is required!' },
-          validate: (value) => isString(value) && isNotEmpty(value),
+          required: { value: true, message: 'Date field is required!' },
+          validate: (value) => (isDate(value) || isDateString(value)) && isNotEmpty(value),
         }}
         render={({ field: { onChange, value } }) => (
           <View style={[{ flex: 1 }]}>
-            {errors.rc != null
-              ? <HelperText type="error">{errors.rc.message}</HelperText>
+            {errors.date != null
+              ? <HelperText type="error">{errors.date.message}</HelperText>
               : null}
             {upsert?.isError
               ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
               : null}
-            <MGTextInput
-              value={value}
-              onChangeText={onChange}
-              containerStyle={[{ justifyContent: 'flex-end' }]}
-              style={{ marginBottom: 7 }}
-              label={'RC'}
+            <MGDatePicker
+              mode='single'
+              value={dayOrNull(dayjs(value))?.toDate()}
+              onDateChange={d => onChange(d.date)}
+              containerStyle={{ marginBottom: 7 }}
+              label={'Data'}
             />
           </View>
         )}
-        name="rc"
+        name="date"
       />
     );
-  }, [control, errors.rc, upsert?.error?.data.code, upsert?.isError]);
+  }, [control, errors.date, upsert?.error?.data.code, upsert?.isError]);
 
-  const renderAddress = useCallback(() => {
+  const renderDetails = useCallback(() => {
     return (
       <Controller
         control={control}
         rules={{
-          required: { value: true, message: 'Address field is required!' },
+          required: { value: true, message: 'Details field is required!' },
           validate: (value) => isString(value) && isNotEmpty(value),
         }}
         render={({ field: { onChange, value } }) => (
           <View style={[{ flex: 1 }]}>
-            {errors.address != null
-              ? <HelperText type="error">{errors.address.message}</HelperText>
+            {errors.details != null
+              ? <HelperText type="error">{errors.details.message}</HelperText>
               : null}
             {upsert?.isError
               ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
               : null}
             <MGTextInput
+              multiline
               value={value}
               onChangeText={onChange}
               containerStyle={[{ justifyContent: 'flex-end' }]}
-              style={{ marginBottom: 7 }}
-              label={'Adresa'}
+              style={{ marginBottom: 7, height: 77 }}
+              label={'Detalii'}
             />
           </View>
         )}
-        name="address"
+        name="details"
       />
     );
-  }, [control, errors.address, upsert?.error?.data.code, upsert?.isError]);
-
-  const renderBankName = useCallback(() => {
-    return (
-      <Controller
-        control={control}
-        rules={{
-          required: { value: true, message: 'BankName field is required!' },
-          validate: (value) => isString(value) && isNotEmpty(value),
-        }}
-        render={({ field: { onChange, value } }) => (
-          <View style={[{ flex: 1 }]}>
-            {errors.bankName != null
-              ? <HelperText type="error">{errors.bankName.message}</HelperText>
-              : null}
-            {upsert?.isError
-              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
-              : null}
-            <MGTextInput
-              value={value}
-              onChangeText={onChange}
-              containerStyle={[{ justifyContent: 'flex-end' }]}
-              style={{ marginBottom: 7 }}
-              label={'Banca'}
-            />
-          </View>
-        )}
-        name="bankName"
-      />
-    );
-  }, [control, errors.bankName, upsert?.error?.data.code, upsert?.isError]);
-
-  const renderBankIban = useCallback(() => {
-    return (
-      <Controller
-        control={control}
-        rules={{
-          required: { value: true, message: 'BankIban field is required!' },
-          validate: (value) => isString(value) && isNotEmpty(value),
-        }}
-        render={({ field: { onChange, value } }) => (
-          <View style={[{ flex: 1 }]}>
-            {errors.bankIban != null
-              ? <HelperText type="error">{errors.bankIban.message}</HelperText>
-              : null}
-            {upsert?.isError
-              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
-              : null}
-            <MGTextInput
-              value={value}
-              onChangeText={onChange}
-              containerStyle={[{ justifyContent: 'flex-end' }]}
-              style={{ marginBottom: 7 }}
-              label={'Iban'}
-            />
-          </View>
-        )}
-        name="bankIban"
-      />
-    );
-  }, [control, errors.bankIban, upsert?.error?.data.code, upsert?.isError]);
-
-  const renderPhoneNumber = useCallback(() => {
-    return (
-      <Controller
-        control={control}
-        rules={{
-          required: { value: true, message: 'PhoneNumber field is required!' },
-          validate: (value) => isString(value) && isNotEmpty(value),
-        }}
-        render={({ field: { onChange, value } }) => (
-          <View style={[{ flex: 1 }]}>
-            {errors.phoneNumber != null
-              ? <HelperText type="error">{errors.phoneNumber.message}</HelperText>
-              : null}
-            {upsert?.isError
-              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
-              : null}
-            <MGTextInput
-              value={value}
-              onChangeText={onChange}
-              containerStyle={[{ justifyContent: 'flex-end' }]}
-              style={{ marginBottom: 7 }}
-              label={'Telefon'}
-            />
-          </View>
-        )}
-        name="phoneNumber"
-      />
-    );
-  }, [control, errors.phoneNumber, upsert?.error?.data.code, upsert?.isError]);
-
-  const renderEmail = useCallback(() => {
-    return (
-      <Controller
-        control={control}
-        rules={{
-          required: { value: true, message: 'Email field is required!' },
-          validate: (value) => isString(value) && isNotEmpty(value),
-        }}
-        render={({ field: { onChange, value } }) => (
-          <View style={[{ flex: 1 }]}>
-            {errors.email != null
-              ? <HelperText type="error">{errors.email.message}</HelperText>
-              : null}
-            {upsert?.isError
-              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
-              : null}
-            <MGTextInput
-              value={value}
-              onChangeText={onChange}
-              containerStyle={[{ justifyContent: 'flex-end' }]}
-              style={{ marginBottom: 7 }}
-              label={'Email'}
-            />
-          </View>
-        )}
-        name="email"
-      />
-    );
-  }, [control, errors.email, upsert?.error?.data.code, upsert?.isError]);
-
-  const renderProducts = useCallback(() => {
-    return (
-      <Controller
-        control={control}
-        rules={{
-          required: { value: true, message: 'Products field is required!' },
-          validate: (value) => isString(value) && isNotEmpty(value),
-        }}
-        render={({ field: { onChange, value } }) => (
-          <View style={[{ flex: 1 }]}>
-            {errors.products != null
-              ? <HelperText type="error">{errors.products.message}</HelperText>
-              : null}
-            {upsert?.isError
-              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
-              : null}
-            <MGTextInput
-              value={value}
-              onChangeText={onChange}
-              containerStyle={[{ justifyContent: 'flex-end' }]}
-              style={{ marginBottom: 7 }}
-              label={'Produse'}
-            />
-          </View>
-        )}
-        name="products"
-      />
-    );
-  }, [control, errors.products, upsert?.error?.data.code, upsert?.isError]);
+  }, [control, errors.details, upsert?.error?.data.code, upsert?.isError]);
 
   return (
     <ScreenContainer
-      loading={(supplier.isLoading && params.id != null) || upsert.isLoading}
+      loading={(cost.isLoading && params.id != null) || upsert.isLoading}
       scrollContainerStyle={[styles.scrollContainer]}
     >
       <View style={[styles.view]}>
         <MGCard>
           <View style={[{ height: 20 }]} />
-          {renderName()}
           <MGRow>
-            {renderCif()}
-            {renderRc()}
-          </MGRow>
-          {renderAddress()}
-          <MGRow>
-            {renderBankName()}
-            {renderBankIban()}
+            {renderInvoiceNumber()}
           </MGRow>
           <MGRow>
-            {renderPhoneNumber()}
-            {renderEmail()}
+            {renderAmount()}
+            {renderDate()}
           </MGRow>
-          {renderProducts()}
+          <MGRow>
+            {renderDetails()}
+          </MGRow>
         </MGCard>
         <MGButton
           icon="send"
