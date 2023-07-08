@@ -58,7 +58,7 @@ export default memo<NativeStackScreenProps<any, string>>(
                 <View>
                   <Text style={[styles.itemText]}>{activity.description}</Text>
                   <Text style={[styles.itemSubText, { color: colors.error }]}>
-                    {activity.product?.name}
+                    {activity.supplier?.name} - {activity.product?.name}
                   </Text>
                   <Text style={[styles.itemSubText, { color: colors.error }]}>
                     {activity.cost}

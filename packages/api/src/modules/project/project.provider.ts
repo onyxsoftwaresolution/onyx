@@ -9,7 +9,7 @@ export class ProjectProvider {
   async upsertProject({ id, area, areaAdmin, code, description, end, localAdmin, projectActivities, start, contract }: UpsertProjectDTO): ReturnType<ProjectProvider["getProject"]> {
     const currentProject = await this.getProject(id);
 
-    const currentProjectActivities = currentProject.projectActivities;
+    const currentProjectActivities = currentProject?.projectActivities ?? [];
     const remainingProjectActivityIds = projectActivities.filter(pa => pa.id != null).map(pa => pa.id);
     const deleteProjectActivityIds = currentProjectActivities.map(pa => pa.id).filter(id => !remainingProjectActivityIds.includes(id));
     const createProjectActivities = projectActivities.filter(pa => pa.id == null);
@@ -67,25 +67,23 @@ export class ProjectProvider {
         deleted: false,
         available: true,
       },
-      select: {
-        id: true,
-        area: true,
-        areaAdmin: true,
-        areaAdminId: true,
-        available: true,
-        code: true,
-        description: true,
-        start: true,
-        end: true,
-        localAdmin: true,
-        localAdminId: true,
+      include: {
         projectActivities: {
           where: { deleted: false },
+          include: {
+            activityTemplate: {
+              include: {
+                supplier: true,
+                product: true,
+              }
+            }
+          },
         },
-        contractId: true,
         contract: {
           include: { client: true, }
         },
+        areaAdmin: true,
+        localAdmin: true,
       },
     });
   }

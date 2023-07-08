@@ -2,7 +2,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { UpsertActivityTemplateDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-in.dto';
-import { isInt, isNotEmpty, isString } from 'class-validator';
+import { isInt, isNotEmpty, isNumber, isNumberString, isString } from 'class-validator';
 import { memo, useCallback, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
@@ -123,7 +123,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ActivityTempla
             message: 'required message',
           },
           validate: (value) => {
-            return isString(value) && isNotEmpty(value);
+            return (isNumber(value) || isNumberString(value)) && isNotEmpty(value);
           },
         }}
         render={({ field: { onChange, value } }) => (
@@ -171,7 +171,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ActivityTempla
               getter={(conf) => Queries.getSuppliers(conf) as any}
               text={(data: SupplierOutDTO) => data?.name ?? value?.name ?? ""}
               data={value}
-              onSelect={(data: SupplierOutDTO) => { onChange(data) }}
+              onSelect={(data: SupplierOutDTO) => { onChange(data); setValue('product', undefined) }}
               label="Furnizor"
               containerStyle={[{ marginBottom: 7 }]}
             />
@@ -180,7 +180,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ActivityTempla
         name={`supplier`}
       />
     );
-  }, [control, errors.supplier, upsert?.error?.data.code, upsert?.isError]);
+  }, [control, errors.supplier, setValue, upsert?.error?.data.code, upsert?.isError]);
 
   const renderProduct = useCallback(() => {
     return (

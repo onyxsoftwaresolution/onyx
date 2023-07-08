@@ -1,31 +1,30 @@
+import { useIsFocused } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ActivityTemplateOutDTO } from '@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto';
+import { ContractOutDTO } from '@workspace/api/src/modules/contract/dtos/contract.out.dto';
+import { EmployeeOutDTO } from "@workspace/api/src/modules/employee/dtos/employee.out.dto";
 import { UpsertProjectDTO } from '@workspace/api/src/modules/project/dtos/project.in.dto';
 import { isDate, isDateString, isInt, isNotEmpty, isNumber, isString } from 'class-validator';
+import dayjs from 'dayjs';
 import { memo, useCallback, useMemo } from 'react';
-import { Controller, useForm, useFieldArray } from 'react-hook-form';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 import { HelperText, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import MGButton from '../../../components/MGButton';
+import MGCard from '../../../components/MGCard';
 import MGDatePicker from '../../../components/MGDatePicker';
+import MGMultipleSelect from '../../../components/MGMultipleSelect';
+import MGRow from '../../../components/MGRow';
+import MGSelect from '../../../components/MGSelect';
 import MGTextInput from '../../../components/MGTextInput';
 import ScreenContainer from '../../../components/ScreenContainer';
-import MGSelect from '../../../components/MGSelect';
+import { useSnackbar } from '../../../components/hooks/useSnackbar';
+import { dayOrNull } from '../../../dayOrNull';
 import { Mutations } from '../../../requests/mutations';
 import { Queries } from '../../../requests/queries';
-import { EmployeeOutDTO } from "@workspace/api/src/modules/employee/dtos/employee.out.dto"
-import { useIsFocused } from '@react-navigation/native';
-import dayjs from 'dayjs';
-import { dayOrNull } from '../../../dayOrNull';
-import MGCard from '../../../components/MGCard';
-import { useSnackbar } from '../../../components/hooks/useSnackbar';
-import MGRow from '../../../components/MGRow';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import { AppTheme } from '../../../theme/type';
-import MGMultipleSelect from '../../../components/MGMultipleSelect';
-import { SupplierOutDTO } from '@workspace/api/src/modules/supplier/dtos/supplier.out.dto';
-import { ContractOutDTO } from '@workspace/api/src/modules/contract/dtos/contract.out.dto';
 
 type Params = {
   id: number;
@@ -118,6 +117,24 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
               label="Contract"
               containerStyle={[{ marginBottom: 7 }]}
             />
+            <MGRow>
+              <MGDatePicker
+                disabled
+                mode='single'
+                value={(value as ContractOutDTO)?.start}
+                onDateChange={() => { }}
+                containerStyle={{ marginBottom: 7 }}
+                label={'Data inceput'}
+              />
+              <MGDatePicker
+                disabled
+                mode='single'
+                value={(value as ContractOutDTO)?.end}
+                onDateChange={() => { }}
+                containerStyle={{ marginBottom: 7 }}
+                label={'Data inceput'}
+              />
+            </MGRow>
           </View>
         )}
         name={`contract`}
@@ -390,32 +407,62 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
     );
   }, [control, errors.projectActivities, upsert?.error?.data.code, upsert?.isError]);
 
-  const renderProjectActivityMaterial = useCallback((index: number) => {
+  const renderProjectActivitySupplier = useCallback((index: number) => {
     return (
       <Controller
         control={control}
         rules={{
-          required: { value: true, message: 'Material field is required!' },
-          validate: (value) => isString(value) && isNotEmpty(value),
+          required: false,
         }}
         render={({ field: { onChange, value } }) => (
           <View style={[{ flex: 1 }]}>
-            {errors.projectActivities?.[index]?.material != null
-              ? <HelperText type="error">{errors.projectActivities?.[index]?.material?.message}</HelperText>
+            {errors.projectActivities?.[index]?.activityTemplate != null
+              ? <HelperText type="error">{errors.projectActivities?.[index]?.activityTemplate?.supplier.name.message}</HelperText>
               : null}
             {upsert?.isError
               ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
               : null}
             <MGTextInput
               value={value}
+              disabled
               onChangeText={onChange}
               containerStyle={[{ justifyContent: 'flex-end' }]}
               style={{ marginBottom: 7 }}
-              label={'Material'}
+              label={'Supplier'}
             />
           </View>
         )}
-        name={`projectActivities.${index}.material`}
+        name={`projectActivities.${index}.activityTemplate.supplier.name`}
+      />
+    );
+  }, [control, errors.projectActivities, upsert?.error?.data.code, upsert?.isError]);
+
+  const renderProjectActivityProduct = useCallback((index: number) => {
+    return (
+      <Controller
+        control={control}
+        rules={{
+          required: false,
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View style={[{ flex: 1 }]}>
+            {errors.projectActivities?.[index]?.activityTemplate != null
+              ? <HelperText type="error">{errors.projectActivities?.[index]?.activityTemplate?.product.name.message}</HelperText>
+              : null}
+            {upsert?.isError
+              ? <HelperText type="error">{upsert?.error?.data.code}</HelperText>
+              : null}
+            <MGTextInput
+              value={value}
+              disabled
+              onChangeText={onChange}
+              containerStyle={[{ justifyContent: 'flex-end' }]}
+              style={{ marginBottom: 7 }}
+              label={'Product'}
+            />
+          </View>
+        )}
+        name={`projectActivities.${index}.activityTemplate.product.name`}
       />
     );
   }, [control, errors.projectActivities, upsert?.error?.data.code, upsert?.isError]);
@@ -466,13 +513,16 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
       <MGCard key={`${index}-${activityFields[index].id}`} title={renderActivityCardTitle(index)}>
         {renderProjectActivityDescription(index)}
         <MGRow>
-          {renderProjectActivityMaterial(index)}
+          {renderProjectActivitySupplier(index)}
+          {renderProjectActivityProduct(index)}
+        </MGRow>
+        <MGRow>
           {renderProjectActivityCost(index)}
           {renderProjectActivityQuantity(index)}
         </MGRow>
       </MGCard>
     );
-  }, [activityFields, renderActivityCardTitle, renderProjectActivityCost, renderProjectActivityDescription, renderProjectActivityMaterial, renderProjectActivityQuantity]);
+  }, [activityFields, renderActivityCardTitle, renderProjectActivityCost, renderProjectActivityDescription, renderProjectActivityProduct, renderProjectActivityQuantity, renderProjectActivitySupplier]);
 
   const renderLocalAdmin = useCallback(() => {
     return (
@@ -564,7 +614,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
                 getText={(data: ActivityTemplateOutDTO) => data?.description ?? ''}
                 getId={(data: ActivityTemplateOutDTO) => data?.description ?? ''}
                 onSelect={(datas: ActivityTemplateOutDTO[]) => {
-                  appendActivity(datas.map(data => ({ cost: data.cost, description: data.description, material: data.material, quantity: 0 })));
+                  appendActivity(datas.map(data => ({ cost: data.cost, description: data.description, quantity: 0, activityTemplate: data, activityTemplateId: data.id, projectId: params.id })));
                 }}
                 label="Adauga activitate"
                 containerStyle={[{ marginTop: 10, marginHorizontal: 10 }]}
@@ -575,7 +625,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ProjectUpsertS
         name={`projectActivities`}
       />
     );
-  }, [appendActivity, control, enabled, errors.areaAdmin, upsert?.error?.data.code, upsert?.isError]);
+  }, [appendActivity, control, enabled, errors.areaAdmin, params.id, upsert?.error?.data.code, upsert?.isError]);
 
   return (
     <ScreenContainer

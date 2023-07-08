@@ -1,4 +1,5 @@
 import { IsNonPrimitiveArray } from '@common/validator/IsNonPrimitiveArray';
+import { UpsertActivityTemplateDTO } from '@modules/activity-template/dtos/activity-template-in.dto';
 import { UpsertContractDTO } from '@modules/contract/dtos/contract.in.dto';
 import { UpsertEmployeeDTO } from '@modules/employee/dtos/employee.in.dto';
 import { Type } from 'class-transformer';
@@ -93,7 +94,7 @@ export class UpsertProjectActivityDTO {
   @IsNotEmpty()
   activityTemplateId: number;
 
-  @IsInt()
+  @Type(() => UpsertActivityTemplateDTO)
   @IsNotEmpty()
-  projectId: number;
+  activityTemplate: UpsertActivityTemplateDTO;
 }
