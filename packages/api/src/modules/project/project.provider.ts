@@ -60,6 +60,32 @@ export class ProjectProvider {
     });
   }
 
+  async listProjectActivities(projectId: number) {
+    return await this.prismaService.client.projectActivity.findMany({
+      where: {
+        deleted: false,
+        projectId,
+      },
+      include: {
+        activityTemplate: {
+          include: {
+            supplier: true,
+            product: true,
+          },
+        }
+      },
+    });
+  }
+
+  async listProjectActivityCosts(projectActivityId: number) {
+    return await this.prismaService.client.cost.findMany({
+      where: {
+        deleted: false,
+        projectActivityId,
+      },
+    });
+  }
+
   async getProject(id: number) {
     return await this.prismaService.client.project.findFirst({
       where: {

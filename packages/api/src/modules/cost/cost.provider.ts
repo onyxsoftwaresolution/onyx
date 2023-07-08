@@ -26,9 +26,7 @@ export class CostProvider {
   async upsertCost({ id, ...data }: UpsertCostDTO) {
     return await this.prismaService.client.cost.upsert({
       where: id != null ? { id } : { id: -1 },
-      // @ts-expect-error 123
       create: data,
-      // @ts-expect-error 123
       update: id != null ? { id, ...data } : {},
     });
   }

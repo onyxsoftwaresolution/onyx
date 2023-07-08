@@ -17,6 +17,9 @@ import { ClientModule } from '@modules/client/client.module';
 import { SupplierModule } from '@modules/supplier/supplier.module';
 import { ContractModule } from '@modules/contract/contract.module';
 import { ProductModule } from '@modules/product/product.module';
+import { CostModule } from '@modules/cost/cost.module';
+import { ReceiptModule } from '@modules/receipt/receipt.module';
+import { InvoiceModule } from '@modules/invoice/invoice.module';
 
 @Module({
   imports: [
@@ -32,6 +35,9 @@ import { ProductModule } from '@modules/product/product.module';
     ReportModule,
     ContractModule,
     ProductModule,
+    CostModule,
+    ReceiptModule,
+    InvoiceModule,
   ],
   controllers: [AppController],
   providers: [

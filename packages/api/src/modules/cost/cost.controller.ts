@@ -17,11 +17,11 @@ export class CostController {
     return await this.costService.getCost(id);
   }
 
-  @Get('costs')
-  @Roles(Role.ADMIN, Role.USER)
-  async listCosts() {
-    return await this.costService.listCosts();
-  }
+  // @Get('costs')
+  // @Roles(Role.ADMIN, Role.USER)
+  // async listCosts() {
+  //   return await this.costService.listCosts();
+  // }
 
   @Put('cost')
   @Roles(Role.ADMIN)

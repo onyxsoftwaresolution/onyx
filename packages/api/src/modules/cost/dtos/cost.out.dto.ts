@@ -1,9 +1,7 @@
 import { EntityOutDTO } from '@common/dtos/entity.out.dto';
-import { IsNonPrimitiveArray } from '@common/validator/IsNonPrimitiveArray';
-import { ProjectOutDTO } from '@modules/project/dtos/project.out.dto';
+import { ProjectActivityOutDTO } from '@modules/project/dtos/project.out.dto';
 import { Cost } from '@prisma/client';
 import { Expose, Type } from 'class-transformer';
-import { IsArray, ValidateNested } from 'class-validator';
 
 export class CostOutDTO extends EntityOutDTO implements Cost {
   @Expose()
@@ -14,7 +12,11 @@ export class CostOutDTO extends EntityOutDTO implements Cost {
   deleted: boolean;
 
   @Expose()
-  supplierId: number;
+  projectActivityId: number;
+
+  @Expose()
+  @Type(() => ProjectActivityOutDTO)
+  projectActivity: ProjectActivityOutDTO;
 
   @Expose()
   invoiceNumber: string;

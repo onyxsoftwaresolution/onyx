@@ -11,6 +11,18 @@ import { ProjectService } from './project.service';
 export class ProjectController {
   constructor(private projectService: ProjectService) { }
 
+  @Get('project/:id/project-activities')
+  @Roles(Role.ADMIN, Role.USER)
+  async listProjectActivities(@Param('id') id: number) {
+    return await this.projectService.listProjectActivities(id);
+  }
+
+  @Get('project-activity/:id/costs')
+  @Roles(Role.ADMIN, Role.USER)
+  async listProjectActivityCosts(@Param('id') id: number) {
+    return await this.projectService.listProjectActivityCosts(id);
+  }
+
   @Get('projects')
   @Roles(Role.ADMIN, Role.USER)
   async listProjects() {

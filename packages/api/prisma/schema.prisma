@@ -79,7 +79,6 @@ model Supplier {
 
   contracts        Contract[]
   products         Product[]
-  costs            Cost[]
   activityTemplate ActivityTemplate[]
 
   @@map("Suppliers")
@@ -213,6 +212,7 @@ model ProjectActivity {
 
   dailyActivityReports   ActivityReport[] @relation("daily_activity_report")
   monthlyActivityReports ActivityReport[] @relation("monthly_activity_report")
+  costs                  Cost[]
 
   @@index([projectId])
   @@index([activityTemplateId])
@@ -269,10 +269,10 @@ model Cost {
   date          DateTime
   details       String
 
-  supplierId Int
-  supplier   Supplier @relation(fields: [supplierId], references: [id])
+  projectActivityId Int?
+  projectActivity   ProjectActivity? @relation(fields: [projectActivityId], references: [id])
 
-  @@index([supplierId])
+  @@index([projectActivityId])
   @@map("Costs")
 }
 
