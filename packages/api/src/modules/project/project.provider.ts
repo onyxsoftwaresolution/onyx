@@ -1,6 +1,7 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { UpsertProjectDTO } from './dtos/project.in.dto';
+import { ProjectActivityQueryParams, ProjectQueryParams } from './dtos/project.out.dto';
 
 @Injectable()
 export class ProjectProvider {
@@ -54,26 +55,37 @@ export class ProjectProvider {
     return await this.getProject(id);
   }
 
-  async listProjects() {
+  async listProjects(params: ProjectQueryParams) {
     return await this.prismaService.client.project.findMany({
-      where: { deleted: false, available: true },
+      where: { deleted: false, available: params.available },
       orderBy: { modified: 'desc' },
+      include: {
+        areaAdmin: !!params.areaAdmin,
+        localAdmin: !!params.localAdmin,
+        contract: !!params.contract,
+        projectActivities: !!params.projectActivities || !!params['projectActivities.activityTemplate'] ? {
+          include: {
+            activityTemplate: !!params['projectActivities.activityTemplate'],
+          }
+        } : false,
+      },
     });
   }
 
-  async listProjectActivities(projectId: number) {
+  async listProjectActivities(projectId: number, params: ProjectActivityQueryParams) {
     return await this.prismaService.client.projectActivity.findMany({
       where: {
         deleted: false,
         projectId,
       },
       include: {
-        activityTemplate: {
+        activityTemplate: params.activityTemplate || params['activityTemplate.product'] || params['activityTemplate.supplier'] ? {
           include: {
-            supplier: true,
-            product: true,
+            supplier: !!params['activityTemplate.supplier'],
+            product: !!params['activityTemplate.product'],
           },
-        }
+        } : false,
+        costs: !!params.costs,
       },
     });
   }

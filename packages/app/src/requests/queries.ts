@@ -1,7 +1,7 @@
 import { UseQueryOptions } from '@tanstack/react-query';
 import { Store } from '../storage/Store';
 import { FetchError, FetchResponse, request } from './request';
-import { ProjectActivityOutDTO, ProjectOutDTO } from '@workspace/api/src/modules/project/dtos/project.out.dto';
+import { ProjectActivityOutDTO, ProjectActivityQueryParams, ProjectOutDTO } from '@workspace/api/src/modules/project/dtos/project.out.dto';
 import { ActivityTemplateOutDTO } from "@workspace/api/src/modules/activity-template/dtos/activity-template-out.dto"
 import { EmployeeOutDTO } from "@workspace/api/src/modules/employee/dtos/employee.out.dto"
 import { ReportListItemOutDTO } from '@workspace/api/src/modules/report/dtos/report-out.dto';
@@ -16,6 +16,7 @@ import { ClientOutDTO } from '@workspace/api/src/modules/client/dtos/client.out.
 import { ContractOutDTO } from '@workspace/api/src/modules/contract/dtos/contract.out.dto';
 import { ProductOutDTO } from '@workspace/api/src/modules/product/dtos/product.out.dto';
 import { CostOutDTO } from '@workspace/api/src/modules/cost/dtos/cost.out.dto';
+import { getQueryParams } from '../getQueryParams';
 
 type Options<T = never> = Partial<Pick<UseQueryOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -212,11 +213,11 @@ export class Queries {
     enabled,
   } as UseQueryOptions<FetchResponse<ActivityTemplateOutDTO[]>, FetchError>);
 
-  static getProjectActivities = (projectId: number, { enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
-    queryKey: [`/v1/project/${projectId}/project-activities`],
+  static getProjectActivities = (projectId: number, params: ProjectActivityQueryParams, { enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
+    queryKey: [`/v1/project/${projectId}/project-activities?${getQueryParams(params)}`],
     queryFn: async () => {
       onLoading?.();
-      return await Queries.queryFn(`${API_URL}/v1/project/${projectId}/project-activities`);
+      return await Queries.queryFn(`${API_URL}/v1/project/${projectId}/project-activities?${getQueryParams(params)}`);
     },
     onError,
     onSuccess,

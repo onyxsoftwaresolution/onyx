@@ -1,10 +1,10 @@
 import { useIsFocused } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
-import { ProjectActivityOutDTO } from '@workspace/api/src/modules/project/dtos/project.out.dto';
+import { ProjectActivityOutDTO, ProjectActivityQueryParams } from '@workspace/api/src/modules/project/dtos/project.out.dto';
 import { memo, useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Divider, HelperText, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import ScreenContainer from '../../../components/ScreenContainer';
 import { useSnackbar } from '../../../components/hooks/useSnackbar';
 import { Queries } from '../../../requests/queries';
@@ -13,6 +13,20 @@ import { Screens } from '../../Screens';
 
 type Props = NativeStackScreenProps<any, string> & {
   type: 'cost';
+}
+
+const getQuerySearchParams = (type: Props['type']) => {
+  switch (type) {
+    case 'cost':
+      return {
+        costs: true,
+        "activityTemplate.supplier": true,
+        "activityTemplate.product": true,
+      } as ProjectActivityQueryParams;
+
+    default:
+      return {};
+  }
 }
 
 export default memo<Props>(function ProjectActivityListScreen({ type, ...props }) {
@@ -24,10 +38,12 @@ export default memo<Props>(function ProjectActivityListScreen({ type, ...props }
 
   const enabled = useIsFocused();
   const activities = useQuery(
-    Queries.getProjectActivities(projectId, {
-      enabled,
-      onError() { snackbar.show('A aparut o eroare la listarea activitatilor!') },
-    })
+    Queries.getProjectActivities(projectId,
+      getQuerySearchParams(type),
+      {
+        enabled,
+        onError() { snackbar.show('A aparut o eroare la listarea activitatilor!') },
+      })
   );
 
   const { colors } = useTheme<AppTheme>();
@@ -45,12 +61,33 @@ export default memo<Props>(function ProjectActivityListScreen({ type, ...props }
               style={[{ flex: 1 }]}
             >
               <View>
-                <Text style={[styles.itemText]}>{activity.description}</Text>
-                <Text style={[styles.itemSubText, { color: colors.error }]}>
-                  {activity.activityTemplate.supplier?.name} - {activity.activityTemplate.product?.name}
+                <Text style={[styles.parentText]}>
+                  <HelperText style={[styles.helperText]} variant='bodySmall' type='info'>Nume activitate: </HelperText>
+                  <Text variant='bodyLarge' style={[styles.itemText]}>{activity.description}</Text>
                 </Text>
-                <Text style={[styles.itemSubText, { color: colors.error }]}>
-                  {activity.cost}
+                <Text style={[styles.parentText]}>
+                  <HelperText style={[styles.helperText]} type='info'>Furnizor: </HelperText>
+                  <Text variant='bodyLarge' style={[styles.itemSubText, { color: colors.error }]}>
+                    {activity.activityTemplate.supplier?.name}
+                  </Text>
+                </Text>
+                <Text style={[styles.parentText]}>
+                  <HelperText style={[styles.helperText]} type='info'>Produs: </HelperText>
+                  <Text variant='bodyLarge' style={[styles.itemSubText, { color: colors.error }]}>
+                    {activity.activityTemplate.product?.name}
+                  </Text>
+                </Text>
+                <Text style={[styles.parentText]}>
+                  <HelperText style={[styles.helperText]} type='info'>Cost activitate: </HelperText>
+                  <Text variant='bodyLarge' style={[styles.itemSubText, { color: colors.error }]}>
+                    {activity.cost}
+                  </Text>
+                </Text>
+                <Text style={[styles.parentText]}>
+                  <HelperText style={[styles.helperText]} type='info'>Total costuri: </HelperText>
+                  <Text variant='bodyLarge' style={[styles.itemSubText, { color: colors.error }]}>
+                    {activity.costs?.reduce((p, n) => p + n.amount, 0)}
+                  </Text>
                 </Text>
                 <View style={[{ marginBottom: 10 }]} />
               </View>
@@ -116,15 +153,22 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
+  parentText: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  helperText: {
+    width: 130,
+    display: 'flex',
+  },
   itemText: {
     padding: 10,
+    paddingTop: 0,
     paddingBottom: 3,
-    fontSize: 18,
   },
   itemSubText: {
     paddingHorizontal: 10,
-    fontSize: 16,
-    paddingBottom: 10,
+    // paddingBottom: 10,
   },
   iconContainer: {
     alignItems: 'center',
