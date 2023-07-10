@@ -1,5 +1,6 @@
 import { EntityOutDTO } from '@common/dtos/entity.out.dto';
 import { IsNonPrimitiveArray } from '@common/validator/IsNonPrimitiveArray';
+import { ActivityTemplateOutDTO } from '@modules/activity-template/dtos/activity-template-out.dto';
 import { ContractOutDTO } from '@modules/contract/dtos/contract.out.dto';
 import { ProductOutDTO } from '@modules/product/dtos/product.out.dto';
 import { ProjectOutDTO } from '@modules/project/dtos/project.out.dto';
@@ -38,6 +39,13 @@ export class SupplierOutDTO extends EntityOutDTO implements Supplier {
 
   @Expose()
   email: string;
+
+  @Expose()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @IsNonPrimitiveArray()
+  @Type(() => ActivityTemplateOutDTO)
+  activityTemplates: ActivityTemplateOutDTO[];
 
   @Expose()
   @IsArray()

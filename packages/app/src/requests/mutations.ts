@@ -19,6 +19,10 @@ import { UpsertContractDTO } from '@workspace/api/src/modules/contract/dtos/cont
 import { ProductOutDTO } from '@workspace/api/src/modules/product/dtos/product.out.dto';
 import { CostOutDTO } from '@workspace/api/src/modules/cost/dtos/cost.out.dto';
 import { UpsertCostDTO } from '@workspace/api/src/modules/cost/dtos/cost.in.dto';
+import { InvoiceOutDTO } from '@workspace/api/src/modules/invoice/dtos/invoice.out.dto';
+import { UpsertInvoiceDTO } from '@workspace/api/src/modules/invoice/dtos/invoice.in.dto';
+import { ReceiptOutDTO } from '@workspace/api/src/modules/receipt/dtos/receipt.out.dto';
+import { UpsertReceiptDTO } from '@workspace/api/src/modules/receipt/dtos/receipt.in.dto';
 
 type Options<T = never> = Partial<Pick<UseMutationOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -222,6 +226,88 @@ export class Mutations {
       onSuccess,
       onError,
     } as UseMutationOptions<FetchResponse<CostOutDTO>, FetchError, number>;
+  }
+
+  static upsertInvoice({ onError, onLoading, onSuccess }: Options<FetchResponse<InvoiceOutDTO>> = {}) {
+    return {
+      mutationKey: ['/v1/invoice'],
+      mutationFn: async (body) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/invoice`,
+          {
+            // @ts-expect-error a simple typescript mistake
+            body,
+            method: 'PUT',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<
+      FetchResponse<InvoiceOutDTO>,
+      FetchError,
+      UpsertInvoiceDTO,
+      unknown
+    >;
+  }
+
+  static deleteInvoice({ onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: [`/v1/invoice/`],
+      mutationFn: async (id) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/invoice/${id}`,
+          {
+            method: 'DELETE',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<InvoiceOutDTO>, FetchError, number>;
+  }
+
+  static upsertReceipt({ onError, onLoading, onSuccess }: Options<FetchResponse<ReceiptOutDTO>> = {}) {
+    return {
+      mutationKey: ['/v1/receipt'],
+      mutationFn: async (body) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/receipt`,
+          {
+            // @ts-expect-error a simple typescript mistake
+            body,
+            method: 'PUT',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<
+      FetchResponse<ReceiptOutDTO>,
+      FetchError,
+      UpsertReceiptDTO,
+      unknown
+    >;
+  }
+
+  static deleteReceipt({ onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: [`/v1/receipt/`],
+      mutationFn: async (id) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/receipt/${id}`,
+          {
+            method: 'DELETE',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<ReceiptOutDTO>, FetchError, number>;
   }
 
   static upsertSupplier({ onError, onLoading, onSuccess }: Options<FetchResponse<SupplierOutDTO>> = {}) {

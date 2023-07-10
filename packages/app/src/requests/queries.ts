@@ -17,6 +17,8 @@ import { ContractOutDTO } from '@workspace/api/src/modules/contract/dtos/contrac
 import { ProductOutDTO } from '@workspace/api/src/modules/product/dtos/product.out.dto';
 import { CostOutDTO } from '@workspace/api/src/modules/cost/dtos/cost.out.dto';
 import { getQueryParams } from '../getQueryParams';
+import { InvoiceOutDTO } from '@workspace/api/src/modules/invoice/dtos/invoice.out.dto';
+import { ReceiptOutDTO } from '@workspace/api/src/modules/receipt/dtos/receipt.out.dto';
 
 type Options<T = never> = Partial<Pick<UseQueryOptions<T>, 'onError' | 'onSuccess'>> & {
   onLoading?: () => void;
@@ -135,6 +137,50 @@ export class Queries {
     onSuccess,
     enabled,
   } as UseQueryOptions<FetchResponse<CostOutDTO>, FetchError>);
+
+  static getInvoices = (projectId: number, { enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
+    queryKey: [`/v1/project/${projectId}/invoices`],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/project/${projectId}/invoices`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<InvoiceOutDTO[]>, FetchError>);
+
+  static getInvoice = (id: number, { enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<InvoiceOutDTO>> = {}) => ({
+    queryKey: [`invoice-${id}`],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/invoice/${id}`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<InvoiceOutDTO>, FetchError>);
+
+  static getReceipts = (projectId: number, { enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
+    queryKey: [`/v1/project/${projectId}/receipts`],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/project/${projectId}/receipts`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<ReceiptOutDTO[]>, FetchError>);
+
+  static getReceipt = (id: number, { enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<ReceiptOutDTO>> = {}) => ({
+    queryKey: [`receipt-${id}`],
+    queryFn: async () => {
+      onLoading?.();
+      return await Queries.queryFn(`${API_URL}/v1/receipt/${id}`);
+    },
+    onError,
+    onSuccess,
+    enabled,
+  } as UseQueryOptions<FetchResponse<ReceiptOutDTO>, FetchError>);
 
   static getSuppliers = ({ enabled = false, onError, onLoading, onSuccess }: Options = {}) => ({
     queryKey: ['suppliers'],

@@ -4,8 +4,8 @@ import { Portal, TextInputProps, TouchableRipple, Text } from "react-native-pape
 import { enGB, registerTranslation, DatePickerModal, DatePickerModalSingleProps } from "react-native-paper-dates";
 import { SingleChange, ValidRangeType } from "react-native-paper-dates/lib/typescript/Date/Calendar";
 import dayjs from "dayjs";
-import { dayOrNull } from "../dayOrNull";
 import MGTextInput from "./MGTextInput";
+import { getHumanReadableDate } from "../getHumanReadableDate";
 
 registerTranslation('en-GB', enGB);
 
@@ -50,7 +50,7 @@ export default memo<MGDatePickerProps>(function MGDatePicker(props) {
         <View pointerEvents="none">
           <MGTextInput
             disabled={props.disabled}
-            value={props.renderInputValue?.(props.value) ?? dayOrNull(dayjs(props.value ?? ''))?.format('DD/MM/YYYY') ?? ""}
+            value={props.renderInputValue?.(props.value) ?? getHumanReadableDate(props.value ?? '') ?? ""}
             label={props.label}
           />
         </View>

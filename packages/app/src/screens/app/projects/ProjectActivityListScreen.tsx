@@ -10,6 +10,7 @@ import { useSnackbar } from '../../../components/hooks/useSnackbar';
 import { Queries } from '../../../requests/queries';
 import { AppTheme } from '../../../theme/type';
 import { Screens } from '../../Screens';
+import ListItem from '../../../components/ListItem';
 
 type Props = NativeStackScreenProps<any, string> & {
   type: 'cost';
@@ -60,44 +61,22 @@ export default memo<Props>(function ProjectActivityListScreen({ type, ...props }
               onPress={() => props.navigation.navigate(Screens.APP_COST_LIST, { activityId: activity.id })}
               style={[{ flex: 1 }]}
             >
-              <View>
-                <Text style={[styles.parentText]}>
-                  <HelperText style={[styles.helperText]} variant='bodySmall' type='info'>Nume activitate: </HelperText>
-                  <Text variant='bodyLarge' style={[styles.itemText]}>{activity.description}</Text>
-                </Text>
-                <Text style={[styles.parentText]}>
-                  <HelperText style={[styles.helperText]} type='info'>Furnizor: </HelperText>
-                  <Text variant='bodyLarge' style={[styles.itemSubText, { color: colors.error }]}>
-                    {activity.activityTemplate.supplier?.name}
-                  </Text>
-                </Text>
-                <Text style={[styles.parentText]}>
-                  <HelperText style={[styles.helperText]} type='info'>Produs: </HelperText>
-                  <Text variant='bodyLarge' style={[styles.itemSubText, { color: colors.error }]}>
-                    {activity.activityTemplate.product?.name}
-                  </Text>
-                </Text>
-                <Text style={[styles.parentText]}>
-                  <HelperText style={[styles.helperText]} type='info'>Cost activitate: </HelperText>
-                  <Text variant='bodyLarge' style={[styles.itemSubText, { color: colors.error }]}>
-                    {activity.cost}
-                  </Text>
-                </Text>
-                <Text style={[styles.parentText]}>
-                  <HelperText style={[styles.helperText]} type='info'>Total costuri: </HelperText>
-                  <Text variant='bodyLarge' style={[styles.itemSubText, { color: colors.error }]}>
-                    {activity.costs?.reduce((p, n) => p + n.amount, 0)}
-                  </Text>
-                </Text>
-                <View style={[{ marginBottom: 10 }]} />
-              </View>
+              <ListItem
+                rows={[
+                  { label: 'Nume activitate:', value: activity.description },
+                  { label: 'Furnizor:', value: activity.activityTemplate.supplier?.name },
+                  { label: 'Produs:', value: activity.activityTemplate.product?.name },
+                  { label: 'Cost activitate:', value: activity.cost },
+                  { label: 'Total costuri:', value: activity.costs?.reduce((p, n) => p + n.amount, 0) },
+                ]}
+              />
             </TouchableRipple>
           </View>
           <Divider />
         </View>
       </View>
     ),
-    [colors.error, props.navigation],
+    [props.navigation],
   );
 
   const renderListItem = useCallback((activity: ProjectActivityOutDTO, index: number) => {

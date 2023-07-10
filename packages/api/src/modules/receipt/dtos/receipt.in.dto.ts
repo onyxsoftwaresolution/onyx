@@ -1,5 +1,7 @@
+import { UpsertInvoiceDTO } from '@modules/invoice/dtos/invoice.in.dto';
 import { PickType } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 class CreateReceiptInDTO {
   @IsInt()
@@ -14,11 +16,15 @@ class CreateReceiptInDTO {
   modified?: string | Date;
   deleted?: boolean;
 
-  @IsString()
+  @IsInt()
   @IsNotEmpty()
-  invoiceNumber: string;
+  invoiceId: number;
 
-  @IsString()
+  @IsNotEmpty()
+  @Type(() => UpsertInvoiceDTO)
+  invoice: UpsertInvoiceDTO;
+
+  @IsNumber()
   @IsNotEmpty()
   amount: number;
 
@@ -29,14 +35,10 @@ class CreateReceiptInDTO {
   @IsString()
   @IsNotEmpty()
   type: string;
-
-  @IsInt()
-  @IsNotEmpty()
-  contractId: number;
 }
 
 export class CreateReceiptDTO extends PickType(CreateReceiptInDTO, [
-  'invoiceNumber',
+  'invoice',
   'amount',
   'date',
   'type',
@@ -44,7 +46,7 @@ export class CreateReceiptDTO extends PickType(CreateReceiptInDTO, [
 
 export class UpdateReceiptDTO extends PickType(CreateReceiptInDTO, [
   'id',
-  'invoiceNumber',
+  'invoice',
   'amount',
   'date',
   'type',

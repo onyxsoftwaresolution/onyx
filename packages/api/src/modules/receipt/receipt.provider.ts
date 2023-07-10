@@ -8,9 +8,17 @@ import {
 export class ReceiptProvider {
   constructor(private prismaService: PrismaService) { }
 
-  async listReceipts() {
+  async listProjectReceipts(projectId: number) {
     return await this.prismaService.client.receipt.findMany({
-      where: { deleted: false },
+      where: {
+        deleted: false,
+        invoice: {
+          projectId,
+        },
+      },
+      include: {
+        invoice: true,
+      },
     });
   }
 
@@ -20,17 +28,17 @@ export class ReceiptProvider {
         id,
         deleted: false,
       },
+      include: {
+        invoice: true,
+      },
     });
   }
 
-  async upsertReceipt({ id, ...data }: UpsertReceiptDTO) {
+  async upsertReceipt({ id, amount, date, invoice, type }: UpsertReceiptDTO) {
     return await this.prismaService.client.receipt.upsert({
       where: id != null ? { id } : { id: -1 },
-      create: {
-        ...data,
-        contract: {},
-      },
-      update: id != null ? { id, ...data } : {},
+      create: { amount, date, type, invoiceId: invoice.id },
+      update: id != null ? { id, amount, date, invoiceId: invoice.id, type } : {},
     });
   }
 

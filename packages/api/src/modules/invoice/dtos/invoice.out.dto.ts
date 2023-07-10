@@ -1,14 +1,28 @@
 import { EntityOutDTO } from '@common/dtos/entity.out.dto';
-import { Expose } from 'class-transformer';
+import { ProjectOutDTO } from '@modules/project/dtos/project.out.dto';
+import { Expose, Type } from 'class-transformer';
 
 export class InvoiceOutDTO extends EntityOutDTO {
   @Expose()
   id: number;
 
-  // created: Date;
-  // modified: Date;
-  // deleted: boolean;
+  created: Date;
+  modified: Date;
+  deleted: boolean;
 
   @Expose()
   number: string;
+
+  @Expose()
+  issueDate: Date;
+
+  @Expose()
+  dueDate: Date;
+
+  @Expose()
+  projectId: number;
+
+  @Expose()
+  @Type(() => ProjectOutDTO)
+  project: ProjectOutDTO;
 }

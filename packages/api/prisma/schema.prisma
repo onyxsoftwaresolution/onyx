@@ -36,8 +36,8 @@ model Product {
 
   name String
 
-  suppliers        Supplier[]
-  activityTemplate ActivityTemplate[]
+  suppliers         Supplier[]
+  activityTemplates ActivityTemplate[]
 
   @@map("Products")
 }
@@ -77,8 +77,8 @@ model Supplier {
   phoneNumber String
   email       String
 
-  products         Product[]
-  activityTemplate ActivityTemplate[]
+  products          Product[]
+  activityTemplates ActivityTemplate[]
 
   @@map("Suppliers")
 }
@@ -102,7 +102,6 @@ model Contract {
   client   Client @relation(fields: [clientId], references: [id])
 
   projects Project[]
-  receipt  Receipt[]
 
   @@index([clientId])
   @@map("Contracts")
@@ -168,6 +167,7 @@ model Project {
 
   projectActivities ProjectActivity[]
   reports           ProjectReport[]
+  invoices          Invoice[]
 
   @@index([areaAdminId])
   @@index([localAdminId])
@@ -257,6 +257,25 @@ model ActivityReport {
   @@map("ActivityReports")
 }
 
+model Invoice {
+  id       Int      @id @unique @default(autoincrement())
+  created  DateTime @default(now())
+  modified DateTime @default(now())
+  deleted  Boolean  @default(false)
+
+  number    String   @unique @default(uuid())
+  issueDate DateTime
+  dueDate   DateTime
+
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id])
+
+  receipts Receipt[]
+
+  @@index([projectId])
+  @@map("Invoices")
+}
+
 model Cost {
   id       Int      @id @unique @default(autoincrement())
   created  DateTime @default(now())
@@ -281,14 +300,13 @@ model Receipt {
   modified DateTime @default(now())
   deleted  Boolean  @default(false)
 
-  invoiceNumber String
-  amount        Float
-  date          DateTime
-  type          String
+  amount Float
+  date   DateTime
+  type   String
 
-  contractId Int
-  contract   Contract @relation(fields: [contractId], references: [id])
+  invoiceId Int
+  invoice   Invoice @relation(fields: [invoiceId], references: [id])
 
-  @@index([contractId])
+  @@index([invoiceId])
   @@map("Receipts")
 }

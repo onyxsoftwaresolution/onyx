@@ -13,6 +13,7 @@ import { useSnackbar } from '../../../components/hooks/useSnackbar';
 import { Mutations } from '../../../requests/mutations';
 import { RenderOptionsFunction, useDialog } from '../../../components/hooks/useDialog';
 import { AppTheme } from '../../../theme/type';
+import ListItem from '../../../components/ListItem';
 
 type Params = {
   activityId: number;
@@ -57,13 +58,13 @@ export default memo<NativeStackScreenProps<any, string>>(function CostListScreen
               onPress={() => onPress(cost)}
               style={[{ flex: 1 }]}
             >
-              <View>
-                <Text style={[styles.itemText]}>{cost.details}</Text>
-                <Text style={[styles.itemSubText, { color: colors.error }]}>
-                  {cost.amount}
-                </Text>
-                <View style={[{ marginBottom: 10 }]} />
-              </View>
+              <ListItem
+                rows={[
+                  { label: 'Detalii:', value: cost.details },
+                  { label: 'Valoare:', value: cost.amount?.toString() },
+                ]}
+                labelWidth={70}
+              />
             </TouchableRipple>
             <TouchableRipple
               onPress={() => dialog.show(cost)}
@@ -79,7 +80,7 @@ export default memo<NativeStackScreenProps<any, string>>(function CostListScreen
         </View>
       </View>
     ),
-    [colors.danger, colors.error, dialog, onPress],
+    [colors.danger, dialog, onPress],
   );
 
   const dialogRenderOptions: RenderOptionsFunction<CostOutDTO> = useCallback((cost) => ({

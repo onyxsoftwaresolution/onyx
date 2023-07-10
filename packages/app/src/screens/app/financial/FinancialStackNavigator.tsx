@@ -19,6 +19,8 @@ const Stack = createNativeStackNavigator();
 
 const CostProjectListScreen = memo((props: any) => <ProjectListScreen {...props} type={'cost'} />);
 const CostProjectActivityListScreen = memo((props: any) => <ProjectActivityListScreen {...props} type={'cost'} />);
+const InvoiceProjectListScreen = memo((props: any) => <ProjectListScreen {...props} type={'invoice'} />);
+const ReceiptProjectListScreen = memo((props: any) => <ProjectListScreen {...props} type={'receipt'} />);
 
 export default memo(function FinancialStackNavigator() {
   const options = useScreenOptions();
@@ -33,100 +35,127 @@ export default memo(function FinancialStackNavigator() {
         component={FinancialScreen}
         options={options('Financiar')}
       />
-      <Stack.Screen
-        name={Screens.APP_FINANCIAL_INVOICE_LIST}
-        component={InvoiceListScreen}
-        options={(screenProps) => ({
-          ...options('Facturi'),
-          headerRight: (headerProps) => (
-            <HeaderAddButton
-              {...screenProps}
-              {...headerProps}
-              screenName={Screens.APP_FINANCIAL_INVOICE_UPSERT}
-            />
-          ),
-        })}
-      />
-      <Stack.Screen
-        name={Screens.APP_FINANCIAL_INVOICE_UPSERT}
-        component={InvoiceUpsertScreen}
-        options={(screenProps) => ({
-          ...options(''),
-          title:
-            // @ts-expect-error missing type
-            screenProps.route.params?.name != null
-              ? 'Modifica factura'
-              : 'Adauga factura',
-        })}
-      />
-      <Stack.Screen
-        name={Screens.APP_COST_PROJECT_LIST}
-        component={CostProjectListScreen}
-        options={(screenProps) => ({
-          ...options('Alege un proiect...'),
-        })}
-      />
-      <Stack.Screen
-        name={Screens.APP_COST_PROJECT_ACTIVITY_LIST}
-        component={CostProjectActivityListScreen}
-        options={(screenProps) => ({
-          ...options('Alege o activitate...'),
-        })}
-      />
-      <Stack.Screen
-        name={Screens.APP_COST_LIST}
-        component={CostListScreen}
-        options={(screenProps) => ({
-          ...options('Costuri'),
-          headerRight: (headerProps) => (
-            <HeaderAddButton
-              {...screenProps}
-              {...headerProps}
-              screenName={Screens.APP_COST_UPSERT}
+
+      <Stack.Group>
+        <Stack.Screen
+          name={Screens.APP_INVOICE_PROJECT_LIST}
+          component={InvoiceProjectListScreen}
+          options={(screenProps) => ({
+            ...options('Alege un proiect...'),
+          })}
+        />
+        <Stack.Screen
+          name={Screens.APP_INVOICE_LIST}
+          component={InvoiceListScreen}
+          options={(screenProps) => ({
+            ...options('Facturi'),
+            headerRight: (headerProps) => (
+              <HeaderAddButton
+                {...screenProps}
+                {...headerProps}
+                screenName={Screens.APP_INVOICE_UPSERT}
+                // @ts-expect-error missing type
+                params={{ projectId: screenProps.route.params?.projectId }}
+              />
+            ),
+          })}
+        />
+        <Stack.Screen
+          name={Screens.APP_INVOICE_UPSERT}
+          component={InvoiceUpsertScreen}
+          options={(screenProps) => ({
+            ...options(''),
+            title:
               // @ts-expect-error missing type
-              params={{ projectActivityId: screenProps.route.params?.activityId }}
-            />
-          ),
-        })}
-      />
-      <Stack.Screen
-        name={Screens.APP_COST_UPSERT}
-        component={CostUpsertScreen}
-        options={(screenProps) => ({
-          ...options(''),
-          title:
-            // @ts-expect-error missing type
-            screenProps.route.params?.name != null
-              ? 'Modifica cost'
-              : 'Adauga cost',
-        })}
-      />
-      <Stack.Screen
-        name={Screens.APP_FINANCIAL_RECEIPT_LIST}
-        component={ReceiptListScreen}
-        options={(screenProps) => ({
-          ...options('Incasari'),
-          headerRight: (headerProps) => (
-            <HeaderAddButton
-              {...screenProps}
-              {...headerProps}
-              screenName={Screens.APP_FINANCIAL_RECEIPT_UPSERT}
-            />
-          ),
-        })}
-      />
-      <Stack.Screen
-        name={Screens.APP_FINANCIAL_RECEIPT_UPSERT}
-        component={ReceiptUpsertScreen}
-        options={(screenProps) => ({
-          ...options(''),
-          title:
-            // @ts-expect-error missing type
-            screenProps.route.params?.name != null
-              ? 'Modifica incasare'
-              : 'Adauga incasare',
-        })}
-      />
+              screenProps.route.params?.name != null
+                ? 'Modifica factura'
+                : 'Adauga factura',
+          })}
+        />
+      </Stack.Group>
+
+      <Stack.Group>
+        <Stack.Screen
+          name={Screens.APP_COST_PROJECT_LIST}
+          component={CostProjectListScreen}
+          options={(screenProps) => ({
+            ...options('Alege un proiect...'),
+          })}
+        />
+        <Stack.Screen
+          name={Screens.APP_COST_PROJECT_ACTIVITY_LIST}
+          component={CostProjectActivityListScreen}
+          options={(screenProps) => ({
+            ...options('Alege o activitate...'),
+          })}
+        />
+        <Stack.Screen
+          name={Screens.APP_COST_LIST}
+          component={CostListScreen}
+          options={(screenProps) => ({
+            ...options('Costuri'),
+            headerRight: (headerProps) => (
+              <HeaderAddButton
+                {...screenProps}
+                {...headerProps}
+                screenName={Screens.APP_COST_UPSERT}
+                // @ts-expect-error missing type
+                params={{ projectActivityId: screenProps.route.params?.activityId }}
+              />
+            ),
+          })}
+        />
+        <Stack.Screen
+          name={Screens.APP_COST_UPSERT}
+          component={CostUpsertScreen}
+          options={(screenProps) => ({
+            ...options(''),
+            title:
+              // @ts-expect-error missing type
+              screenProps.route.params?.name != null
+                ? 'Modifica cost'
+                : 'Adauga cost',
+          })}
+        />
+      </Stack.Group>
+
+      <Stack.Group>
+        <Stack.Screen
+          name={Screens.APP_RECEIPT_PROJECT_LIST}
+          component={ReceiptProjectListScreen}
+          options={(screenProps) => ({
+            ...options('Alege un proiect...'),
+          })}
+        />
+        <Stack.Screen
+          name={Screens.APP_RECEIPT_LIST}
+          component={ReceiptListScreen}
+          options={(screenProps) => ({
+            ...options('Incasari'),
+            headerRight: (headerProps) => (
+              <HeaderAddButton
+                {...screenProps}
+                {...headerProps}
+                screenName={Screens.APP_RECEIPT_UPSERT}
+                // @ts-expect-error missing type
+                params={{ projectId: screenProps.route.params?.projectId }}
+              />
+            ),
+          })}
+        />
+        <Stack.Screen
+          name={Screens.APP_RECEIPT_UPSERT}
+          component={ReceiptUpsertScreen}
+          options={(screenProps) => ({
+            ...options(''),
+            title:
+              // @ts-expect-error missing type
+              screenProps.route.params?.name != null
+                ? 'Modifica incasare'
+                : 'Adauga incasare',
+          })}
+        />
+      </Stack.Group>
     </Stack.Navigator>
   );
 });

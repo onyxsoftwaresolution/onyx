@@ -26,12 +26,12 @@ export const getFinancialItemData = (
         color: colors.inverseSurface,
         onPress: () => {
           navigation.navigate(Screens.APP_FINANCIAL_NAVIGATOR, {
-            screen: Screens.APP_FINANCIAL_INVOICE_LIST,
+            screen: Screens.APP_INVOICE_PROJECT_LIST,
           });
         },
         icon: 'file-invoice',
         chevron: 'chevron-right',
-        screen: Screens.APP_FINANCIAL_INVOICE_LIST,
+        screen: Screens.APP_INVOICE_PROJECT_LIST,
       };
 
     case FinancialLinks.COSTS:
@@ -52,12 +52,12 @@ export const getFinancialItemData = (
         color: colors.inverseSurface,
         onPress: () => {
           navigation.navigate(Screens.APP_FINANCIAL_NAVIGATOR, {
-            screen: Screens.APP_FINANCIAL_RECEIPT_LIST,
+            screen: Screens.APP_RECEIPT_PROJECT_LIST,
           });
         },
         icon: 'euro-sign',
         chevron: 'chevron-right',
-        screen: Screens.APP_FINANCIAL_RECEIPT_LIST,
+        screen: Screens.APP_RECEIPT_PROJECT_LIST,
       }
 
     default:

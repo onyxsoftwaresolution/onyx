@@ -17,10 +17,10 @@ export class ReceiptController {
     return await this.receiptService.getReceipt(id);
   }
 
-  @Get('receipts')
+  @Get('project/:id/receipts')
   @Roles(Role.ADMIN, Role.USER)
-  async listReceipts() {
-    return await this.receiptService.listReceipts();
+  async listProjectReceipts(@Param('id') id: number) {
+    return await this.receiptService.listProjectReceipts(id);
   }
 
   @Put('receipt')

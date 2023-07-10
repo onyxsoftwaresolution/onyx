@@ -17,10 +17,10 @@ export class InvoiceController {
     return await this.invoiceService.getInvoice(id);
   }
 
-  @Get('invoices')
+  @Get('project/:id/invoices')
   @Roles(Role.ADMIN, Role.USER)
-  async listInvoices() {
-    return await this.invoiceService.listInvoices();
+  async listProjectInvoices(@Param('id') id: number) {
+    return await this.invoiceService.listProjectInvoices(id);
   }
 
   @Put('invoice')

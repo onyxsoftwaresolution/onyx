@@ -9,9 +9,9 @@ import { ReceiptProvider } from './receipt.provider';
 export class ReceiptService {
   constructor(private receiptProvider: ReceiptProvider) { }
 
-  async listReceipts() {
-    const receipts = await this.receiptProvider.listReceipts();
-    return receipts.map((e) => new ReceiptOutDTO(e));
+  async listProjectReceipts(projectId: number): Promise<ReceiptOutDTO[]> {
+    const receipts = await this.receiptProvider.listProjectReceipts(projectId);
+    return receipts.map((receipt) => new ReceiptOutDTO(receipt));
   }
 
   async getReceipt(id: number): Promise<ReceiptOutDTO> {

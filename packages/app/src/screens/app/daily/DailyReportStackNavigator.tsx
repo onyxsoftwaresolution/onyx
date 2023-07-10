@@ -8,8 +8,7 @@ import ReportListScreen from '../reports/ReportListScreen';
 import { Report } from '../reports/Report';
 import ReportUpsertScreen from '../reports/ReportUpsertScreen';
 import { Text } from 'react-native-paper';
-import dayjs from 'dayjs';
-import { dayOrNull } from '../../../dayOrNull';
+import { getHumanReadableDate } from '../../../getHumanReadableDate';
 import { Platform } from 'react-native';
 
 const Stack = createNativeStackNavigator();
@@ -56,7 +55,7 @@ export default memo(function DailyReportStackNavigator() {
             headerRight: () => (
               <Text variant='bodyLarge' style={[{ paddingRight: Platform.OS === 'ios' ? 0 : 10, }]}>
                 {/* @ts-expect-error missing type */}
-                {dayOrNull(dayjs(screenProps.route.params?.date))?.format('DD/MM/YYYY')}
+                {getHumanReadableDate(screenProps.route.params?.date)}
               </Text>
             ),
           })

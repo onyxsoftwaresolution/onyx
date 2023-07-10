@@ -18,12 +18,6 @@ export class ProjectController {
     return await this.projectService.listProjectActivities(id, params);
   }
 
-  @Get('project-activity/:id/costs')
-  @Roles(Role.ADMIN, Role.USER)
-  async listProjectActivityCosts(@Param('id') id: number) {
-    return await this.projectService.listProjectActivityCosts(id);
-  }
-
   @Get('projects')
   @Roles(Role.ADMIN, Role.USER)
   async listProjects(@Query() params: ProjectQueryParams) {

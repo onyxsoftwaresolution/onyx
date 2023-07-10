@@ -9,9 +9,9 @@ import { InvoiceProvider } from './invoice.provider';
 export class InvoiceService {
   constructor(private invoiceProvider: InvoiceProvider) { }
 
-  async listInvoices() {
-    const invoices = await this.invoiceProvider.listInvoices();
-    return invoices.map((e) => new InvoiceOutDTO(e));
+  async listProjectInvoices(projectId: number): Promise<InvoiceOutDTO[]> {
+    const invoices = await this.invoiceProvider.listProjectInvoices(projectId);
+    return invoices.map((invoice) => new InvoiceOutDTO(invoice));
   }
 
   async getInvoice(id: number): Promise<InvoiceOutDTO> {

@@ -9,9 +9,9 @@ import { CostProvider } from './cost.provider';
 export class CostService {
   constructor(private costProvider: CostProvider) { }
 
-  async listCosts() {
-    const costs = await this.costProvider.listCosts();
-    return costs.map((e) => new CostOutDTO(e));
+  async listProjectActivityCosts(activityId: number): Promise<CostOutDTO[]> {
+    const costs = await this.costProvider.listProjectActivityCosts(activityId);
+    return costs.map((cost) => new CostOutDTO(cost));
   }
 
   async getCost(id: number): Promise<CostOutDTO> {

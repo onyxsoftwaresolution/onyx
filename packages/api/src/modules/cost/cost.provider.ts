@@ -8,9 +8,12 @@ import {
 export class CostProvider {
   constructor(private prismaService: PrismaService) { }
 
-  async listCosts() {
+  async listProjectActivityCosts(projectActivityId: number) {
     return await this.prismaService.client.cost.findMany({
-      where: { deleted: false },
+      where: {
+        deleted: false,
+        projectActivityId,
+      },
     });
   }
 

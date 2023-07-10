@@ -18,9 +18,10 @@ import { Queries } from '../../../requests/queries';
 import { AppTheme } from '../../../theme/type';
 import { Screens } from '../../Screens';
 import { Report } from '../reports/Report';
+import ListItem from '../../../components/ListItem';
 
 type Props = NativeStackScreenProps<any, string> & {
-  type: 'project' | Report | 'cost';
+  type: 'project' | Report | 'cost' | 'invoice' | 'receipt';
 }
 
 export default memo<Props>(function ProjectListScreen({ type, ...props }) {
@@ -131,18 +132,60 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
     >
       <View style={[styles.item]}>
         <View style={[styles.itemRow]}>
-          <View style={[{ flex: 1 }]}>
-            <Text style={[styles.itemText]}>{project.description}</Text>
-            <Text style={[styles.itemSubText, { color: colors.error }]}>
-              {dayjs(project.start).format('DD/MM/YYYY')} - {dayjs(project.end).format('DD/MM/YYYY')}
-            </Text>
-            <View style={[{ marginBottom: 10 }]} />
-          </View>
+          <ListItem
+            rows={[
+              { label: 'Descriere:', value: project.description },
+              { label: 'Data inceput:', value: dayjs(project.start).format('DD/MM/YYYY') },
+              { label: 'Data sfarsit:', value: dayjs(project.end).format('DD/MM/YYYY') },
+            ]}
+          />
         </View>
         <Divider />
       </View>
     </TouchableRipple>
-  ), [colors.error, props.navigation]);
+  ), [props.navigation]);
+
+  const renderInvoice = useCallback((project: ProjectOutDTO, index: number) => (
+    <TouchableRipple
+      style={[styles.touchStyle]}
+      key={project.id}
+      onPress={() => { props.navigation.navigate(Screens.APP_INVOICE_LIST, { projectId: project.id, description: project.description }) }}
+    >
+      <View style={[styles.item]}>
+        <View style={[styles.itemRow]}>
+          <ListItem
+            rows={[
+              { label: 'Descriere:', value: project.description },
+              { label: 'Data inceput:', value: dayjs(project.start).format('DD/MM/YYYY') },
+              { label: 'Data sfarsit:', value: dayjs(project.end).format('DD/MM/YYYY') },
+            ]}
+          />
+        </View>
+        <Divider />
+      </View>
+    </TouchableRipple>
+  ), [props.navigation]);
+
+  const renderReceipt = useCallback((project: ProjectOutDTO, index: number) => (
+    <TouchableRipple
+      style={[styles.touchStyle]}
+      key={project.id}
+      onPress={() => { props.navigation.navigate(Screens.APP_RECEIPT_LIST, { projectId: project.id, description: project.description }) }}
+    >
+      <View style={[styles.item]}>
+        <View style={[styles.itemRow]}>
+          <ListItem
+            rows={[
+              { label: 'Descriere:', value: project.description },
+              { label: 'Data inceput:', value: dayjs(project.start).format('DD/MM/YYYY') },
+              { label: 'Data sfarsit:', value: dayjs(project.end).format('DD/MM/YYYY') },
+            ]}
+          />
+        </View>
+        <Divider />
+      </View>
+    </TouchableRipple>
+  ), [props.navigation]);
 
   const renderListItem = useCallback((project: ProjectOutDTO, index: number) => {
     switch (type) {
@@ -158,10 +201,16 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
       case 'cost':
         return renderCost(project, index);
 
+      case 'invoice':
+        return renderInvoice(project, index);
+
+      case 'receipt':
+        return renderReceipt(project, index);
+
       default:
         return null;
     }
-  }, [type, renderProjectForDaily, renderProjectForMonthly, renderProject, renderCost]);
+  }, [type, renderProjectForDaily, renderProjectForMonthly, renderProject, renderCost, renderInvoice, renderReceipt]);
 
   const dialogRenderOptions: RenderOptionsFunction<ProjectOutDTO> = useCallback((project) => ({
     title: `Sterge proiect '${project?.description}'`,

@@ -90,15 +90,6 @@ export class ProjectProvider {
     });
   }
 
-  async listProjectActivityCosts(projectActivityId: number) {
-    return await this.prismaService.client.cost.findMany({
-      where: {
-        deleted: false,
-        projectActivityId,
-      },
-    });
-  }
-
   async getProject(id: number) {
     return await this.prismaService.client.project.findFirst({
       where: {

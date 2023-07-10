@@ -1,5 +1,6 @@
 import { EntityOutDTO } from '@common/dtos/entity.out.dto';
 import { IsNonPrimitiveArray } from '@common/validator/IsNonPrimitiveArray';
+import { ActivityTemplateOutDTO } from '@modules/activity-template/dtos/activity-template-out.dto';
 import { SupplierOutDTO } from '@modules/supplier/dtos/supplier.out.dto';
 import { Product } from '@prisma/client';
 import { Expose, Type } from 'class-transformer';
@@ -22,4 +23,11 @@ export class ProductOutDTO extends EntityOutDTO implements Product {
   @IsNonPrimitiveArray()
   @Type(() => SupplierOutDTO)
   suppliers: SupplierOutDTO[];
+
+  @Expose()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @IsNonPrimitiveArray()
+  @Type(() => ActivityTemplateOutDTO)
+  activityTemplates: ActivityTemplateOutDTO[];
 }

@@ -8,102 +8,109 @@ import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Screens } from '../../Screens';
 import { useIsFocused } from '@react-navigation/native';
-import { SupplierOutDTO } from '@workspace/api/src/modules/supplier/dtos/supplier.out.dto';
+import { ReceiptOutDTO } from '@workspace/api/src/modules/receipt/dtos/receipt.out.dto';
 import { useSnackbar } from '../../../components/hooks/useSnackbar';
 import { Mutations } from '../../../requests/mutations';
 import { RenderOptionsFunction, useDialog } from '../../../components/hooks/useDialog';
 import { AppTheme } from '../../../theme/type';
+import ListItem from '../../../components/ListItem';
+import { getHumanReadableDate } from '../../../getHumanReadableDate';
+import { getInvoiceNumberFormatter } from '../invoice/getInvoiceNumberFormatter';
 
-export default memo<NativeStackScreenProps<any, string>>(
-  function ReceiptListScreen(props) {
-    const snackbar = useSnackbar()
+type Params = {
+  projectId: number;
+};
 
-    const enabled = useIsFocused();
-    const suppliers = useQuery(
-      Queries.getSuppliers({
-        enabled,
-        onError() { snackbar.show('A aparut o eroare la listarea angajatilor!') }
-      })
-    );
-    const deleteSupplier = useMutation(Mutations.deleteSupplier({
-      onSuccess() { suppliers.refetch(); },
-      onError() { snackbar.show('A aparut o eroare la stergerea angajatului!') },
-    }),);
+export default memo<NativeStackScreenProps<any, string>>(function ReceiptListScreen(props) {
+  const params = props.route.params as unknown as Params;
 
-    const { colors } = useTheme<AppTheme>();
-    const dialog = useDialog<SupplierOutDTO>();
+  const snackbar = useSnackbar()
 
-    const onPress = useCallback(
-      (supplier: SupplierOutDTO) => {
-        props.navigation.navigate(Screens.APP_SUPPLIER_UPSERT, supplier);
-      },
-      [props.navigation],
-    );
+  const enabled = useIsFocused();
+  const receipts = useQuery(
+    Queries.getReceipts(params.projectId, {
+      enabled,
+      onError() { snackbar.show('A aparut o eroare la listarea angajatilor!') }
+    })
+  );
+  const deleteReceipt = useMutation(Mutations.deleteReceipt({
+    onSuccess() { receipts.refetch(); },
+    onError() { snackbar.show('A aparut o eroare la stergerea angajatului!') },
+  }),);
 
-    const renderSupplier = useCallback(
-      (supplier: SupplierOutDTO) => (
-        <View
-          style={[styles.touchStyle]}
-          key={supplier.id}
-        >
-          <View style={[styles.item]}>
-            <View style={[styles.itemRow]}>
-              <TouchableRipple
-                onPress={() => onPress(supplier)}
-                style={[{ flex: 1 }]}
-              >
-                <View>
-                  <Text style={[styles.itemText]}>{supplier.name}</Text>
-                  <Text style={[styles.itemSubText, { color: colors.error }]}>
-                    {supplier.cif}
-                  </Text>
-                  <View style={[{ marginBottom: 10 }]} />
-                </View>
-              </TouchableRipple>
-              <TouchableRipple
-                onPress={() => dialog.show(supplier)}
-                style={[styles.iconContainer]}
-              >
-                <Icon
-                  name={'trash-alt'}
-                  style={[{ color: colors.danger, fontSize: 18 }]}
-                />
-              </TouchableRipple>
-            </View>
-            <Divider />
+  const { colors } = useTheme<AppTheme>();
+  const dialog = useDialog<ReceiptOutDTO>();
+
+  const onPress = useCallback(
+    (receipt: ReceiptOutDTO) => {
+      props.navigation.navigate(Screens.APP_RECEIPT_UPSERT, { id: receipt.id, projectId: params.projectId });
+    },
+    [params.projectId, props.navigation],
+  );
+
+  const renderReceipt = useCallback(
+    (receipt: ReceiptOutDTO) => (
+      <View
+        style={[styles.touchStyle]}
+        key={receipt.id}
+      >
+        <View style={[styles.item]}>
+          <View style={[styles.itemRow]}>
+            <TouchableRipple
+              onPress={() => onPress(receipt)}
+              style={[{ flex: 1 }]}
+            >
+              <ListItem
+                rows={[
+                  { label: 'Numar factura:', value: getInvoiceNumberFormatter(receipt.invoice?.number) },
+                  { label: 'Data:', value: getHumanReadableDate(receipt.date) },
+                ]}
+              />
+            </TouchableRipple>
+            <TouchableRipple
+              onPress={() => dialog.show(receipt)}
+              style={[styles.iconContainer]}
+            >
+              <Icon
+                name={'trash-alt'}
+                style={[{ color: colors.danger, fontSize: 18 }]}
+              />
+            </TouchableRipple>
           </View>
+          <Divider />
         </View>
-      ),
-      [colors.danger, colors.error, dialog, onPress],
-    );
+      </View>
+    ),
+    [colors.danger, dialog, onPress],
+  );
 
-    const dialogRenderOptions: RenderOptionsFunction<SupplierOutDTO> = useCallback((supplier) => ({
-      title: `Sterge sablon activitate`,
-      message: <View>
-        <Text>'{supplier?.name}' va fi sters!</Text>
-        <Text>Esti sigur?</Text>
-      </View>,
-      buttons: [
-        {
-          label: 'Sterge',
-          textColor: colors.danger,
-          onPress: () => deleteSupplier.mutate(supplier.id),
-        },
-        () => <View style={{ flex: 1 }} />,
-        { label: 'Renunta' },
-      ],
-    }), [colors.danger, deleteSupplier]);
+  const dialogRenderOptions: RenderOptionsFunction<ReceiptOutDTO> = useCallback((receipt) => ({
+    title: `Sterge sablon activitate`,
+    message: <View>
+      <Text>'{receipt?.invoice?.number}' va fi sters!</Text>
+      <Text>Esti sigur?</Text>
+    </View>,
+    buttons: [
+      {
+        label: 'Sterge',
+        textColor: colors.danger,
+        onPress: () => deleteReceipt.mutate(receipt.id),
+      },
+      () => <View style={{ flex: 1 }} />,
+      { label: 'Renunta' },
+    ],
+  }), [colors.danger, deleteReceipt]);
 
-    return (
-      <ScreenContainer loading={suppliers.isLoading} scrollContainerStyle={[styles.scrollContainer]}>
-        <View style={[styles.list]}>
-          {suppliers.data?.data?.map(renderSupplier)}
-        </View>
-        {dialog.renderDialog(dialogRenderOptions)}
-        {snackbar.renderSnackbar()}
-      </ScreenContainer>
-    );
-  },
+  return (
+    <ScreenContainer loading={receipts.isLoading} scrollContainerStyle={[styles.scrollContainer]}>
+      <View style={[styles.list]}>
+        {receipts.data?.data?.map(renderReceipt)}
+      </View>
+      {dialog.renderDialog(dialogRenderOptions)}
+      {snackbar.renderSnackbar()}
+    </ScreenContainer>
+  );
+},
 );
 
 const styles = StyleSheet.create({

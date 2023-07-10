@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { UpsertProjectDTO } from './dtos/project.in.dto';
 import { ProjectActivityOutDTO, ProjectQueryParams, ProjectOutDTO, ProjectActivityQueryParams } from './dtos/project.out.dto';
 import { ProjectProvider } from './project.provider';
-import { CostOutDTO } from '@modules/cost/dtos/cost.out.dto';
 
 @Injectable()
 export class ProjectService {
@@ -16,11 +15,6 @@ export class ProjectService {
   async listProjectActivities(projectId: number, params: ProjectActivityQueryParams): Promise<ProjectActivityOutDTO[]> {
     const projects = await this.projectProvider.listProjectActivities(projectId, params);
     return projects.map((proj) => new ProjectActivityOutDTO(proj));
-  }
-
-  async listProjectActivityCosts(activityId: number): Promise<CostOutDTO[]> {
-    const costs = await this.projectProvider.listProjectActivityCosts(activityId);
-    return costs.map((activity) => new CostOutDTO(activity));
   }
 
   async getProject(id: number): Promise<ProjectOutDTO> {

@@ -1,32 +1,43 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
-import { Injectable, NotImplementedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   UpsertInvoiceDTO,
 } from './dtos/invoice.in.dto';
-import { InvoiceOutDTO } from './dtos/invoice.out.dto';
 
 @Injectable()
 export class InvoiceProvider {
   constructor(private prismaService: PrismaService) { }
 
-  async listInvoices(): Promise<InvoiceOutDTO[]> {
-    return ([
-      { id: 1, number: 'HTC100' },
-      { id: 2, number: 'HTC101' },
-      { id: 3, number: 'HTC102' },
-      { id: 4, number: 'HTC103' },
-    ])
+  async listProjectInvoices(projectId: number) {
+    return await this.prismaService.client.invoice.findMany({
+      where: {
+        deleted: false,
+        projectId,
+      },
+    });
   }
 
-  async getInvoice(id: number): Promise<InvoiceOutDTO> {
-    throw new NotImplementedException();
+  async getInvoice(id: number) {
+    return await this.prismaService.client.invoice.findFirst({
+      where: {
+        id,
+        deleted: false,
+      },
+    });
   }
 
-  async upsertInvoice({ id, ...data }: UpsertInvoiceDTO): Promise<InvoiceOutDTO> {
-    throw new NotImplementedException();
+  async upsertInvoice({ id, number, issueDate, dueDate, projectId }: UpsertInvoiceDTO) {
+    return await this.prismaService.client.invoice.upsert({
+      where: id != null ? { id } : { id: -1 },
+      create: { projectId, issueDate, dueDate },
+      update: { id, projectId, issueDate, dueDate },
+    });
   }
 
-  async deleteInvoice(id: number): Promise<InvoiceOutDTO> {
-    throw new NotImplementedException();
+  async deleteInvoice(id: number) {
+    return await this.prismaService.client.invoice.update({
+      where: { id },
+      data: { deleted: true },
+    });
   }
 }
