@@ -4,6 +4,7 @@ import {
 } from './dtos/invoice.in.dto';
 import { InvoiceOutDTO } from './dtos/invoice.out.dto';
 import { InvoiceProvider } from './invoice.provider';
+import { QueryParams } from '@common/QueryParams';
 
 @Injectable()
 export class InvoiceService {
@@ -14,8 +15,8 @@ export class InvoiceService {
     return invoices.map((invoice) => new InvoiceOutDTO(invoice));
   }
 
-  async getInvoice(id: number): Promise<InvoiceOutDTO> {
-    return new InvoiceOutDTO(await this.invoiceProvider.getInvoice(id));
+  async getInvoice(id: number, paths: QueryParams): Promise<InvoiceOutDTO> {
+    return new InvoiceOutDTO(await this.invoiceProvider.getInvoice(id, paths));
   }
 
   async upsertInvoice(data: UpsertInvoiceDTO) {

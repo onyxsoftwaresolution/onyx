@@ -1,8 +1,10 @@
 import { Roles } from '@modules/auth/rbac/role.decorator';
-import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Put, Query } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { UpsertInvoiceDTO } from './dtos/invoice.in.dto';
 import { InvoiceService } from './invoice.service';
+import { QueryParams } from '@common/QueryParams';
+import { Type } from 'class-transformer';
 
 @Controller({
   version: '1',
@@ -13,8 +15,11 @@ export class InvoiceController {
 
   @Get('invoice/:id')
   @Roles(Role.ADMIN)
-  async getInvoice(@Param('id') id: number) {
-    return await this.invoiceService.getInvoice(id);
+  async getInvoice(
+    @Param('id') id: number,
+    @Query('paths') paths: string,
+  ) {
+    return await this.invoiceService.getInvoice(id, new QueryParams(paths));
   }
 
   @Get('project/:id/invoices')

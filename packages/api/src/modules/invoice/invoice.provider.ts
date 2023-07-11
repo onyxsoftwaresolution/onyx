@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import {
   UpsertInvoiceDTO,
 } from './dtos/invoice.in.dto';
+import { QueryParams } from '@common/QueryParams';
 
 @Injectable()
 export class InvoiceProvider {
@@ -17,12 +18,32 @@ export class InvoiceProvider {
     });
   }
 
-  async getInvoice(id: number) {
+  async getInvoice(id: number, paths: QueryParams) {
     return await this.prismaService.client.invoice.findFirst({
       where: {
         id,
         deleted: false,
       },
+      include: {
+        project: paths.has('project') ? {
+          include: {
+            contract: paths.has('project.contract') ? {
+              include: {
+                client: paths.has('project.contract.client'),
+              },
+            } : false,
+            projectActivities: paths.has('project.projectActivities') ? {
+              include: {
+                activityTemplate: paths.has('project.projectActivities.activityTemplate') ? {
+                  include: {
+                    product: paths.has('project.projectActivities.activityTemplate.product'),
+                  },
+                } : false,
+              },
+            } : false,
+          }
+        } : false,
+      }
     });
   }
 

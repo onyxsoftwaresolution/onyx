@@ -18,7 +18,7 @@ import { Queries } from '../../../requests/queries';
 import { AppTheme } from '../../../theme/type';
 import { Screens } from '../../Screens';
 import { Report } from '../reports/Report';
-import ListItem from '../../../components/ListItem';
+import ListItem from '../../../components/MGListItem';
 
 type Props = NativeStackScreenProps<any, string> & {
   type: 'project' | Report | 'cost' | 'invoice' | 'receipt';

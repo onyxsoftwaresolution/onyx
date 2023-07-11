@@ -10,7 +10,7 @@ import { useSnackbar } from '../../../components/hooks/useSnackbar';
 import { Queries } from '../../../requests/queries';
 import { AppTheme } from '../../../theme/type';
 import { Screens } from '../../Screens';
-import ListItem from '../../../components/ListItem';
+import ListItem from '../../../components/MGListItem';
 
 type Props = NativeStackScreenProps<any, string> & {
   type: 'cost';

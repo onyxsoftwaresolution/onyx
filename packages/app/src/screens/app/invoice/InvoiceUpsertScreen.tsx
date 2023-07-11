@@ -4,10 +4,10 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { UpsertInvoiceDTO } from '@workspace/api/src/modules/invoice/dtos/invoice.in.dto';
 import { isDate, isDateString, isNotEmpty } from 'class-validator';
 import dayjs from 'dayjs';
-import { memo, useCallback, useMemo } from 'react';
+import { ReactNode, memo, useCallback, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
-import { HelperText, useTheme } from 'react-native-paper';
+import { DataTable, HelperText, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import MGButton from '../../../components/MGButton';
 import MGCard from '../../../components/MGCard';
@@ -21,6 +21,10 @@ import { Mutations } from '../../../requests/mutations';
 import { Queries } from '../../../requests/queries';
 import { AppTheme } from '../../../theme/type';
 import { getInvoiceNumberFormatter } from './getInvoiceNumberFormatter';
+import ListItem from '../../../components/MGListItem';
+import { getHumanReadableDate } from '../../../getHumanReadableDate';
+import MGDataTable from '../../../components/MGDataTable';
+import { ProjectActivityOutDTO } from '@workspace/api/src/modules/project/dtos/project.out.dto';
 
 type Params = {
   id: number;
@@ -33,7 +37,7 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceUpsertS
   const { colors } = useTheme<AppTheme>();
 
   const enabled = useIsFocused();
-  const invoice = useQuery(Queries.getInvoice(params.id, {
+  const invoice = useQuery(Queries.getInvoice(params.id, ["project.contract.client", "project.projectActivities.activityTemplate.product"], {
     enabled: enabled && params.id != null,
     onSuccess: data => reset(data.data),
   }));
@@ -77,6 +81,116 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceUpsertS
     },
     [params?.id, upsert],
   );
+
+  const renderProject = useCallback(() => {
+    return (
+      <MGCard title={`Contract: ${invoice.data?.data?.project?.description}`}>
+        <MGRow>
+          <ListItem
+            rows={[
+              { label: 'Activ:', value: invoice.data?.data?.project?.available ? 'da' : 'nu' },
+              { label: 'Area:', value: invoice.data?.data?.project?.area },
+              { label: 'Code:', value: invoice.data?.data?.project?.code },
+            ]}
+            labelWidth={100}
+            direction='column'
+            type='input'
+          />
+          <ListItem
+            rows={[
+              { label: 'Data inceput:', value: getHumanReadableDate(invoice.data?.data?.project?.start) },
+              { label: 'Data sfarsit:', value: getHumanReadableDate(invoice.data?.data?.project?.end) },
+            ]}
+            labelWidth={100}
+            direction='column'
+            type='input'
+          />
+        </MGRow>
+      </MGCard>
+    );
+  }, [invoice]);
+
+  const renderContract = useCallback(() => {
+    return (
+      <MGCard title={`Contract: ${invoice.data?.data?.project?.contract?.number}`}>
+        <MGRow>
+          <ListItem
+            rows={[
+              { label: 'Activ:', value: invoice.data?.data?.project?.contract?.active ? 'da' : 'nu' },
+              { label: 'Locatie:', value: invoice.data?.data?.project?.contract?.location },
+              { label: 'Data inceput:', value: getHumanReadableDate(invoice.data?.data?.project?.contract?.start) },
+              { label: 'Data sfarsit:', value: getHumanReadableDate(invoice.data?.data?.project?.contract?.end) },
+            ]}
+            labelWidth={100}
+            direction='column'
+            type='input'
+          />
+          <ListItem
+            rows={[
+              { label: 'Reprezentativ:', value: invoice.data?.data?.project?.contract?.representative },
+              { label: 'Detalii:', value: invoice.data?.data?.project?.contract?.details },
+              { label: 'Cost:', value: invoice.data?.data?.project?.contract?.cost },
+            ]}
+            labelWidth={100}
+            direction='column'
+            type='input'
+          />
+        </MGRow>
+      </MGCard>
+    );
+  }, [invoice]);
+
+  const renderClient = useCallback(() => {
+    return (
+      <MGCard title={`Client: ${invoice.data?.data?.project?.contract?.client?.name}`}>
+        <MGRow>
+          <ListItem
+            rows={[
+              { label: 'CIF:', value: invoice.data?.data?.project?.contract?.client?.cif },
+              { label: 'RC:', value: invoice.data?.data?.project?.contract?.client?.rc },
+              { label: 'Bank:', value: invoice.data?.data?.project?.contract?.client?.rc },
+              { label: 'IBAN:', value: invoice.data?.data?.project?.contract?.client?.rc },
+            ]}
+            labelWidth={100}
+            direction='column'
+            type='input'
+          />
+          <ListItem
+            rows={[
+              { label: 'Adresa client:', value: invoice.data?.data?.project?.contract?.client?.address },
+              { label: 'Email:', value: invoice.data?.data?.project?.contract?.client?.email },
+              { label: 'Phone number:', value: invoice.data?.data?.project?.contract?.client?.phoneNumber },
+            ]}
+            labelWidth={100}
+            direction='column'
+            type='input'
+          />
+        </MGRow>
+      </MGCard>
+    );
+  }, [invoice]);
+
+  const renderProduct = useCallback(() => {
+    const rows: ReactNode[][] = invoice.data?.data?.project?.projectActivities?.map((pa?: ProjectActivityOutDTO) => [
+      pa?.description,
+      pa?.activityTemplate?.product?.name,
+      pa?.quantity,
+      pa?.cost,
+      (pa?.quantity ?? 0) * (pa?.cost ?? 0),
+    ]);
+    rows?.push([
+      '', '', '', 'Total', rows?.reduce((p, n) => p + (n.at(4) as number), 0)
+    ]);
+
+    return (
+      <MGCard>
+        <MGDataTable
+          headers={['Activitate', 'Produs', 'Cantitate', 'Pret', 'Total']}
+          rows={rows}
+        />
+      </MGCard>
+    );
+  }, [invoice.data?.data?.project?.projectActivities]);
 
   const renderNumber = useCallback(() => {
     return (
@@ -174,6 +288,10 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceUpsertS
       scrollContainerStyle={[styles.scrollContainer]}
     >
       <View style={[styles.view]}>
+        {renderProject()}
+        {renderContract()}
+        {renderClient()}
+        {renderProduct()}
         <MGCard>
           <View style={[{ height: 20 }]} />
           {renderNumber()}

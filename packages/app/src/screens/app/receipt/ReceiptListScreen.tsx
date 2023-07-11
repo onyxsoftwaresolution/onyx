@@ -13,7 +13,7 @@ import { useSnackbar } from '../../../components/hooks/useSnackbar';
 import { Mutations } from '../../../requests/mutations';
 import { RenderOptionsFunction, useDialog } from '../../../components/hooks/useDialog';
 import { AppTheme } from '../../../theme/type';
-import ListItem from '../../../components/ListItem';
+import ListItem from '../../../components/MGListItem';
 import { getHumanReadableDate } from '../../../getHumanReadableDate';
 import { getInvoiceNumberFormatter } from '../invoice/getInvoiceNumberFormatter';
 

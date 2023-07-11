@@ -149,11 +149,11 @@ export class Queries {
     enabled,
   } as UseQueryOptions<FetchResponse<InvoiceOutDTO[]>, FetchError>);
 
-  static getInvoice = (id: number, { enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<InvoiceOutDTO>> = {}) => ({
-    queryKey: [`invoice-${id}`],
+  static getInvoice = (id: number, paths: string[], { enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<InvoiceOutDTO>> = {}) => ({
+    queryKey: [`/v1/invoice/${id}?paths=${JSON.stringify(paths)}`],
     queryFn: async () => {
       onLoading?.();
-      return await Queries.queryFn(`${API_URL}/v1/invoice/${id}`);
+      return await Queries.queryFn(`${API_URL}/v1/invoice/${id}?paths=${JSON.stringify(paths)}`);
     },
     onError,
     onSuccess,

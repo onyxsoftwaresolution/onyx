@@ -12,6 +12,7 @@ type Props = PropsWithChildren<{
 export default memo<Props>(function MGRow(props) {
   const theme = useTheme<AppTheme>();
   const dimensions = useWindowDimensions();
+  const flexDirection = dimensions.width >= theme.iphoneWidth ? 'row' : 'column';
 
   const spacer = useCallback((key: string) => {
     return (
@@ -19,19 +20,32 @@ export default memo<Props>(function MGRow(props) {
     )
   }, []);
 
+  const childWrapper = useCallback((child: Child, index: number) => {
+    return (
+      <View key={index} style={[{ flex: flexDirection === 'row' ? 1 : undefined }]}>
+        {child}
+      </View>
+    );
+  }, [flexDirection]);
+
   const children = useMemo(() => {
     return React.Children
       .toArray(props.children)
       .reduce((p: Child[], n: Child, index, list) => {
-        p.push(<Fragment key={`${index}`}>{n}</Fragment>)
+        p.push(childWrapper(n, index));
         if (index < list.length - 1)
           p.push(spacer(`spacer-${index}`));
         return p;
       }, [] as Child[]);
-  }, [props.children, spacer]);
+  }, [childWrapper, props.children, spacer]);
 
   return (
-    <View style={[{ flexDirection: dimensions.width >= theme.iphoneWidth ? 'row' : 'column' }, props.style]}>
+    <View
+      style={[
+        { flexDirection },
+        props.style
+      ]}
+    >
       {children}
     </View>
   )

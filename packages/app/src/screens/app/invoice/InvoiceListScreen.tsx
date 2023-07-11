@@ -14,7 +14,7 @@ import { Mutations } from '../../../requests/mutations';
 import { RenderOptionsFunction, useDialog } from '../../../components/hooks/useDialog';
 import { AppTheme } from '../../../theme/type';
 import dayjs from 'dayjs';
-import ListItem from '../../../components/ListItem';
+import ListItem from '../../../components/MGListItem';
 import { getInvoiceNumberFormatter } from './getInvoiceNumberFormatter';
 
 type Params = {
