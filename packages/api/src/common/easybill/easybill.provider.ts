@@ -135,4 +135,13 @@ export class EasyBillProvider {
 
     return `${this.config.get('EASYBILL_ENDPOINT')}&${params.toString()}`;
   }
+
+  async getInvoice(session: EasyBillSessionOutDTO, invoiceNumber: string) {
+    const url = this.getInvoiceUrl(session, invoiceNumber);
+
+    const res = await fetch(url);
+    const buffer = await res.buffer();
+
+    return buffer;
+  }
 }

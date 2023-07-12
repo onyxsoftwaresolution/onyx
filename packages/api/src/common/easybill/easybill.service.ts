@@ -32,4 +32,10 @@ export class EasyBillService {
     const url = this.easyBillProvider.getInvoiceUrl(session, invoiceNumber);
     return ({ invoiceNumber, url });
   }
+
+  async getInvoice(invoiceNumber: string) {
+    const session = await this.easyBillProvider.login();
+    const buffer = this.easyBillProvider.getInvoice(session, invoiceNumber);
+    return buffer;
+  }
 }
