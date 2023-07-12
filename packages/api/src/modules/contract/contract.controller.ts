@@ -1,8 +1,10 @@
 import { Roles } from '@modules/auth/rbac/role.decorator';
-import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Put, Res } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { UpsertContractDTO } from './dtos/contract.in.dto';
 import { ContractService } from './contract.service';
+import { AllowAnonymous } from '@modules/auth/rbac/anonymous.decorator';
+import { Response } from 'express';
 
 @Controller({
   version: '1',
@@ -33,5 +35,14 @@ export class ContractController {
   @Roles(Role.ADMIN)
   async deleteContract(@Param('id') id: number) {
     return await this.contractService.deleteContract(id);
+  }
+
+  @Get('view-contract/:id')
+  @AllowAnonymous()
+  async viewContract(
+    @Param('id') id: number,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return await this.contractService.viewContract(res, id);
   }
 }
