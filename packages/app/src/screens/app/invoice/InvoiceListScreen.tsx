@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { memo, useCallback } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Linking } from 'react-native';
 import ScreenContainer from '../../../components/ScreenContainer';
 import { Queries } from '../../../requests/queries';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
@@ -16,6 +16,7 @@ import { AppTheme } from '../../../theme/type';
 import dayjs from 'dayjs';
 import ListItem from '../../../components/MGListItem';
 import { getInvoiceNumberFormatter } from './getInvoiceNumberFormatter';
+import { isUUID } from 'class-validator';
 
 type Params = {
   projectId: number;
@@ -37,6 +38,7 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceListScr
     onSuccess() { invoices.refetch(); },
     onError() { snackbar.show('A aparut o eroare la stergerea angajatului!') },
   }),);
+  const invoiceUrl = useMutation(Mutations.getInvoiceUrl());
 
   const { colors } = useTheme<AppTheme>();
   const dialog = useDialog<InvoiceOutDTO>();
@@ -47,6 +49,11 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceListScr
     },
     [props.navigation],
   );
+
+  const onDownloadInvoice = useCallback(async (invoiceNumber: string) => {
+    const url = await invoiceUrl.mutateAsync(invoiceNumber);
+    await Linking.openURL(url.data.url);
+  }, [invoiceUrl]);
 
   const renderInvoice = useCallback(
     (invoice: InvoiceOutDTO) => (
@@ -69,6 +76,16 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceListScr
               />
             </TouchableRipple>
             <TouchableRipple
+              onPress={() => onDownloadInvoice(invoice.number)}
+              style={[styles.iconContainer, { opacity: isUUID(invoice.number) ? 0 : 1 }]}
+              disabled={isUUID(invoice.number)}
+            >
+              <Icon
+                name={'download'}
+                style={[{ fontSize: 18 }]}
+              />
+            </TouchableRipple>
+            <TouchableRipple
               onPress={() => dialog.show(invoice)}
               style={[styles.iconContainer]}
             >
@@ -82,7 +99,7 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceListScr
         </View>
       </View>
     ),
-    [colors.danger, dialog, onPress],
+    [colors.danger, dialog, onDownloadInvoice, onPress],
   );
 
   const dialogRenderOptions: RenderOptionsFunction<InvoiceOutDTO> = useCallback((invoice) => ({

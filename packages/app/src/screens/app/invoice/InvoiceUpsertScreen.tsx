@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import { ReactNode, memo, useCallback, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
-import { DataTable, HelperText, useTheme } from 'react-native-paper';
+import { HelperText, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import MGButton from '../../../components/MGButton';
 import MGCard from '../../../components/MGCard';
@@ -41,6 +41,11 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceUpsertS
     enabled: enabled && params.id != null,
     onSuccess: data => reset(data.data),
   }));
+  const project = useQuery(Queries.getProject(params.projectId, {
+    enabled: enabled && params.id == null && params.projectId != null,
+    // onSuccess: data => reset(data.data),
+  }));
+  const someProject = invoice.data?.data?.project ?? project.data?.data;
   const upsert = useMutation(Mutations.upsertInvoice({
     onSuccess: () => props.navigation.pop(),
     onError: () => snackbar.show(),
@@ -84,13 +89,13 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceUpsertS
 
   const renderProject = useCallback(() => {
     return (
-      <MGCard title={`Contract: ${invoice.data?.data?.project?.description}`}>
+      <MGCard title={`Contract: ${someProject?.description}`}>
         <MGRow>
           <ListItem
             rows={[
-              { label: 'Activ:', value: invoice.data?.data?.project?.available ? 'da' : 'nu' },
-              { label: 'Area:', value: invoice.data?.data?.project?.area },
-              { label: 'Code:', value: invoice.data?.data?.project?.code },
+              { label: 'Activ:', value: someProject?.available ? 'da' : 'nu' },
+              { label: 'Area:', value: someProject?.area },
+              { label: 'Code:', value: someProject?.code },
             ]}
             labelWidth={100}
             direction='column'
@@ -98,8 +103,8 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceUpsertS
           />
           <ListItem
             rows={[
-              { label: 'Data inceput:', value: getHumanReadableDate(invoice.data?.data?.project?.start) },
-              { label: 'Data sfarsit:', value: getHumanReadableDate(invoice.data?.data?.project?.end) },
+              { label: 'Data inceput:', value: getHumanReadableDate(someProject?.start) },
+              { label: 'Data sfarsit:', value: getHumanReadableDate(someProject?.end) },
             ]}
             labelWidth={100}
             direction='column'
@@ -108,18 +113,18 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceUpsertS
         </MGRow>
       </MGCard>
     );
-  }, [invoice]);
+  }, [someProject]);
 
   const renderContract = useCallback(() => {
     return (
-      <MGCard title={`Contract: ${invoice.data?.data?.project?.contract?.number}`}>
+      <MGCard title={`Contract: ${someProject?.contract?.number}`}>
         <MGRow>
           <ListItem
             rows={[
-              { label: 'Activ:', value: invoice.data?.data?.project?.contract?.active ? 'da' : 'nu' },
-              { label: 'Locatie:', value: invoice.data?.data?.project?.contract?.location },
-              { label: 'Data inceput:', value: getHumanReadableDate(invoice.data?.data?.project?.contract?.start) },
-              { label: 'Data sfarsit:', value: getHumanReadableDate(invoice.data?.data?.project?.contract?.end) },
+              { label: 'Activ:', value: someProject?.contract?.active ? 'da' : 'nu' },
+              { label: 'Locatie:', value: someProject?.contract?.location },
+              { label: 'Data inceput:', value: getHumanReadableDate(someProject?.contract?.start) },
+              { label: 'Data sfarsit:', value: getHumanReadableDate(someProject?.contract?.end) },
             ]}
             labelWidth={100}
             direction='column'
@@ -127,9 +132,9 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceUpsertS
           />
           <ListItem
             rows={[
-              { label: 'Reprezentativ:', value: invoice.data?.data?.project?.contract?.representative },
-              { label: 'Detalii:', value: invoice.data?.data?.project?.contract?.details },
-              { label: 'Cost:', value: invoice.data?.data?.project?.contract?.cost },
+              { label: 'Reprezentativ:', value: someProject?.contract?.representative },
+              { label: 'Detalii:', value: someProject?.contract?.details },
+              { label: 'Cost:', value: someProject?.contract?.cost },
             ]}
             labelWidth={100}
             direction='column'
@@ -138,18 +143,18 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceUpsertS
         </MGRow>
       </MGCard>
     );
-  }, [invoice]);
+  }, [someProject]);
 
   const renderClient = useCallback(() => {
     return (
-      <MGCard title={`Client: ${invoice.data?.data?.project?.contract?.client?.name}`}>
+      <MGCard title={`Client: ${someProject?.contract?.client?.name}`}>
         <MGRow>
           <ListItem
             rows={[
-              { label: 'CIF:', value: invoice.data?.data?.project?.contract?.client?.cif },
-              { label: 'RC:', value: invoice.data?.data?.project?.contract?.client?.rc },
-              { label: 'Bank:', value: invoice.data?.data?.project?.contract?.client?.rc },
-              { label: 'IBAN:', value: invoice.data?.data?.project?.contract?.client?.rc },
+              { label: 'CIF:', value: someProject?.contract?.client?.cif },
+              { label: 'RC:', value: someProject?.contract?.client?.rc },
+              { label: 'Bank:', value: someProject?.contract?.client?.rc },
+              { label: 'IBAN:', value: someProject?.contract?.client?.rc },
             ]}
             labelWidth={100}
             direction='column'
@@ -157,9 +162,9 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceUpsertS
           />
           <ListItem
             rows={[
-              { label: 'Adresa client:', value: invoice.data?.data?.project?.contract?.client?.address },
-              { label: 'Email:', value: invoice.data?.data?.project?.contract?.client?.email },
-              { label: 'Phone number:', value: invoice.data?.data?.project?.contract?.client?.phoneNumber },
+              { label: 'Adresa client:', value: someProject?.contract?.client?.address },
+              { label: 'Email:', value: someProject?.contract?.client?.email },
+              { label: 'Phone number:', value: someProject?.contract?.client?.phoneNumber },
             ]}
             labelWidth={100}
             direction='column'
@@ -168,10 +173,10 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceUpsertS
         </MGRow>
       </MGCard>
     );
-  }, [invoice]);
+  }, [someProject]);
 
   const renderProduct = useCallback(() => {
-    const rows: ReactNode[][] = invoice.data?.data?.project?.projectActivities?.map((pa?: ProjectActivityOutDTO) => [
+    const rows: ReactNode[][] = someProject?.projectActivities?.map((pa?: ProjectActivityOutDTO) => [
       pa?.description,
       pa?.activityTemplate?.product?.name,
       pa?.quantity,
@@ -190,7 +195,7 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceUpsertS
         />
       </MGCard>
     );
-  }, [invoice.data?.data?.project?.projectActivities]);
+  }, [someProject?.projectActivities]);
 
   const renderNumber = useCallback(() => {
     return (
@@ -300,12 +305,13 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceUpsertS
             {renderDueDate()}
           </MGRow>
         </MGCard>
-        <MGButton
-          icon="send"
-          label={'Salveaza'}
-          onPress={handleSubmit(submit)}
-          style={[{ marginTop: 10, marginHorizontal: 10 }]}
-        />
+        {params.id == null
+          ? <MGButton
+            icon="send"
+            label={'Salveaza'}
+            onPress={handleSubmit(submit)}
+            style={[{ marginTop: 10, marginHorizontal: 10 }]}
+          /> : null}
         <MGButton
           mode="text"
           icon={props => <Icon name="times" {...props} />}

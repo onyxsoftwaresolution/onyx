@@ -19,7 +19,7 @@ import { UpsertContractDTO } from '@workspace/api/src/modules/contract/dtos/cont
 import { ProductOutDTO } from '@workspace/api/src/modules/product/dtos/product.out.dto';
 import { CostOutDTO } from '@workspace/api/src/modules/cost/dtos/cost.out.dto';
 import { UpsertCostDTO } from '@workspace/api/src/modules/cost/dtos/cost.in.dto';
-import { InvoiceOutDTO } from '@workspace/api/src/modules/invoice/dtos/invoice.out.dto';
+import { InvoiceDownloadUrl, InvoiceOutDTO } from '@workspace/api/src/modules/invoice/dtos/invoice.out.dto';
 import { UpsertInvoiceDTO } from '@workspace/api/src/modules/invoice/dtos/invoice.in.dto';
 import { ReceiptOutDTO } from '@workspace/api/src/modules/receipt/dtos/receipt.out.dto';
 import { UpsertReceiptDTO } from '@workspace/api/src/modules/receipt/dtos/receipt.in.dto';
@@ -267,6 +267,23 @@ export class Mutations {
       onSuccess,
       onError,
     } as UseMutationOptions<FetchResponse<InvoiceOutDTO>, FetchError, number>;
+  }
+
+  static getInvoiceUrl({ onError, onLoading, onSuccess }: Options = {}) {
+    return {
+      mutationKey: [`/v1/invoice/`],
+      mutationFn: async (number) => {
+        onLoading?.();
+        return await Mutations.mutationFn(
+          `${API_URL}/v1/invoice/${number}/url`,
+          {
+            method: 'GET',
+          },
+        );
+      },
+      onSuccess,
+      onError,
+    } as UseMutationOptions<FetchResponse<InvoiceDownloadUrl>, FetchError, string>;
   }
 
   static upsertReceipt({ onError, onLoading, onSuccess }: Options<FetchResponse<ReceiptOutDTO>> = {}) {
