@@ -4,7 +4,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { ContractOutDTO } from '@workspace/api/src/modules/contract/dtos/contract.out.dto';
 import dayjs from 'dayjs';
 import { memo, useCallback } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Linking, StyleSheet, View } from 'react-native';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import ScreenContainer from '../../../components/ScreenContainer';
@@ -17,6 +17,7 @@ import { Mutations } from '../../../requests/mutations';
 import { Queries } from '../../../requests/queries';
 import { AppTheme } from '../../../theme/type';
 import { Screens } from '../../Screens';
+import { API_URL } from '@env';
 
 type Props = NativeStackScreenProps<any, string>
 
@@ -43,6 +44,10 @@ export default memo<Props>(function ContractListScreen({ navigation }) {
     [navigation],
   );
 
+  const onDownloadContract = useCallback(async (id: number) => {
+    await Linking.openURL(`${API_URL}/v1/view-contract/${id}`);
+  }, []);
+
   const renderContract = useCallback((contract: ContractOutDTO, index: number) => (
     <View
       style={[styles.touchStyle]}
@@ -64,6 +69,15 @@ export default memo<Props>(function ContractListScreen({ navigation }) {
               </Text>
               <View style={[{ marginBottom: 10 }]} />
             </View>
+          </TouchableRipple>
+          <TouchableRipple
+            onPress={() => onDownloadContract(contract.id)}
+            style={[styles.iconContainer]}
+          >
+            <Icon
+              name={'download'}
+              style={[{ fontSize: 18 }]}
+            />
           </TouchableRipple>
           <TouchableRipple
             onPress={() => dialog.show(contract)}
