@@ -24,11 +24,34 @@ type Props = NativeStackScreenProps<any, string> & {
   type: 'project' | Report | 'cost' | 'invoice' | 'receipt';
 }
 
+const getProjectPaths = (type: Props['type']): string[] => {
+  switch (type) {
+    case 'project':
+      return [];
+
+    case 'cost':
+      return ['projectActivities.costs'];
+
+    case 'invoice':
+      return [];
+
+    case 'receipt':
+      return [];
+
+    case Report.DAILY:
+    case Report.MONTHLY:
+      return [];
+
+    default:
+      return [];
+  }
+}
+
 export default memo<Props>(function ProjectListScreen({ type, ...props }) {
   type ??= 'project';
 
   const enabled = useIsFocused();
-  const projects = useQuery(Queries.getProjects({
+  const projects = useQuery(Queries.getProjects(getProjectPaths(type), {
     enabled,
     onError() { snackbar.show('A aparut o eroare la afisarea proiectelor!') },
   }),);
@@ -137,6 +160,7 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
               { label: 'Descriere:', value: project.description },
               { label: 'Data inceput:', value: dayjs(project.start).format('DD/MM/YYYY') },
               { label: 'Data sfarsit:', value: dayjs(project.end).format('DD/MM/YYYY') },
+              { label: 'Total costuri:', value: (project.projectActivities?.reduce((p, n) => p + n.costs?.reduce((p, n) => p + n.amount, 0), 0) ?? 0).toString() }
             ]}
           />
         </View>

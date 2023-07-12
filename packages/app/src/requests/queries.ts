@@ -273,12 +273,12 @@ export class Queries {
     FetchError
   >);
 
-  static getProjects({ enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<ProjectOutDTO[]>> = {}) {
+  static getProjects(paths: string[], { enabled = false, onError, onLoading, onSuccess }: Options<FetchResponse<ProjectOutDTO[]>> = {}) {
     return ({
-      queryKey: ['projects'],
+      queryKey: [`/v1/projects?paths=${JSON.stringify(paths)}`],
       async queryFn() {
         onLoading?.();
-        return await Queries.queryFn(`${API_URL}/v1/projects`);
+        return await Queries.queryFn(`${API_URL}/v1/projects?paths=${JSON.stringify(paths)}`);
       },
       onError,
       onSuccess,
