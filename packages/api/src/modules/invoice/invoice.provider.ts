@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import {
   UpsertInvoiceDTO,
 } from './dtos/invoice.in.dto';
-import { QueryParams } from '@common/QueryParams';
+import { QueryPaths } from '@common/QueryParams';
 
 @Injectable()
 export class InvoiceProvider {
@@ -15,10 +15,13 @@ export class InvoiceProvider {
         deleted: false,
         projectId,
       },
+      orderBy: {
+        created: 'desc',
+      },
     });
   }
 
-  async getInvoice(id: number, paths: QueryParams) {
+  async getInvoice(id: number, paths: QueryPaths) {
     return await this.prismaService.client.invoice.findFirst({
       where: {
         id,
@@ -50,7 +53,7 @@ export class InvoiceProvider {
   async upsertInvoice({ id, number, issueDate, dueDate, projectId }: UpsertInvoiceDTO) {
     return await this.prismaService.client.invoice.upsert({
       where: id != null ? { id } : { id: -1 },
-      create: { projectId, issueDate, dueDate },
+      create: { projectId, issueDate, dueDate, number },
       update: { id, projectId, issueDate, dueDate },
     });
   }

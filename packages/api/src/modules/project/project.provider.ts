@@ -2,6 +2,7 @@ import { PrismaService } from '@modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { UpsertProjectDTO } from './dtos/project.in.dto';
 import { ProjectActivityQueryParams, ProjectQueryParams } from './dtos/project.out.dto';
+import { QueryPaths } from '@common/QueryParams';
 
 @Injectable()
 export class ProjectProvider {
@@ -90,7 +91,7 @@ export class ProjectProvider {
     });
   }
 
-  async getProject(id: number) {
+  async getProject(id: number, paths?: QueryPaths) {
     return await this.prismaService.client.project.findFirst({
       where: {
         id,

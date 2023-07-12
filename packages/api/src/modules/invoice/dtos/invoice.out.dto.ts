@@ -26,3 +26,11 @@ export class InvoiceOutDTO extends EntityOutDTO {
   @Type(() => ProjectOutDTO)
   project: ProjectOutDTO;
 }
+
+export class InvoiceDownloadUrl extends EntityOutDTO {
+  @Expose()
+  invoiceNumber: string;
+
+  @Expose()
+  url: string;
+}

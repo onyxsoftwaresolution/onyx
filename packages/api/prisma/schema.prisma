@@ -263,7 +263,7 @@ model Invoice {
   modified DateTime @default(now())
   deleted  Boolean  @default(false)
 
-  number    String   @unique @default(uuid())
+  number    String
   issueDate DateTime
   dueDate   DateTime
 

@@ -4,6 +4,7 @@ import { Role } from '@prisma/client';
 import { UpsertProjectDTO } from './dtos/project.in.dto';
 import { ProjectService } from './project.service';
 import { ProjectActivityQueryParams, ProjectQueryParams } from './dtos/project.out.dto';
+import { QueryPaths } from '@common/QueryParams';
 
 @Controller({
   version: '1',
@@ -26,8 +27,8 @@ export class ProjectController {
 
   @Get('project/:id')
   @Roles(Role.ADMIN, Role.USER)
-  async getProject(@Param('id') id: number) {
-    return await this.projectService.getProject(id);
+  async getProject(@Param('id') id: number, paths: string) {
+    return await this.projectService.getProject(id, new QueryPaths(paths));
   }
 
   @Put('project')

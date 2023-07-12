@@ -3,7 +3,7 @@ import { Body, Controller, Delete, Get, Param, Put, Query } from '@nestjs/common
 import { Role } from '@prisma/client';
 import { UpsertInvoiceDTO } from './dtos/invoice.in.dto';
 import { InvoiceService } from './invoice.service';
-import { QueryParams } from '@common/QueryParams';
+import { QueryPaths } from '@common/QueryParams';
 import { Type } from 'class-transformer';
 
 @Controller({
@@ -19,7 +19,15 @@ export class InvoiceController {
     @Param('id') id: number,
     @Query('paths') paths: string,
   ) {
-    return await this.invoiceService.getInvoice(id, new QueryParams(paths));
+    return await this.invoiceService.getInvoice(id, new QueryPaths(paths));
+  }
+
+  @Get('invoice/:number/url')
+  @Roles(Role.ADMIN)
+  async getInvoiceUrl(
+    @Param('number') invoiceNumber: string,
+  ) {
+    return await this.invoiceService.getInvoiceUrl(invoiceNumber);
   }
 
   @Get('project/:id/invoices')

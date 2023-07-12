@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UpsertProjectDTO } from './dtos/project.in.dto';
 import { ProjectActivityOutDTO, ProjectQueryParams, ProjectOutDTO, ProjectActivityQueryParams } from './dtos/project.out.dto';
 import { ProjectProvider } from './project.provider';
+import { QueryPaths } from '@common/QueryParams';
 
 @Injectable()
 export class ProjectService {
@@ -17,8 +18,8 @@ export class ProjectService {
     return projects.map((proj) => new ProjectActivityOutDTO(proj));
   }
 
-  async getProject(id: number): Promise<ProjectOutDTO> {
-    return new ProjectOutDTO(await this.projectProvider.getProject(id));
+  async getProject(id: number, paths?: QueryPaths): Promise<ProjectOutDTO> {
+    return new ProjectOutDTO(await this.projectProvider.getProject(id, paths));
   }
 
   async upsertProject(data: UpsertProjectDTO): Promise<ProjectOutDTO> {
