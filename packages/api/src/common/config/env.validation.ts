@@ -45,6 +45,15 @@ export class EnvironmentVariables {
 
   @IsNumber()
   CACHE_TTL: number;
+
+  @IsString()
+  EASYBILL_ENDPOINT: string
+
+  @IsString()
+  EASYBILL_USERNAME: string
+
+  @IsString()
+  EASYBILL_PASSWORD: string
 }
 
 export function validate(config: Record<string, unknown>) {

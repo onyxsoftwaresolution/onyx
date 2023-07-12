@@ -1,4 +1,4 @@
-export class QueryParams extends String {
+export class QueryPaths extends String {
   private paths: string[] = [];
 
   constructor(str: string) {
