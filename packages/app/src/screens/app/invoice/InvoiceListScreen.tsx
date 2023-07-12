@@ -17,6 +17,7 @@ import dayjs from 'dayjs';
 import ListItem from '../../../components/MGListItem';
 import { getInvoiceNumberFormatter } from './getInvoiceNumberFormatter';
 import { isUUID } from 'class-validator';
+import { API_URL } from '@env';
 
 type Params = {
   projectId: number;
@@ -50,10 +51,14 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceListScr
     [props.navigation],
   );
 
-  const onDownloadInvoice = useCallback(async (invoiceNumber: string) => {
+  const onDownloadInvoiceUrl = useCallback(async (invoiceNumber: string) => {
     const url = await invoiceUrl.mutateAsync(invoiceNumber);
     await Linking.openURL(url.data.url);
   }, [invoiceUrl]);
+
+  const onDownloadInvoice = useCallback(async (id: number) => {
+    await Linking.openURL(`${API_URL}/v1/view-invoice/${id}`);
+  }, []);
 
   const renderInvoice = useCallback(
     (invoice: InvoiceOutDTO) => (
@@ -76,7 +81,7 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceListScr
               />
             </TouchableRipple>
             <TouchableRipple
-              onPress={() => onDownloadInvoice(invoice.number)}
+              onPress={() => onDownloadInvoice(invoice.id)}
               style={[styles.iconContainer, { opacity: isUUID(invoice.number) ? 0 : 1 }]}
               disabled={isUUID(invoice.number)}
             >
