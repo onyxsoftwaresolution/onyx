@@ -86,9 +86,9 @@ export class InvoiceService {
     const buffer = await this.easyBillService.getInvoice(invoice.number);
 
     res.set({
-      'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'Content-Type': 'application/pdf',
       'Content-Disposition': `filename=invoice-${invoice.number}.pdf`,
-      // 'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      // 'Content-Type': 'application/pdf',
       // 'Content-Disposition': `attachment;filename=invoice-${invoice.number}.pdf`,
     });
 
