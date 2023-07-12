@@ -107,12 +107,7 @@ export class ProjectActivityOutDTO extends EntityOutDTO implements ProjectActivi
 }
 
 export class ProjectQueryParams {
-  'available'?: boolean = true;
-  'contract'?: boolean;
-  'projectActivities'?: boolean;
-  'projectActivities.activityTemplate'?: boolean;
-  'areaAdmin'?: boolean;
-  'localAdmin'?: boolean;
+  available?: boolean = true;
 }
 
 export class ProjectActivityQueryParams {

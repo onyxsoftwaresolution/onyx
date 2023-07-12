@@ -56,17 +56,20 @@ export class ProjectProvider {
     return await this.getProject(id);
   }
 
-  async listProjects(params: ProjectQueryParams) {
+  async listProjects(params: ProjectQueryParams, paths: QueryPaths) {
     return await this.prismaService.client.project.findMany({
       where: { deleted: false, available: params.available },
       orderBy: { modified: 'desc' },
       include: {
-        areaAdmin: !!params.areaAdmin,
-        localAdmin: !!params.localAdmin,
-        contract: !!params.contract,
-        projectActivities: !!params.projectActivities || !!params['projectActivities.activityTemplate'] ? {
+        areaAdmin: paths.has('areaAdmin'),
+        localAdmin: paths.has('localAdmin'),
+        contract: paths.has('contract'),
+        projectActivities: paths.has('projectActivities') ? {
           include: {
-            activityTemplate: !!params['projectActivities.activityTemplate'],
+            activityTemplate: paths.has('projectActivities.activityTemplate'),
+            costs: paths.has('projectActivities.costs') ? {
+              where: { deleted: false }
+            } : false,
           }
         } : false,
       },
@@ -86,7 +89,9 @@ export class ProjectProvider {
             product: !!params['activityTemplate.product'],
           },
         } : false,
-        costs: !!params.costs,
+        costs: !!params.costs ? {
+          where: { deleted: false }
+        } : false,
       },
     });
   }

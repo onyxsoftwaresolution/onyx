@@ -8,8 +8,8 @@ import { QueryPaths } from '@common/QueryParams';
 export class ProjectService {
   constructor(private projectProvider: ProjectProvider) { }
 
-  async listProjects(params: ProjectQueryParams): Promise<ProjectOutDTO[]> {
-    const projects = await this.projectProvider.listProjects(params);
+  async listProjects(params: ProjectQueryParams, paths: QueryPaths): Promise<ProjectOutDTO[]> {
+    const projects = await this.projectProvider.listProjects(params, paths);
     return projects.map((proj) => new ProjectOutDTO(proj));
   }
 

@@ -21,13 +21,19 @@ export class ProjectController {
 
   @Get('projects')
   @Roles(Role.ADMIN, Role.USER)
-  async listProjects(@Query() params: ProjectQueryParams) {
-    return await this.projectService.listProjects(params);
+  async listProjects(
+    @Query() params: ProjectQueryParams,
+    @Query('paths') paths: string,
+  ) {
+    return await this.projectService.listProjects(params, new QueryPaths(paths));
   }
 
   @Get('project/:id')
   @Roles(Role.ADMIN, Role.USER)
-  async getProject(@Param('id') id: number, paths: string) {
+  async getProject(
+    @Param('id') id: number,
+    @Query('paths') paths: string,
+  ) {
     return await this.projectService.getProject(id, new QueryPaths(paths));
   }
 
