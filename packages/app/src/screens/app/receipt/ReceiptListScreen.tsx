@@ -64,6 +64,7 @@ export default memo<NativeStackScreenProps<any, string>>(function ReceiptListScr
                 rows={[
                   { label: 'Numar factura:', value: getInvoiceNumberFormatter(receipt.invoice?.number) },
                   { label: 'Data:', value: getHumanReadableDate(receipt.date) },
+                  { label: 'Suma:', value: receipt.amount?.toString() },
                 ]}
               />
             </TouchableRipple>
