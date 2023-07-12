@@ -72,6 +72,14 @@ export class ProjectProvider {
             } : false,
           }
         } : false,
+        invoices: paths.has('invoices') ? {
+          where: { deleted: false },
+          include: {
+            receipts: paths.has('invoices.receipts') ? {
+              where: { deleted: false },
+            } : false,
+          },
+        } : false
       },
     });
   }

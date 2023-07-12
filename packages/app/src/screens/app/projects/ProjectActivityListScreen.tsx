@@ -11,6 +11,7 @@ import { Queries } from '../../../requests/queries';
 import { AppTheme } from '../../../theme/type';
 import { Screens } from '../../Screens';
 import ListItem from '../../../components/MGListItem';
+import { getProjectActivityCostSum } from '../cost/costUtils';
 
 type Props = NativeStackScreenProps<any, string> & {
   type: 'cost';
@@ -67,7 +68,7 @@ export default memo<Props>(function ProjectActivityListScreen({ type, ...props }
                   { label: 'Furnizor:', value: activity.activityTemplate.supplier?.name },
                   { label: 'Produs:', value: activity.activityTemplate.product?.name },
                   { label: 'Cost activitate:', value: activity.cost },
-                  { label: 'Total costuri:', value: activity.costs?.reduce((p, n) => p + n.amount, 0) },
+                  { label: 'Total costuri:', value: getProjectActivityCostSum(activity) },
                 ]}
               />
             </TouchableRipple>

@@ -19,6 +19,8 @@ import { AppTheme } from '../../../theme/type';
 import { Screens } from '../../Screens';
 import { Report } from '../reports/Report';
 import ListItem from '../../../components/MGListItem';
+import { getProjectActivitiesCostSum } from '../cost/costUtils';
+import { getInvoicesReceiptSum } from '../receipt/receiptUtils';
 
 type Props = NativeStackScreenProps<any, string> & {
   type: 'project' | Report | 'cost' | 'invoice' | 'receipt';
@@ -33,10 +35,10 @@ const getProjectPaths = (type: Props['type']): string[] => {
       return ['projectActivities.costs'];
 
     case 'invoice':
-      return [];
+      return ['projectActivities.costs', 'invoices.receipts'];
 
     case 'receipt':
-      return [];
+      return ['invoices.receipts'];
 
     case Report.DAILY:
     case Report.MONTHLY:
@@ -76,19 +78,15 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
             onPress={() => props.navigation.navigate(Screens.APP_PROJECT_UPSERT, { id: project.id })}
             style={[{ flex: 1 }]}
           >
-            <View style={[{ flex: 1 }]}>
-              <Text style={[styles.itemText]}>{project.description}</Text>
-              <Text style={[styles.itemSubText, { color: colors.error }]}>
-                {dayjs(project.start).format('DD/MM/YYYY')} - {dayjs(project.end).format('DD/MM/YYYY')}
-              </Text>
-              <Text style={[styles.itemSubText, { color: colors.error }]}>
-                {project.area}
-              </Text>
-              <Text style={[styles.itemSubText, { color: colors.error }]}>
-                {project.code}
-              </Text>
-              <View style={[{ marginBottom: 10 }]} />
-            </View>
+            <ListItem
+              rows={[
+                { label: 'Descriere:', value: project.description },
+                { label: 'Data inceput:', value: dayjs(project.start).format('DD/MM/YYYY') },
+                { label: 'Data sfarsit:', value: dayjs(project.end).format('DD/MM/YYYY') },
+                { label: 'Aria:', value: project.area },
+                { label: 'Cod:', value: project.code },
+              ]}
+            />
           </TouchableRipple>
           <TouchableRipple
             onPress={() => dialog.show(project)}
@@ -103,7 +101,7 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
         <Divider />
       </View>
     </View>
-  ), [colors.danger, colors.error, dialog, props.navigation]);
+  ), [colors.danger, dialog, props.navigation]);
 
   const renderProjectForDaily = useCallback((project: ProjectOutDTO, index: number) => (
     <TouchableRipple
@@ -113,18 +111,20 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
     >
       <View style={[styles.item]}>
         <View style={[styles.itemRow]}>
-          <View style={[{ flex: 1 }]}>
-            <Text style={[styles.itemText]}>{project.description}</Text>
-            <Text style={[styles.itemSubText, { color: colors.error }]}>
-              {dayjs(project.start).format('DD/MM/YYYY')} - {dayjs(project.end).format('DD/MM/YYYY')}
-            </Text>
-            <View style={[{ marginBottom: 10 }]} />
-          </View>
+          <ListItem
+            rows={[
+              { label: 'Descriere:', value: project.description },
+              { label: 'Data inceput:', value: dayjs(project.start).format('DD/MM/YYYY') },
+              { label: 'Data sfarsit:', value: dayjs(project.end).format('DD/MM/YYYY') },
+              { label: 'Aria:', value: project.area },
+              { label: 'Cod:', value: project.code },
+            ]}
+          />
         </View>
         <Divider />
       </View>
     </TouchableRipple>
-  ), [colors.error, props.navigation]);
+  ), [props.navigation]);
 
   const renderProjectForMonthly = useCallback((project: ProjectOutDTO, index: number) => (
     <TouchableRipple
@@ -134,18 +134,20 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
     >
       <View style={[styles.item]}>
         <View style={[styles.itemRow]}>
-          <View style={[{ flex: 1 }]}>
-            <Text style={[styles.itemText]}>{project.description}</Text>
-            <Text style={[styles.itemSubText, { color: colors.error }]}>
-              {dayjs(project.start).format('DD/MM/YYYY')} - {dayjs(project.end).format('DD/MM/YYYY')}
-            </Text>
-            <View style={[{ marginBottom: 10 }]} />
-          </View>
+          <ListItem
+            rows={[
+              { label: 'Descriere:', value: project.description },
+              { label: 'Data inceput:', value: dayjs(project.start).format('DD/MM/YYYY') },
+              { label: 'Data sfarsit:', value: dayjs(project.end).format('DD/MM/YYYY') },
+              { label: 'Aria:', value: project.area },
+              { label: 'Cod:', value: project.code },
+            ]}
+          />
         </View>
         <Divider />
       </View>
     </TouchableRipple>
-  ), [colors.error, props.navigation]);
+  ), [props.navigation]);
 
   const renderCost = useCallback((project: ProjectOutDTO, index: number) => (
     <TouchableRipple
@@ -160,7 +162,7 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
               { label: 'Descriere:', value: project.description },
               { label: 'Data inceput:', value: dayjs(project.start).format('DD/MM/YYYY') },
               { label: 'Data sfarsit:', value: dayjs(project.end).format('DD/MM/YYYY') },
-              { label: 'Total costuri:', value: (project.projectActivities?.reduce((p, n) => p + n.costs?.reduce((p, n) => p + n.amount, 0), 0) ?? 0).toString() }
+              { label: 'Total costuri:', value: getProjectActivitiesCostSum(project.projectActivities).toString() },
             ]}
           />
         </View>
@@ -182,6 +184,8 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
               { label: 'Descriere:', value: project.description },
               { label: 'Data inceput:', value: dayjs(project.start).format('DD/MM/YYYY') },
               { label: 'Data sfarsit:', value: dayjs(project.end).format('DD/MM/YYYY') },
+              { label: 'Total costuri:', value: getProjectActivitiesCostSum(project.projectActivities).toString() },
+              { label: 'Total incasari:', value: getInvoicesReceiptSum(project.invoices).toString() },
             ]}
           />
         </View>
@@ -203,6 +207,7 @@ export default memo<Props>(function ProjectListScreen({ type, ...props }) {
               { label: 'Descriere:', value: project.description },
               { label: 'Data inceput:', value: dayjs(project.start).format('DD/MM/YYYY') },
               { label: 'Data sfarsit:', value: dayjs(project.end).format('DD/MM/YYYY') },
+              { label: 'Total incasari:', value: getInvoicesReceiptSum(project.invoices).toString() },
             ]}
           />
         </View>

@@ -4,6 +4,7 @@ import { ActivityTemplateOutDTO } from '@modules/activity-template/dtos/activity
 import { ContractOutDTO } from '@modules/contract/dtos/contract.out.dto';
 import { CostOutDTO } from '@modules/cost/dtos/cost.out.dto';
 import { EmployeeOutDTO } from '@modules/employee/dtos/employee.out.dto';
+import { InvoiceOutDTO } from '@modules/invoice/dtos/invoice.out.dto';
 import { Project, ProjectActivity } from '@prisma/client';
 import { Expose, Type } from 'class-transformer';
 import { IsArray, ValidateNested } from 'class-validator';
@@ -65,6 +66,13 @@ export class ProjectOutDTO extends EntityOutDTO implements Project {
   @Expose()
   @Type(() => ContractOutDTO)
   contract: ContractOutDTO;
+
+  @Expose()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @IsNonPrimitiveArray()
+  @Type(() => InvoiceOutDTO)
+  invoices: InvoiceOutDTO[];
 }
 
 export class ProjectActivityOutDTO extends EntityOutDTO implements ProjectActivity {
