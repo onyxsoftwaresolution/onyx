@@ -1,10 +1,11 @@
 import { Roles } from '@modules/auth/rbac/role.decorator';
-import { Body, Controller, Delete, Get, Param, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Put, Query, Res } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { UpsertInvoiceDTO } from './dtos/invoice.in.dto';
 import { InvoiceService } from './invoice.service';
 import { QueryPaths } from '@common/QueryParams';
-import { Type } from 'class-transformer';
+import { AllowAnonymous } from '@modules/auth/rbac/anonymous.decorator';
+import { Response } from 'express';
 
 @Controller({
   version: '1',
@@ -46,5 +47,14 @@ export class InvoiceController {
   @Roles(Role.ADMIN)
   async deleteInvoice(@Param('id') id: number) {
     return await this.invoiceService.deleteInvoice(id);
+  }
+
+  @Get('view-invoice/:id')
+  @AllowAnonymous()
+  async viewInvoice(
+    @Param('id') id: number,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return await this.invoiceService.viewInvoice(res, id);
   }
 }

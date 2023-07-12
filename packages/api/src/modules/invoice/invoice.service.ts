@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, StreamableFile } from '@nestjs/common';
 import {
   UpsertInvoiceDTO,
 } from './dtos/invoice.in.dto';
@@ -10,6 +10,7 @@ import { isEmpty } from 'class-validator';
 import { ProjectService } from '@modules/project/project.service';
 import dayjs from 'dayjs';
 import { randomUUID } from 'crypto';
+import { Response } from 'express';
 
 @Injectable()
 export class InvoiceService {
@@ -70,5 +71,27 @@ export class InvoiceService {
 
   async deleteInvoice(id: number) {
     return new InvoiceOutDTO(await this.invoiceProvider.deleteInvoice(id));
+  }
+
+  async viewInvoice(
+    res: Response,
+    id: number,
+  ) {
+    const invoice = await this.getInvoice(id, new QueryPaths(''));
+
+    if (isEmpty(invoice.number)) {
+      throw new HttpException('Not a valid invoice!', 500, {});
+    }
+
+    const buffer = await this.easyBillService.getInvoice(invoice.number);
+
+    res.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'Content-Disposition': `filename=invoice-${invoice.number}.pdf`,
+      // 'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      // 'Content-Disposition': `attachment;filename=invoice-${invoice.number}.pdf`,
+    });
+
+    return new StreamableFile(buffer);
   }
 }
