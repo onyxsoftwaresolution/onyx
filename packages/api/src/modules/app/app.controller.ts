@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
+import { AllowAnonymous } from '@modules/auth/rbac/anonymous.decorator';
 
 @Controller({
   version: '1',
@@ -21,6 +22,7 @@ export class AppController {
   }
 
   @Get('keep-alive')
+  @AllowAnonymous()
   async keepAlive() {
     await this.appService.keepAlive();
     return ({
