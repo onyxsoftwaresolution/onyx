@@ -153,8 +153,8 @@ export default memo<NativeStackScreenProps<any, string>>(function InvoiceUpsertS
             rows={[
               { label: 'CIF:', value: someProject?.contract?.client?.cif },
               { label: 'RC:', value: someProject?.contract?.client?.rc },
-              { label: 'Bank:', value: someProject?.contract?.client?.rc },
-              { label: 'IBAN:', value: someProject?.contract?.client?.rc },
+              { label: 'Bank:', value: someProject?.contract?.client?.bankName },
+              { label: 'IBAN:', value: someProject?.contract?.client?.bankIban },
             ]}
             labelWidth={100}
             direction='column'
